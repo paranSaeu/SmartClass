@@ -13,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 public class TimeTableActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -33,7 +35,72 @@ public class TimeTableActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        final TextView time_class  = (TextView) findViewById(R.id.time_class);
+        time_class.setText(refreshClassNo());
+
+        final ImageButton button_grade_left = (ImageButton) findViewById(R.id.time_button_grade_back);
+        button_grade_left.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(Grade != 1) {
+                    Grade--;
+                } else {
+                    Grade = 3;
+                }
+                time_class.setText(refreshClassNo());
+            }
+        });
+
+        final ImageButton button_grade_right = (ImageButton) findViewById(R.id.time_button_grade_forward);
+        button_grade_right.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(Grade != 3) {
+                    Grade++;
+                } else {
+                    Grade = 1;
+                }
+                time_class.setText(refreshClassNo());
+            }
+        });
+
+        final ImageButton button_class_left = (ImageButton) findViewById(R.id.time_button_class_back);
+        button_class_left.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(Class != 1) {
+                    Class--;
+                } else {
+                    Class = 11;
+                }
+                time_class.setText(refreshClassNo());
+            }
+        });
+
+        final ImageButton button_class_right = (ImageButton) findViewById(R.id.time_button_class_forward);
+        button_class_right.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(Class != 11) {
+                    Class++;
+                } else {
+                    Class = 1;
+                }
+                time_class.setText(refreshClassNo());
+            }
+        });
     }
+
+    private CharSequence refreshClassNo() {
+        CharSequence temp;
+        try {
+            temp =
+            temp = String.valueOf(Grade) + getResources().getString(R.string.Grade) + " " + String.valueOf(Class) + getResources().getString(R.string.Class);
+        } catch (java.lang.NullPointerException e) {
+            temp = "Error";
+        }
+        return temp;
+    }
+
+    private int Grade = 1, Class = 1;
+    private CharSequence classNo;
 
     @Override
     public void onBackPressed() {

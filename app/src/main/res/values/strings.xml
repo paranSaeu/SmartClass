@@ -4,13 +4,17 @@
 
     <string name="app_name">스마트 클래스</string>
     <string name="school_name">김포고등학교</string>
-    <string name="school_motto">건강하고 창조적이며 성실한 학생</string>
-
-    <string name="nav_app">Application</string>
+    <string name="school_motto">건강하고 창조적이며 성실한 사람</string>
 
     <string name="action_settings">설정</string>
 
     <string name="noti_version_is">어플리케이션 버전:</string>
+
+    <string name="mon">월</string>
+    <string name="tue">화</string>
+    <string name="wed">수</string>
+    <string name="thu">목</string>
+    <string name="fri">금</string>
 
     <!-- HomeActivity -->
 
@@ -29,8 +33,6 @@
         <item>@string/home_card_event_title</item>
     </string-array>
 
-    <string name="title_activity_home">HomeActivity</string>
-
     <!-- TimeTableActivity -->
 
     <string name="time_title">시간표</string>
@@ -40,12 +42,12 @@
     <string name="time_button_class_back_desc">@string/notYet</string>
     <string name="time_button_class_forward_desc">@string/notYet</string>
 
-    <string-array name="timetable_spinner_grade">
+    <string-array name="time_spinner_grade">
         <item>1</item>
         <item>2</item>
         <item>3</item>
     </string-array>
-    <string-array name="timetable_spinner_class">
+    <string-array name="time_spinner_class">
         <item>01</item>
         <item>02</item>
         <item>03</item>
@@ -58,6 +60,20 @@
         <item>10</item>
         <item>11</item>
     </string-array>
+
+    <string name="time_card_1st_period">1교시</string>
+    <string name="time_card_2nd_period">2교시</string>
+    <string name="time_card_3rd_period">3교시</string>
+    <string name="time_card_4th_period">4교시</string>
+    <string name="time_card_5th_period">5교시</string>
+    <string name="time_card_6th_period">6교시</string>
+    <string name="time_card_7th_period">7교시</string>
+
+    <string name="time_card_period">교시</string>
+
+    <string name="Grade">학년</string>
+    <string name="Class">반</string>
+
 
     <!-- MealInfoActivity -->
 
@@ -77,14 +93,8 @@
 
     <string name="notYet">아직 구현되지 않은 기능입니다.</string>
 
-    <string name="TimeTable">Time Table</string>
-    <string name="MealInfo">Meal Information</string>
-    <string name="AcademicCalendar">Academic Calendar</string>
-    <string name="Setting">Settings</string>
-    <string name="AppInfo">App Information</string>
-
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="navigation_drawer_open">탐색 창 열기</string>
+    <string name="navigation_drawer_close">탐색 창 닫기</string>
 
 
 </resources>
