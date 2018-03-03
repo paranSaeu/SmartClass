@@ -6,7 +6,7 @@ android {
         applicationId "kr.hs.gimpo.smartclass"
         minSdkVersion 19
         targetSdkVersion 26
-        versionCode 310
+        versionCode 320
         versionName "3.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -23,7 +23,7 @@ android {
     productFlavors {
         beta {
             dimension "test"
-            versionName "3.1.0-beta"
+            versionName "3.2.0-beta"
         }
     }
 }
