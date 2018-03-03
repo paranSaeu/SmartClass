@@ -16,6 +16,11 @@
     <string name="thu">목</string>
     <string name="fri">금</string>
 
+    <string name="Grade">학년</string>
+    <string name="Class">반</string>
+
+    <string name="Subject">과목\n선생님</string>
+
     <!-- HomeActivity -->
 
     <string name="home_title">메인</string>
@@ -70,9 +75,6 @@
     <string name="time_card_7th_period">7교시</string>
 
     <string name="time_card_period">교시</string>
-
-    <string name="Grade">학년</string>
-    <string name="Class">반</string>
 
 
     <!-- MealInfoActivity -->

@@ -88,10 +88,11 @@ public class TimeTableActivity extends AppCompatActivity
         });
     }
 
+    private TextView[][] timetableSubject = new TextView[5][7];
+
     private CharSequence refreshClassNo() {
         CharSequence temp;
         try {
-            temp =
             temp = String.valueOf(Grade) + getResources().getString(R.string.Grade) + " " + String.valueOf(Class) + getResources().getString(R.string.Class);
         } catch (java.lang.NullPointerException e) {
             temp = "Error";
