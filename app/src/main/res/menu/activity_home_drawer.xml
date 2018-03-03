@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/nav_group_home">
+
+        <item
+            android:id="@+id/nav_home"
+            android:title="@string/home_title" />
+
+    </group>
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/nav_group_school">
+
+        <item
+            android:id="@+id/nav_table"
+            android:title="@string/time_title" />
+        <item
+            android:id="@+id/nav_meal"
+            android:title="@string/meal_title" />
+        <item
+            android:id="@+id/nav_calendar"
+            android:title="@string/event_title" />
+
+    </group>
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/nav_group_app">
+
+        <item
+            android:id="@+id/nav_setting"
+            android:title="@string/set_title" />
+        <item
+            android:id="@+id/nav_info"
+            android:title="@string/about" />
+
+    </group>
+
+</menu>
