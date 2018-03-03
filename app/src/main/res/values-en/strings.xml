@@ -7,8 +7,6 @@
     <string name="school_name">Gimpo High School</string>
     <string name="school_motto">Being A healthy, creative, and diligent person</string>
 
-    <string name="nav_app">Application</string>
-
     <string name="action_settings">Settings</string>
 
     <string name="noti_version_is">Version: </string>
@@ -29,8 +27,6 @@
         <item>@string/home_card_meal_title_am</item>
         <item>@string/home_card_event_title</item>
     </string-array>
-
-    <string name="title_activity_home">HomeActivity</string>
 
     <!-- TimeTableActivity -->
 
@@ -78,14 +74,24 @@
 
     <string name="notYet">This function will be supported in future version</string>
 
-    <string name="TimeTable">Time Table</string>
-    <string name="MealInfo">Meal Information</string>
-    <string name="AcademicCalendar">Academic Calendar</string>
-    <string name="Setting">Settings</string>
-    <string name="AppInfo">App Information</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="time_card_period">Period</string>
+    <string name="time_card_1st_period">1st Period</string>
+    <string name="time_card_2nd_period">2nd Period</string>
+    <string name="time_card_3rd_period">3rd Period</string>
+    <string name="time_card_4th_period">4th Period</string>
+    <string name="time_card_5th_period">5th Period</string>
+    <string name="time_card_6th_period">6th Period</string>
+    <string name="time_card_7th_period">7th Period</string>
+    <string name="mon">Mon</string>
+    <string name="tue">Tue</string>
+    <string name="wed">Wed</string>
+    <string name="thu">Thu</string>
+    <string name="fri">Fri</string>
+    <string name="Grade">Grade</string>
+    <string name="Class">Class</string>
+    <string name="Subject">Subject\nTeacher</string>
 
 
 </resources>
