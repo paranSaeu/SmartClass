@@ -22,7 +22,7 @@ public class AcademicCalendarActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_academic_calendar);
         Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.AcademicCalendar);
+        toolbar.setTitle(R.string.event_title);
         setSupportActionBar(toolbar);
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
