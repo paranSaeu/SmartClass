@@ -16,6 +16,10 @@ import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
+import java.util.Locale;
+
 public class TimeTableActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -86,22 +90,29 @@ public class TimeTableActivity extends AppCompatActivity
                 time_class.setText(refreshClassNo());
             }
         });
-    }
 
-    private TextView[][] timetableSubject = new TextView[5][7];
+        for(int a = 0; a < 5; a++) {
+            for(int b = 0; b < 7; b++) {
+                String id = String.format(Locale.getDefault(), ID_FORMAT, date[a], b);
+                timetable[a][b] = (TextView) findViewById(getResources().getIdentifier(id, "id", getPackageName()));
+                timetable[a][b].setText(date[a] + "\n" + (b + 1));
+            }
+        }
+    }
+    private String[] date = {"mon", "tue", "wed", "thu", "fri"};
+    private static final String ID_FORMAT = "time_card_%s_%d";
+    private TextView timetable[][] = new TextView[5][7];
 
     private CharSequence refreshClassNo() {
-        CharSequence temp;
         try {
-            temp = String.valueOf(Grade) + getResources().getString(R.string.Grade) + " " + String.valueOf(Class) + getResources().getString(R.string.Class);
+            return String.valueOf(Grade) + getResources().getString(R.string.Grade) + " " + String.valueOf(Class) + getResources().getString(R.string.Class);
         } catch (java.lang.NullPointerException e) {
-            temp = "Error";
+            return "Error";
         }
-        return temp;
     }
 
+
     private int Grade = 1, Class = 1;
-    private CharSequence classNo;
 
     @Override
     public void onBackPressed() {
