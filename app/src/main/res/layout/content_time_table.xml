@@ -79,14 +79,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/time_button_class_back">
 
-        <TableLayout
-            android:id="@+id/time_card_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-        </TableLayout>
-
         <android.support.constraint.ConstraintLayout
+            android:id="@+id/time_card_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 

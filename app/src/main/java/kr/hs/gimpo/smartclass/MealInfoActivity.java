@@ -1,6 +1,7 @@
 package kr.hs.gimpo.smartclass;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,15 +16,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class MealInfoActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -45,10 +53,23 @@ public class MealInfoActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        textviewHtmlDocument = (TextView)findViewById(R.id.textView);
-        textviewHtmlDocument.setMovementMethod(new ScrollingMovementMethod()); //스크롤 가능한 텍스트뷰로 만들기
+        Date c = Calendar.getInstance().getTime();
+        day = new SimpleDateFormat("dd", Locale.getDefault()).format(c);
+        month = new SimpleDateFormat("MM", Locale.getDefault()).format(c);
+        year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(c);
 
-        Button htmlTitleButton = (Button)findViewById(R.id.button);
+        initDate(year, month, day);
+
+        lunch_data = (TextView)findViewById(R.id.meal_card_lunch_data);
+        lunch_data.setMovementMethod(new ScrollingMovementMethod()); //스크롤 가능한 텍스트뷰로 만들기
+
+        dinner_data = (TextView) findViewById(R.id.meal_card_dinner_data);
+        lunch_data.setMovementMethod(new ScrollingMovementMethod());
+
+        final JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
+        jsoupAsyncTask.execute();
+
+        /*Button htmlTitleButton = (Button)findViewById(R.id.button);
         htmlTitleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -57,12 +78,32 @@ public class MealInfoActivity extends AppCompatActivity
                 jsoupAsyncTask.execute();
                 cnt++;
             }
+        });*/
+
+        final ImageButton month_left = (ImageButton) findViewById(R.id.meal_button_month_back);
+        month_left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initDate(year, month, day);
+                jsoupAsyncTask.execute();
+            }
         });
     }
-    private String htmlPageUrl = "http://www.yonhapnews.co.kr/"; //파싱할 홈페이지의 URL주소
-    private TextView textviewHtmlDocument;
-    private String htmlContentInStringFormat="";
-    int cnt = 0;
+
+    private void initDate(String _year, String _month, String _day) {
+        String date = String.format(Locale.getDefault(), getResources().getString(R.string.date_format), _year, _month, _day);
+        TextView mealDate = (TextView) findViewById(R.id.meal_date);
+        mealDate.setText(date);
+        htmlPageUrl = "http://www.gimpo.hs.kr/main.php?menugrp=021100&master=meal2&act=list&SearchYear="+_year+"&SearchMonth="+_month+"&SearchDay="+_day+"#diary_list";
+    }
+
+    //private String htmlPageUrl = "http://www.yonhapnews.co.kr/"; //파싱할 홈페이지의 URL주소
+    private String year, month, day;
+    private String htmlPageUrl;
+    private TextView lunch_data;
+    private TextView dinner_data;
+
+    private String meal[] = new String[2];
 
     private class JsoupAsyncTask extends AsyncTask<Void, Void, Void> {
 
@@ -76,8 +117,7 @@ public class MealInfoActivity extends AppCompatActivity
             try {
 
                 Document doc = Jsoup.connect(htmlPageUrl).get();
-
-
+                /*
                 //테스트1
                 Elements titles= doc.select("div.news-con h1.tit-news");
 
@@ -105,6 +145,18 @@ public class MealInfoActivity extends AppCompatActivity
                     htmlContentInStringFormat += e.text().trim() + "\n";
                 }
                 System.out.println("-------------------------------------------------------------");
+                */
+
+                //급식
+                Elements mealData = doc.select("div.meal_content.col-md-7 div.meal_table table tbody");
+                System.out.println("------------------");
+                int cnt = 0;
+                for(Element e: mealData) {
+                    System.out.println("data:" + e.text());
+                    meal[cnt] = e.text().trim();
+                    cnt++;
+                }
+                System.out.println("-------------------");
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -114,7 +166,8 @@ public class MealInfoActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(Void result) {
-            textviewHtmlDocument.setText(htmlContentInStringFormat);
+            lunch_data.setText(meal[0]);
+            dinner_data.setText(meal[1]);
         }
     }
 
@@ -167,7 +220,11 @@ public class MealInfoActivity extends AppCompatActivity
         } else if (id == R.id.nav_setting) {
 
         } else if (id == R.id.nav_info) {
-
+            try {
+                CharSequence version = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
+                CharSequence versionName = getResources().getString(R.string.noti_version_is) + " " + version.toString();
+                Toast.makeText(getApplicationContext(),versionName,Toast.LENGTH_SHORT).show();
+            } catch (PackageManager.NameNotFoundException e) { }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

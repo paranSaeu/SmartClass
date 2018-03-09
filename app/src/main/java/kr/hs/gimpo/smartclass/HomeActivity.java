@@ -2,8 +2,10 @@ package kr.hs.gimpo.smartclass;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,7 +19,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,AdapterView.OnItemSelectedListener {
@@ -61,7 +71,7 @@ public class HomeActivity extends AppCompatActivity
                 if(home_spinner_selected != 0) {
                     home_spinner_selected--;
                 } else {
-                    home_spinner_selected = 2;
+                    home_spinner_selected = 3;
                 }
                 spinner.setSelection(home_spinner_selected);
             }
@@ -70,7 +80,7 @@ public class HomeActivity extends AppCompatActivity
         final ImageButton button_right = (ImageButton) findViewById(R.id.home_button_right);
         button_right.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if(home_spinner_selected != 2) {
+                if(home_spinner_selected != 3) {
                     home_spinner_selected++;
                 } else {
                     home_spinner_selected = 0;
@@ -78,8 +88,10 @@ public class HomeActivity extends AppCompatActivity
                 spinner.setSelection(home_spinner_selected);
             }
         });
-    }
 
+        jsoupAsyncTask.execute();
+    }
+    final private JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
     public int home_spinner_selected = 0;
 
     @Override
@@ -148,46 +160,153 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
-    public void onItemSelected(AdapterView<?> parent, View view,
-                               int pos, long id) {
-        // An item was selected. You can retrieve the selected item using
-        // parent.getItemAtPosition(pos)
-        ConstraintLayout cl_tt = (ConstraintLayout) findViewById(R.id.home_card_timetable);
-        ConstraintLayout cl_mi = (ConstraintLayout) findViewById(R.id.home_card_meal_info);
-        ConstraintLayout cl_ac = (ConstraintLayout) findViewById(R.id.home_card_event);
-
-        switch(pos) {
+    private void initData(int mode) {
+        switch(mode) {
             case 0:
-                cl_tt.setVisibility(View.VISIBLE);
-                cl_mi.setVisibility(View.INVISIBLE);
-                cl_ac.setVisibility(View.INVISIBLE);
                 break;
             case 1:
-                cl_tt.setVisibility(View.INVISIBLE);
-                cl_mi.setVisibility(View.VISIBLE);
-                cl_ac.setVisibility(View.INVISIBLE);
                 break;
             case 2:
-                cl_tt.setVisibility(View.INVISIBLE);
-                cl_mi.setVisibility(View.INVISIBLE);
-                cl_ac.setVisibility(View.VISIBLE);
+                break;
+            case 3:
+                //jsoupAsyncTask.execute();
                 break;
             default:
-                cl_tt.setVisibility(View.INVISIBLE);
-                cl_mi.setVisibility(View.INVISIBLE);
-                cl_ac.setVisibility(View.INVISIBLE);
                 break;
         }
     }
 
+    public void onItemSelected(AdapterView<?> parent, View view,
+                               int pos, long id) {
+        // An item was selected. You can retrieve the selected item using
+        // parent.getItemAtPosition(pos)
+        ConstraintLayout cl_tt = (ConstraintLayout) findViewById(R.id.home_card_time);
+        ConstraintLayout cl_mi = (ConstraintLayout) findViewById(R.id.home_card_meal);
+        ConstraintLayout cl_ac = (ConstraintLayout) findViewById(R.id.home_card_event);
+        ConstraintLayout cl_ai = (ConstraintLayout) findViewById(R.id.home_card_air);
+
+        switch(pos) {
+            case 0:
+                cl_tt.setVisibility(View.VISIBLE);
+                cl_mi.setVisibility(View.GONE);
+                cl_ac.setVisibility(View.GONE);
+                cl_ai.setVisibility(View.GONE);
+                break;
+            case 1:
+                cl_tt.setVisibility(View.GONE);
+                cl_mi.setVisibility(View.VISIBLE);
+                cl_ac.setVisibility(View.GONE);
+                cl_ai.setVisibility(View.GONE);
+                break;
+            case 2:
+                cl_tt.setVisibility(View.GONE);
+                cl_mi.setVisibility(View.GONE);
+                cl_ac.setVisibility(View.VISIBLE);
+                cl_ai.setVisibility(View.GONE);
+                break;
+            case 3:
+                cl_tt.setVisibility(View.GONE);
+                cl_mi.setVisibility(View.GONE);
+                cl_ac.setVisibility(View.GONE);
+                cl_ai.setVisibility(View.VISIBLE);
+                break;
+            default:
+                cl_tt.setVisibility(View.GONE);
+                cl_mi.setVisibility(View.GONE);
+                cl_ac.setVisibility(View.GONE);
+                cl_ai.setVisibility(View.GONE);
+                break;
+        }
+        initData(pos);
+    }
+
     public void onNothingSelected(AdapterView<?> parent) {
         // Another interface callback
-        ConstraintLayout cl_tt = (ConstraintLayout) findViewById(R.id.home_card_timetable);
-        ConstraintLayout cl_mi = (ConstraintLayout) findViewById(R.id.home_card_meal_info);
+        ConstraintLayout cl_tt = (ConstraintLayout) findViewById(R.id.home_card_time);
+        ConstraintLayout cl_mi = (ConstraintLayout) findViewById(R.id.home_card_meal);
         ConstraintLayout cl_ac = (ConstraintLayout) findViewById(R.id.home_card_event);
-        cl_tt.setVisibility(View.INVISIBLE);
-        cl_mi.setVisibility(View.INVISIBLE);
-        cl_ac.setVisibility(View.INVISIBLE);
+        ConstraintLayout cl_ai = (ConstraintLayout) findViewById(R.id.home_card_air);
+        cl_tt.setVisibility(View.GONE);
+        cl_mi.setVisibility(View.GONE);
+        cl_ac.setVisibility(View.GONE);
+        cl_ai.setVisibility(View.GONE);
+    }
+
+    private String htmlContentInStringFormat;
+    private class JsoupAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                Document doc = Jsoup.connect("http://m.airkorea.or.kr/sub_new/sub41.jsp").get();
+                htmlContentInStringFormat = "";
+                /*
+                //테스트1
+                Elements titles= doc.select("div.news-con h1.tit-news");
+
+                System.out.println("-------------------------------------------------------------");
+                for(Element e: titles){
+                    System.out.println("title: " + e.text());
+                    htmlContentInStringFormat += e.text().trim() + "\n";
+                }
+
+                //테스트2
+                titles= doc.select("div.news-con h2.tit-news");
+
+                System.out.println("-------------------------------------------------------------");
+                for(Element e: titles){
+                    System.out.println("title: " + e.text());
+                    htmlContentInStringFormat += e.text().trim() + "\n";
+                }
+
+                //테스트3
+                titles= doc.select("li.section02 div.con h2.news-tl");
+
+                System.out.println("-------------------------------------------------------------");
+                for(Element e: titles){
+                    System.out.println("title: " + e.text());
+                    htmlContentInStringFormat += e.text().trim() + "\n";
+                }
+                System.out.println("-------------------------------------------------------------");
+
+
+                //급식
+                Elements mealData = doc.select("div.meal_content.col-md-7 div.meal_table table tbody");
+                System.out.println("------------------");
+                int cnt = 0;
+                for(Element e: mealData) {
+                    System.out.println("data:" + e.text());
+                    meal[cnt] = e.text().trim();
+                    cnt++;
+                }
+                System.out.println("-------------------");
+                */
+
+                // 대기질
+                Elements airData = doc.select("div#detailContent table tbody tr[align] td");
+                System.out.println("--------------------");
+                for(Element e: airData) {
+                    System.out.println("data: " + e.text());
+                    htmlContentInStringFormat += e.text().trim() + "\n";
+                }
+                System.out.println("--------------------");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            TextView card_air_data = (TextView) findViewById(R.id.home_card_air_data);
+            card_air_data.setMovementMethod(new ScrollingMovementMethod());
+            card_air_data.setText(htmlContentInStringFormat);
+        }
     }
 
 }

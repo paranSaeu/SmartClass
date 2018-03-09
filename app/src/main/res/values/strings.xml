@@ -36,6 +36,7 @@
         <item>@string/home_card_time_title</item>
         <item>@string/home_card_meal_title_am</item>
         <item>@string/home_card_event_title</item>
+        <item>@string/home_card_air_title</item>
     </string-array>
 
     <!-- TimeTableActivity -->
@@ -97,6 +98,10 @@
 
     <string name="navigation_drawer_open">탐색 창 열기</string>
     <string name="navigation_drawer_close">탐색 창 닫기</string>
+    <string name="date">날짜</string>
+    <string name="date_format">%s년 %s월 %s일</string>
+    <string name="home_card_air_title">학교 주변 대기상태</string>
+    <string name="home_card_air_help">여기에 학교 주변 대기상태가 표시됩니다.</string>
 
 
 </resources>

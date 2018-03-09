@@ -92,6 +92,10 @@
     <string name="Grade">Grade</string>
     <string name="Class">Class</string>
     <string name="Subject">Subject\nTeacher</string>
+    <string name="date">date</string>
+    <string name="date_format">Year %s Month %s Day %s</string>
+    <string name="home_card_air_title">Air-quality information</string>
+    <string name="home_card_air_help">Air-quality around Gimpo High School</string>
 
 
 </resources>
