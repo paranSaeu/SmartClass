@@ -1,6 +1,7 @@
 package kr.hs.gimpo.smartclass;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 public class AcademicCalendarActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -76,15 +78,23 @@ public class AcademicCalendarActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             finish();
         } else if (id == R.id.nav_table) {
-
+            intent = new Intent(AcademicCalendarActivity.this, TimeTableActivity.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.nav_meal) {
-
+            intent = new Intent(AcademicCalendarActivity.this, MealInfoActivity.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.nav_calendar) {
 
         } else if (id == R.id.nav_setting) {
 
         } else if (id == R.id.nav_info) {
-
+            try {
+                CharSequence version = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
+                CharSequence versionName = getResources().getString(R.string.noti_version_is) + " " + version.toString();
+                Toast.makeText(getApplicationContext(),versionName,Toast.LENGTH_SHORT).show();
+            } catch (PackageManager.NameNotFoundException e) { }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -28,6 +28,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,AdapterView.OnItemSelectedListener {
@@ -91,7 +92,7 @@ public class HomeActivity extends AppCompatActivity
 
         jsoupAsyncTask.execute();
     }
-    final private JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
+    private JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
     public int home_spinner_selected = 0;
 
     @Override
@@ -169,7 +170,8 @@ public class HomeActivity extends AppCompatActivity
             case 2:
                 break;
             case 3:
-                //jsoupAsyncTask.execute();
+                jsoupAsyncTask = new JsoupAsyncTask();
+                jsoupAsyncTask.execute();
                 break;
             default:
                 break;
@@ -232,8 +234,11 @@ public class HomeActivity extends AppCompatActivity
         cl_ai.setVisibility(View.GONE);
     }
 
-    private String htmlContentInStringFormat;
     private class JsoupAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        private String htmlContentInStringFormat;
+
+        private String airQualityData[] = new String[8];
 
         @Override
         protected void onPreExecute() {
@@ -243,58 +248,31 @@ public class HomeActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                Document doc = Jsoup.connect("http://m.airkorea.or.kr/sub_new/sub41.jsp").get();
+                Document doc = Jsoup.connect("http://m.airkorea.or.kr/sub_new/sub41.jsp")
+                        .cookie("isGps","N")
+                        .cookie("station","131471")
+                        .cookie("lat", "37.619355")
+                        .cookie("lng","126,716748")
+                        .get();
                 htmlContentInStringFormat = "";
-                /*
-                //테스트1
-                Elements titles= doc.select("div.news-con h1.tit-news");
-
-                System.out.println("-------------------------------------------------------------");
-                for(Element e: titles){
-                    System.out.println("title: " + e.text());
-                    htmlContentInStringFormat += e.text().trim() + "\n";
-                }
-
-                //테스트2
-                titles= doc.select("div.news-con h2.tit-news");
-
-                System.out.println("-------------------------------------------------------------");
-                for(Element e: titles){
-                    System.out.println("title: " + e.text());
-                    htmlContentInStringFormat += e.text().trim() + "\n";
-                }
-
-                //테스트3
-                titles= doc.select("li.section02 div.con h2.news-tl");
-
-                System.out.println("-------------------------------------------------------------");
-                for(Element e: titles){
-                    System.out.println("title: " + e.text());
-                    htmlContentInStringFormat += e.text().trim() + "\n";
-                }
-                System.out.println("-------------------------------------------------------------");
-
-
-                //급식
-                Elements mealData = doc.select("div.meal_content.col-md-7 div.meal_table table tbody");
-                System.out.println("------------------");
-                int cnt = 0;
-                for(Element e: mealData) {
-                    System.out.println("data:" + e.text());
-                    meal[cnt] = e.text().trim();
-                    cnt++;
-                }
-                System.out.println("-------------------");
-                */
 
                 // 대기질
+                /*
                 Elements airData = doc.select("div#detailContent table tbody tr[align] td");
-                System.out.println("--------------------");
+                System.out.println("------------------------------");
                 for(Element e: airData) {
                     System.out.println("data: " + e.text());
                     htmlContentInStringFormat += e.text().trim() + "\n";
                 }
-                System.out.println("--------------------");
+                System.out.println("------------------------------");*/
+                Elements airData = doc.select("div#detailContent div");
+                int cnt = 0;
+                for(Element e: airData) {
+                    System.out.println("place: " + e.text());
+                    airQualityData[cnt] = e.text().trim();
+                    cnt++;
+                }
+                System.out.println("------------------------------");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -305,6 +283,16 @@ public class HomeActivity extends AppCompatActivity
         protected void onPostExecute(Void result) {
             TextView card_air_data = (TextView) findViewById(R.id.home_card_air_data);
             card_air_data.setMovementMethod(new ScrollingMovementMethod());
+            htmlContentInStringFormat = String.format(Locale.getDefault(),
+                    getResources().getString(R.string.home_card_air_quality_format),
+                    airQualityData[0],
+                    airQualityData[1],
+                    airQualityData[2],
+                    airQualityData[3],
+                    airQualityData[4],
+                    airQualityData[5],
+                    airQualityData[6],
+                    airQualityData[7]);
             card_air_data.setText(htmlContentInStringFormat);
         }
     }

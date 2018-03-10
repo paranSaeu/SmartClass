@@ -160,9 +160,13 @@ public class TimeTableActivity extends AppCompatActivity
         } else if (id == R.id.nav_table) {
 
         } else if (id == R.id.nav_meal) {
-
+            intent = new Intent(TimeTableActivity.this, MealInfoActivity.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.nav_calendar) {
-
+            intent = new Intent(TimeTableActivity.this, AcademicCalendarActivity.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.nav_setting) {
 
         } else if (id == R.id.nav_info) {

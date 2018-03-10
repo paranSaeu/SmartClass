@@ -53,10 +53,12 @@ public class MealInfoActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Date c = Calendar.getInstance().getTime();
-        day = new SimpleDateFormat("dd", Locale.getDefault()).format(c);
-        month = new SimpleDateFormat("MM", Locale.getDefault()).format(c);
-        year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(c);
+        calendar = Calendar.getInstance();
+        today = Calendar.getInstance().getTime();
+        calendar.setTime(today);
+        day = new SimpleDateFormat("dd", Locale.getDefault()).format(today);
+        month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
+        year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
 
         initDate(year, month, day);
 
@@ -66,7 +68,7 @@ public class MealInfoActivity extends AppCompatActivity
         dinner_data = (TextView) findViewById(R.id.meal_card_dinner_data);
         lunch_data.setMovementMethod(new ScrollingMovementMethod());
 
-        final JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
+        jsoupAsyncTask = new JsoupAsyncTask();
         jsoupAsyncTask.execute();
 
         /*Button htmlTitleButton = (Button)findViewById(R.id.button);
@@ -84,8 +86,55 @@ public class MealInfoActivity extends AppCompatActivity
         month_left.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                calendar.add(Calendar.MONTH, -1);
+                today = new Date(calendar.getTimeInMillis());
+                day = new SimpleDateFormat("dd", Locale.getDefault()).format(today);
+                month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
+                year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
                 initDate(year, month, day);
-                jsoupAsyncTask.execute();
+                //jsoupAsyncTask.execute();
+            }
+        });
+
+        final ImageButton month_right = (ImageButton) findViewById(R.id.meal_button_month_forward);
+        month_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar.add(Calendar.MONTH, 1);
+                today = new Date(calendar.getTimeInMillis());
+                day = new SimpleDateFormat("dd", Locale.getDefault()).format(today);
+                month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
+                year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
+                initDate(year, month, day);
+                //jsoupAsyncTask.execute();
+            }
+        });
+
+        final ImageButton day_left = (ImageButton) findViewById(R.id.meal_button_day_back);
+        day_left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar.add(Calendar.DATE, -1);
+                today = new Date(calendar.getTimeInMillis());
+                day = new SimpleDateFormat("dd", Locale.getDefault()).format(today);
+                month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
+                year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
+                initDate(year, month, day);
+                //jsoupAsyncTask.execute();
+            }
+        });
+
+        final ImageButton day_right = (ImageButton) findViewById(R.id.meal_button_day_forward);
+        day_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar.add(Calendar.DATE, 1);
+                today = new Date(calendar.getTimeInMillis());
+                day = new SimpleDateFormat("dd", Locale.getDefault()).format(today);
+                month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
+                year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
+                initDate(year, month, day);
+                //jsoupAsyncTask.execute();
             }
         });
     }
@@ -93,12 +142,18 @@ public class MealInfoActivity extends AppCompatActivity
     private void initDate(String _year, String _month, String _day) {
         String date = String.format(Locale.getDefault(), getResources().getString(R.string.date_format), _year, _month, _day);
         TextView mealDate = (TextView) findViewById(R.id.meal_date);
+        System.out.println("Current Date: " + date);
         mealDate.setText(date);
         htmlPageUrl = "http://www.gimpo.hs.kr/main.php?menugrp=021100&master=meal2&act=list&SearchYear="+_year+"&SearchMonth="+_month+"&SearchDay="+_day+"#diary_list";
+        jsoupAsyncTask = new JsoupAsyncTask();
+        jsoupAsyncTask.execute();
     }
 
     //private String htmlPageUrl = "http://www.yonhapnews.co.kr/"; //파싱할 홈페이지의 URL주소
+    private JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
     private String year, month, day;
+    private Date today;
+    private Calendar calendar;
     private String htmlPageUrl;
     private TextView lunch_data;
     private TextView dinner_data;
@@ -115,49 +170,19 @@ public class MealInfoActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... params) {
             try {
-
                 Document doc = Jsoup.connect(htmlPageUrl).get();
-                /*
-                //테스트1
-                Elements titles= doc.select("div.news-con h1.tit-news");
 
-                System.out.println("-------------------------------------------------------------");
-                for(Element e: titles){
-                    System.out.println("title: " + e.text());
-                    htmlContentInStringFormat += e.text().trim() + "\n";
-                }
-
-                //테스트2
-                titles= doc.select("div.news-con h2.tit-news");
-
-                System.out.println("-------------------------------------------------------------");
-                for(Element e: titles){
-                    System.out.println("title: " + e.text());
-                    htmlContentInStringFormat += e.text().trim() + "\n";
-                }
-
-                //테스트3
-                titles= doc.select("li.section02 div.con h2.news-tl");
-
-                System.out.println("-------------------------------------------------------------");
-                for(Element e: titles){
-                    System.out.println("title: " + e.text());
-                    htmlContentInStringFormat += e.text().trim() + "\n";
-                }
-                System.out.println("-------------------------------------------------------------");
-                */
-
-                //급식
                 Elements mealData = doc.select("div.meal_content.col-md-7 div.meal_table table tbody");
-                System.out.println("------------------");
+                System.out.println("------------------------------");
                 int cnt = 0;
+                meal[0] = getResources().getString(R.string.meal_card_data_null);
+                meal[1] = getResources().getString(R.string.meal_card_data_null);
                 for(Element e: mealData) {
                     System.out.println("data:" + e.text());
                     meal[cnt] = e.text().trim();
                     cnt++;
                 }
-                System.out.println("-------------------");
-
+                System.out.println("------------------------------");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -166,6 +191,21 @@ public class MealInfoActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(Void result) {
+            for(int i = 0; i < 2; i++) {
+                StringBuilder sb = new StringBuilder(meal[i]);
+                if(meal[i].compareTo(getResources().getString(R.string.meal_card_data_null))!=0) {
+                    for(int j = 0; j < sb.length(); j++) {
+                        if(sb.charAt(j) == ' ') {
+                            if(sb.charAt(j+1) == '1' || sb.charAt(j+1) == '2' || sb.charAt(j+1) == '3' || sb.charAt(j+1) == '4' || sb.charAt(j+1) == '5' || sb.charAt(j+1) == '6' || sb.charAt(j+1) == '7' || sb.charAt(j+1) == '8' || sb.charAt(j+1) == '9' || sb.charAt(j+1) == '0') {
+                                sb.deleteCharAt(j);
+                            } else {
+                                sb.replace(j, j+1, "\n");
+                            }
+                        }
+                    }
+                    meal[i] = sb.toString();
+                }
+            }
             lunch_data.setText(meal[0]);
             dinner_data.setText(meal[1]);
         }
@@ -212,13 +252,19 @@ public class MealInfoActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             finish();
         } else if (id == R.id.nav_table) {
-
+            intent = new Intent(MealInfoActivity.this, TimeTableActivity.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.nav_meal) {
 
         } else if (id == R.id.nav_calendar) {
-
+            intent = new Intent(MealInfoActivity.this, AcademicCalendarActivity.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.nav_setting) {
-
+            //intent = new Intent(MealInfoActivity.this, .class);
+            //startActivity(intent);
+            finish();
         } else if (id == R.id.nav_info) {
             try {
                 CharSequence version = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
