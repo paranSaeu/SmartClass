@@ -21,6 +21,9 @@
 
     <string name="Subject">과목\n선생님</string>
 
+    <string name="lunch">점심 메뉴</string>
+    <string name="dinner">저녁 메뉴</string>
+
     <!-- HomeActivity -->
 
     <string name="home_title">메인</string>
@@ -36,7 +39,10 @@
         <item>@string/home_card_time_title</item>
         <item>@string/home_card_meal_title_am</item>
         <item>@string/home_card_event_title</item>
+        <item>@string/home_card_air_title</item>
     </string-array>
+
+    <string name="home_card_air_quality_format">%s\n미세먼지(PM10): %s\n미세먼지(PM2.5): %s\n오존(O₃): %s\n이산화질소(NO₂): %s\n일산화탄소(CO): %s\n아황산가스(SO₂): %s\n통합대기환경지수: %s</string>
 
     <!-- TimeTableActivity -->
 
@@ -81,6 +87,8 @@
 
     <string name="meal_title">급식 정보</string>
 
+    <string name="meal_allergic_info">알레르기 정보\n1 난류 2 우유 3 메밀 4 땅콩 5 대두 6 밀 7 고등어 8 게 9 새우 10 돼지고기 11 복숭아 12 토마토 13 아황산염 14 호두 15 닭고기 16 소고기 17 오징어 18 전복 19 홍합</string>
+
     <!-- AcademicCalendarActivity -->
 
     <string name="event_title">학사일정</string>
@@ -97,6 +105,11 @@
 
     <string name="navigation_drawer_open">탐색 창 열기</string>
     <string name="navigation_drawer_close">탐색 창 닫기</string>
+    <string name="date">날짜</string>
+    <string name="date_format">%s년 %s월 %s일</string>
+    <string name="home_card_air_title">학교 주변 대기상태</string>
+    <string name="home_card_air_help">여기에 학교 주변 대기상태가 표시됩니다.</string>
+    <string name="meal_card_data_null">등록된 식단 정보가 없습니다.</string>
 
 
 </resources>

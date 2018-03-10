@@ -1,6 +1,7 @@
 package kr.hs.gimpo.smartclass;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -15,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -94,8 +96,9 @@ public class TimeTableActivity extends AppCompatActivity
         for(int a = 0; a < 5; a++) {
             for(int b = 0; b < 7; b++) {
                 String id = String.format(Locale.getDefault(), ID_FORMAT, date[a], b);
+                String dateNow = date[a] + "\n" + (b + 1);
                 timetable[a][b] = (TextView) findViewById(getResources().getIdentifier(id, "id", getPackageName()));
-                timetable[a][b].setText(date[a] + "\n" + (b + 1));
+                timetable[a][b].setText(dateNow);
             }
         }
     }
@@ -157,13 +160,21 @@ public class TimeTableActivity extends AppCompatActivity
         } else if (id == R.id.nav_table) {
 
         } else if (id == R.id.nav_meal) {
-
+            intent = new Intent(TimeTableActivity.this, MealInfoActivity.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.nav_calendar) {
-
+            intent = new Intent(TimeTableActivity.this, AcademicCalendarActivity.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.nav_setting) {
 
         } else if (id == R.id.nav_info) {
-
+            try {
+                CharSequence version = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
+                CharSequence versionName = getResources().getString(R.string.noti_version_is) + " " + version.toString();
+                Toast.makeText(getApplicationContext(),versionName,Toast.LENGTH_SHORT).show();
+            } catch (PackageManager.NameNotFoundException e) { }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

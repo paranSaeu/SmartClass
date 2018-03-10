@@ -4,7 +4,6 @@
     tools:showIn="navigation_view">
 
     <group
-        android:checkableBehavior="single"
         android:id="@+id/nav_group_home">
 
         <item
@@ -14,7 +13,6 @@
     </group>
 
     <group
-        android:checkableBehavior="single"
         android:id="@+id/nav_group_school">
 
         <item
@@ -30,7 +28,6 @@
     </group>
 
     <group
-        android:checkableBehavior="single"
         android:id="@+id/nav_group_app">
 
         <item
