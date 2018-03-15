@@ -101,4 +101,7 @@ public class AcademicCalendarActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    //www.gimpo.hs.kr/main.php?menugrp=020300&master=diary&act=list&master_sid=1&SearchYear=2018&SearchMonth=03&SearchCategory=
+    //학사일정 주소
 }
