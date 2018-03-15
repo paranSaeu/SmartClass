@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "679439699615",
+    "firebase_url": "https://smart-class-system.firebaseio.com",
+    "project_id": "smart-class-system",
+    "storage_bucket": "smart-class-system.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:679439699615:android:7383a6158ae55594",
+        "android_client_info": {
+          "package_name": "kr.hs.gimpo.smartclass"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "679439699615-gntb92e3cegrvqq4md1gkj1v500vqkft.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJqVjr6Cb6NmCSNGTOpzpRWrpwPiQ65m0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
