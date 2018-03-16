@@ -263,8 +263,8 @@ public class HomeActivity extends AppCompatActivity
                 for(Element e: airData) {
                     System.out.println("data: " + e.text());
                     htmlContentInStringFormat += e.text().trim() + "\n";
-                }
-                System.out.println("------------------------------");*/
+                }*/
+                System.out.println("------------------------------");
                 Elements airData = doc.select("div#detailContent div");
                 int cnt = 0;
                 for(Element e: airData) {

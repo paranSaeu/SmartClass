@@ -50,6 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
+        android:backgroundTint="@android:color/transparent"
         android:src="@drawable/ic_chevron_left_black_24dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/home_header_layout" />
@@ -60,6 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginTop="16dp"
+        android:backgroundTint="@android:color/transparent"
         android:src="@drawable/ic_chevron_right_black_24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/home_header_layout" />
