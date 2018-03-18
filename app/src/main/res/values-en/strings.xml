@@ -91,7 +91,7 @@
     <string name="fri">Fri</string>
     <string name="Grade">Grade</string>
     <string name="Class">Class</string>
-    <string name="Subject">Subject\nTeacher</string>
+    <string name="Subject">Subject</string>
     <string name="date">date</string>
     <string name="date_format">Year %s Month %s Day %s</string>
     <string name="home_card_air_title">Air-quality information</string>
@@ -101,6 +101,16 @@
     <string name="dinner">Dinner</string>
     <string name="meal_allergic_info">Allergic Information</string>
     <string name="home_card_air_quality_format">%s 미세먼지(PM10): %s 미세먼지(PM2.5): %s 오존(O₃): %s 이산화질소(NO₂): %s 일산화탄소(CO): %s 아황산가스(SO₂): %s 통합대기환경지수: %s</string>
+    <string name="Teacher">Teacher</string>
+    <string name="time_card_1st_time">09:10~</string>
+    <string name="time_card_2nd_time">10:10~</string>
+    <string name="time_card_3rd_time">11:10~</string>
+    <string name="time_card_4th_time">12:10~</string>
+    <string name="time_card_5th_time">14:00~</string>
+    <string name="time_card_6th_time">15:00~</string>
+    <string name="time_card_7th_time">16:00~</string>
+    <string name="home_card_meal_title_help">Today\'s Meal Information</string>
+    <string name="time_table_info">Updating Time Table...</string>
 
 
 </resources>
