@@ -86,7 +86,7 @@ public class MealInfoActivity extends AppCompatActivity
         month_left.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calendar.add(Calendar.MONTH, -1);
+                calendar.add(Calendar.DATE, -7);
                 today = new Date(calendar.getTimeInMillis());
                 day = new SimpleDateFormat("dd", Locale.getDefault()).format(today);
                 month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
@@ -100,7 +100,7 @@ public class MealInfoActivity extends AppCompatActivity
         month_right.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                calendar.add(Calendar.MONTH, 1);
+                calendar.add(Calendar.DATE, 7);
                 today = new Date(calendar.getTimeInMillis());
                 day = new SimpleDateFormat("dd", Locale.getDefault()).format(today);
                 month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);

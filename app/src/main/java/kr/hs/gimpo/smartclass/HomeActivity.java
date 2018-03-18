@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -28,6 +29,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity
@@ -54,10 +58,29 @@ public class HomeActivity extends AppCompatActivity
         final ConstraintLayout home_header = (ConstraintLayout) findViewById(R.id.home_header_layout);
         //home_header.setMinHeight(320);
 
+        timeNow = new Date(System.currentTimeMillis());
+        hourFormat = new SimpleDateFormat("HH", Locale.getDefault());
+        hourNow = hourFormat.format(timeNow);
+        timeNow = Calendar.getInstance().getTime();
+        Log.d("init", "hourNow");
+        dateFormat[0] = new SimpleDateFormat("yyyy", Locale.getDefault());
+        dateFormat[1] = new SimpleDateFormat("MM", Locale.getDefault());
+        dateFormat[2] = new SimpleDateFormat("dd", Locale.getDefault());
+        for(int i = 0; i < 3; i++) {
+            dateNow[i] = dateFormat[i].format(timeNow);
+        }
+
         final Spinner spinner = (Spinner) findViewById(R.id.home_spinner);
         // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.home_spinner, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter;
+
+        if(Integer.parseInt(hourNow) < 14) {
+            adapter = ArrayAdapter.createFromResource(this,
+                    R.array.home_spinner_day, android.R.layout.simple_spinner_item);
+        } else {
+            adapter = ArrayAdapter.createFromResource(this,
+                    R.array.home_spinner_night, android.R.layout.simple_spinner_item);
+        }
         // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
@@ -93,7 +116,12 @@ public class HomeActivity extends AppCompatActivity
         jsoupAsyncTask.execute();
     }
     private JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
-    public int home_spinner_selected = 0;
+    private int home_spinner_selected = 0;
+    private Date timeNow;
+    private String hourNow;
+    private String dateNow[] = new String[3];
+    private SimpleDateFormat hourFormat;
+    private SimpleDateFormat dateFormat[] = new SimpleDateFormat[3];
 
     @Override
     public void onBackPressed() {
@@ -161,23 +189,6 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
-    private void initData(int mode) {
-        switch(mode) {
-            case 0:
-                break;
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                jsoupAsyncTask = new JsoupAsyncTask();
-                jsoupAsyncTask.execute();
-                break;
-            default:
-                break;
-        }
-    }
-
     public void onItemSelected(AdapterView<?> parent, View view,
                                int pos, long id) {
         // An item was selected. You can retrieve the selected item using
@@ -219,7 +230,8 @@ public class HomeActivity extends AppCompatActivity
                 cl_ai.setVisibility(View.GONE);
                 break;
         }
-        initData(pos);
+        jsoupAsyncTask = new JsoupAsyncTask();
+        jsoupAsyncTask.execute();
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
@@ -236,7 +248,9 @@ public class HomeActivity extends AppCompatActivity
 
     private class JsoupAsyncTask extends AsyncTask<Void, Void, Void> {
 
-        private String htmlContentInStringFormat;
+        private String air_data;
+        private String meal_data[] = new String[2];
+        private String meal_url;
 
         private String airQualityData[] = new String[8];
 
@@ -248,13 +262,48 @@ public class HomeActivity extends AppCompatActivity
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                Document doc = Jsoup.connect("http://m.airkorea.or.kr/sub_new/sub41.jsp")
-                        .cookie("isGps","N")
-                        .cookie("station","131471")
-                        .cookie("lat", "37.619355")
-                        .cookie("lng","126,716748")
-                        .get();
-                htmlContentInStringFormat = "";
+                Document doc;
+                System.out.println("------------------------------");
+                switch (home_spinner_selected) {
+                    case 0:
+                        break;
+                    case 1: {
+                        meal_url = "http://www.gimpo.hs.kr/main.php?menugrp=021100&master=meal2&act=list&SearchYear="+dateNow[0]+"&SearchMonth="+dateNow[1]+"&SearchDay="+dateNow[2]+"#diary_list"; ;
+                        doc = Jsoup.connect(meal_url).get();
+                        meal_data[0] = getResources().getString(R.string.meal_card_data_null);
+                        meal_data[1] = getResources().getString(R.string.meal_card_data_null);
+
+                        Elements mealData = doc.select("div.meal_content.col-md-7 div.meal_table table tbody");
+
+                        int cnt = 0;
+                        for(Element e: mealData) {
+                            System.out.println("data:" + e.text());
+                            meal_data[cnt] = e.text().trim();
+                            cnt++;
+                        }
+                        break; }
+                    case 2:
+                        break;
+                    case 3: {
+                        doc = Jsoup.connect("http://m.airkorea.or.kr/sub_new/sub41.jsp")
+                                .cookie("isGps","N")
+                                .cookie("station","131471")
+                                .cookie("lat", "37.619355")
+                                .cookie("lng","126,716748")
+                                .get();
+                        air_data = "";
+                        Elements airData = doc.select("div#detailContent div");
+                        int cnt = 0;
+                        for(Element e: airData) {
+                            System.out.println("place: " + e.text());
+                            airQualityData[cnt] = e.text().trim();
+                            cnt++;
+                        }
+                        break; }
+                    default:
+                        break;
+                }
+                System.out.println("------------------------------");
 
                 // 대기질
                 /*
@@ -263,16 +312,8 @@ public class HomeActivity extends AppCompatActivity
                 for(Element e: airData) {
                     System.out.println("data: " + e.text());
                     htmlContentInStringFormat += e.text().trim() + "\n";
-                }
-                System.out.println("------------------------------");*/
-                Elements airData = doc.select("div#detailContent div");
-                int cnt = 0;
-                for(Element e: airData) {
-                    System.out.println("place: " + e.text());
-                    airQualityData[cnt] = e.text().trim();
-                    cnt++;
-                }
-                System.out.println("------------------------------");
+                }*/
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -281,19 +322,56 @@ public class HomeActivity extends AppCompatActivity
 
         @Override
         protected void onPostExecute(Void result) {
-            TextView card_air_data = (TextView) findViewById(R.id.home_card_air_data);
-            card_air_data.setMovementMethod(new ScrollingMovementMethod());
-            htmlContentInStringFormat = String.format(Locale.getDefault(),
-                    getResources().getString(R.string.home_card_air_quality_format),
-                    airQualityData[0],
-                    airQualityData[1],
-                    airQualityData[2],
-                    airQualityData[3],
-                    airQualityData[4],
-                    airQualityData[5],
-                    airQualityData[6],
-                    airQualityData[7]);
-            card_air_data.setText(htmlContentInStringFormat);
+            TextView targetTextView;
+            switch (home_spinner_selected) {
+                case 0:
+                    targetTextView = (TextView) findViewById(R.id.home_card_time_help);
+                    break;
+                case 1:
+                    targetTextView = (TextView) findViewById(R.id.home_card_meal_data);
+                    for(int i = 0; i < 2; i++) {
+                        StringBuilder sb = new StringBuilder(meal_data[i]);
+                        if(meal_data[i].compareTo(getResources().getString(R.string.meal_card_data_null))!=0) {
+                            for(int j = 0; j < sb.length(); j++) {
+                                if(sb.charAt(j) == ' ') {
+                                    if(sb.charAt(j+1) == '1' || sb.charAt(j+1) == '2' || sb.charAt(j+1) == '3' || sb.charAt(j+1) == '4' || sb.charAt(j+1) == '5' || sb.charAt(j+1) == '6' || sb.charAt(j+1) == '7' || sb.charAt(j+1) == '8' || sb.charAt(j+1) == '9' || sb.charAt(j+1) == '0') {
+                                        sb.deleteCharAt(j);
+                                    } else {
+                                        sb.replace(j, j+1, "\n");
+                                    }
+                                }
+                            }
+                            meal_data[i] = sb.toString();
+                        }
+                        meal_data[i] = String.format(Locale.getDefault(), getResources().getString(R.string.date_format), dateNow[0], dateNow[1], dateNow[2]) + "\n" + meal_data[i];
+                    }
+                    if(Integer.parseInt(hourNow) < 14) {
+                        targetTextView.setText(meal_data[0]);
+                    } else {
+                        targetTextView.setText(meal_data[1]);
+                    }
+                    break;
+                case 2:
+                    targetTextView = (TextView) findViewById(R.id.home_card_event_help);
+                    break;
+                case 3:
+                    targetTextView = (TextView) findViewById(R.id.home_card_air_data);
+                    targetTextView.setMovementMethod(new ScrollingMovementMethod());
+                    air_data = String.format(Locale.getDefault(),
+                            getResources().getString(R.string.home_card_air_quality_format),
+                            airQualityData[0],
+                            airQualityData[1],
+                            airQualityData[2],
+                            airQualityData[3],
+                            airQualityData[4],
+                            airQualityData[5],
+                            airQualityData[6],
+                            airQualityData[7]);
+                    targetTextView.setText(air_data);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 

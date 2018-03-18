@@ -19,7 +19,8 @@
     <string name="Grade">학년</string>
     <string name="Class">반</string>
 
-    <string name="Subject">과목\n선생님</string>
+    <string name="Subject">과목</string>
+    <string name="Teacher">선생님</string>
 
     <string name="lunch">점심 메뉴</string>
     <string name="dinner">저녁 메뉴</string>
@@ -30,14 +31,21 @@
 
     <string name="home_card_meal_title_am">오늘의 중식</string>
     <string name="home_card_meal_title_pm">오늘의 석식</string>
+    <string name="home_card_meal_title_help">여기에 오늘의 급식 정보가 표시됩니다.</string>
 
     <string name="home_card_time_title">시간표</string>
 
     <string name="home_card_event_title">오늘의 행사</string>
 
-    <string-array name="home_spinner">
+    <string-array name="home_spinner_day">
         <item>@string/home_card_time_title</item>
         <item>@string/home_card_meal_title_am</item>
+        <item>@string/home_card_event_title</item>
+        <item>@string/home_card_air_title</item>
+    </string-array>
+    <string-array name="home_spinner_night">
+        <item>@string/home_card_time_title</item>
+        <item>@string/home_card_meal_title_pm</item>
         <item>@string/home_card_event_title</item>
         <item>@string/home_card_air_title</item>
     </string-array>
@@ -73,14 +81,23 @@
     </string-array>
 
     <string name="time_card_1st_period">1교시</string>
+    <string name="time_card_1st_time">09:10~</string>
     <string name="time_card_2nd_period">2교시</string>
+    <string name="time_card_2nd_time">10:10~</string>
     <string name="time_card_3rd_period">3교시</string>
+    <string name="time_card_3rd_time">11:10~</string>
     <string name="time_card_4th_period">4교시</string>
+    <string name="time_card_4th_time">12:10~</string>
     <string name="time_card_5th_period">5교시</string>
+    <string name="time_card_5th_time">14:00~</string>
     <string name="time_card_6th_period">6교시</string>
+    <string name="time_card_6th_time">15:00~</string>
     <string name="time_card_7th_period">7교시</string>
+    <string name="time_card_7th_time">16:00~</string>
 
     <string name="time_card_period">교시</string>
+
+    <string name="time_table_info">시간표를 업데이트하는 중입니다...</string>
 
 
     <!-- MealInfoActivity -->
