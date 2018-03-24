@@ -121,10 +121,11 @@ public class AcademicCalendarActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_info) {
             try {
-                CharSequence version = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
-                CharSequence versionName = getResources().getString(R.string.noti_version_is) + " " + version.toString();
+                CharSequence versionName = getResources().getString(R.string.noti_version_is) + " " + getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
                 Toast.makeText(getApplicationContext(),versionName,Toast.LENGTH_SHORT).show();
-            } catch (PackageManager.NameNotFoundException e) { }
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
