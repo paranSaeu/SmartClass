@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Develop-SmartClass.iml" filepath="$PROJECT_DIR$/Develop-SmartClass.iml" />
       <module fileurl="file://$PROJECT_DIR$/SmartClass.iml" filepath="$PROJECT_DIR$/SmartClass.iml" />
-      <module fileurl="file://C:/Users/rhkgkrwk001/AndroidStudioProjects/SmartClass/SmartClass.iml" filepath="C:/Users/rhkgkrwk001/AndroidStudioProjects/SmartClass/SmartClass.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/SmartClass-app.iml" filepath="$PROJECT_DIR$/app/SmartClass-app.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://C:/Users/rhkgkrwk001/AndroidStudioProjects/SmartClass/app/app.iml" filepath="C:/Users/rhkgkrwk001/AndroidStudioProjects/SmartClass/app/app.iml" />
     </modules>
   </component>
 </project>
