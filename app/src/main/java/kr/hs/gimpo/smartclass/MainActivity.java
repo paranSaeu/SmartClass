@@ -28,6 +28,8 @@ import static kr.hs.gimpo.smartclass.DataSQLiteHelper.LAST_UPDATED;
 import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_DELETE;
 import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_JSON_DATA;
 import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_SELECT;
+import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_TABLE_CREATE;
+import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_TABLE_DROP;
 import static kr.hs.gimpo.smartclass.MainActivity.db;
 import static kr.hs.gimpo.smartclass.MainActivity.isConnected;
 
@@ -85,13 +87,25 @@ class DataSQLiteHelper
     private static final String COLUMN_LAST_UPDATED = "LastUpdated";
     private static final String TIME_TABLE_NAME = "TimeTable";
     private static final String COLUMN_TIME_JSON_DATA = "TimeJsonData";
+    private static final String MEAL_TABLE_NAME = "MealInfo";
+    private static final String COLUMN_MEAL_DAY = "MealDay";
+    private static final String COLUMN_MEAL_DATA = "MealData";
 
-    private static final String TIME_TABLE_CREATE =
+    static final String TIME_TABLE_CREATE =
             "CREATE TABLE IF NOT EXISTS " + TIME_TABLE_NAME + "(" +
-                    COLUMN_LAST_UPDATED + "TEXT, " +
-                    COLUMN_TIME_JSON_DATA + "TEXT)";
-    private static final String TIME_TABLE_DROP =
+                    COLUMN_LAST_UPDATED + " TEXT, " +
+                    COLUMN_TIME_JSON_DATA + " TEXT)";
+    static final String TIME_TABLE_DROP =
             "DROP TABLE IF EXISTS " + TIME_TABLE_NAME;
+
+    static final String MEAL_TABLE_CREATE =
+            "CREATE TABLE IF NOT EXISTS " + MEAL_TABLE_NAME + "(" +
+                    COLUMN_LAST_UPDATED + " TEXT, " +
+                    COLUMN_MEAL_DAY + " INT, " +
+                    COLUMN_MEAL_DATA + " TEXT)";
+    static final String MEAL_TABLE_DROP =
+            "DROP TABLE IF EXISTS " + MEAL_TABLE_NAME;
+
 
     static final int LAST_UPDATED = 0;
     static final int TIME_JSON_DATA = 1;
@@ -171,7 +185,8 @@ class InitTimeData
             jsonData = sb.toString();
             String LastUpdated = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
             String sqlInsert = "insert or replace into TimeTable values(\"" + LastUpdated + "\", \"" + jsonData + "\")";
-            db.getWritableDatabase().execSQL(TIME_DELETE);
+            db.getWritableDatabase().execSQL(TIME_TABLE_DROP);
+            db.getWritableDatabase().execSQL(TIME_TABLE_CREATE);
             db.getWritableDatabase().execSQL(sqlInsert);
             Cursor cursor = db.getReadableDatabase().rawQuery(TIME_SELECT, null);
 
@@ -202,7 +217,8 @@ class InitTimeData
                 jsonData = sb.toString();
                 String LastUpdated = "0000-12-31 23:59:59";
                 String sqlInsert = "insert or replace into TimeTable values(\"" + LastUpdated + "\", \"" + jsonData + "\")";
-                db.getWritableDatabase().execSQL(TIME_DELETE);
+                db.getWritableDatabase().execSQL(TIME_TABLE_DROP);
+                db.getWritableDatabase().execSQL(TIME_TABLE_CREATE);
                 db.getWritableDatabase().execSQL(sqlInsert);
 
                 String time = cursor.getString(LAST_UPDATED);
@@ -234,21 +250,23 @@ class InitMealData
             calendar.set(Calendar.DAY_OF_MONTH, 1);
             calendar.add(Calendar.DATE, -1);
             lastDay = Integer.parseInt(new SimpleDateFormat("dd", Locale.getDefault()).format(calendar));
-            for(int i = 0; i < lastDay; i++) {
+            int year = Integer.getInteger(new SimpleDateFormat("yyyy", Locale.getDefault()).format(calendar));
+            int month = Integer.getInteger(new SimpleDateFormat("MM", Locale.getDefault()).format(calendar));
+            for(int day = 1; day <= lastDay; day++) {
                 try {
                     // 급식 정보는 http://www.gimpo.hs.kr/main.php?menugrp=021100&master=meal2&act=list&SearchYear=year&SearchMonth=month&SearchDay=day#diary_list에서 확인할 수 있음!
                     // year,month,day: 연,월,일 날짜
                     String url = "http://www.gimpo.hs.kr/main.php?menugrp=021100&master=meal2&act=list&"
-                            + "SearchYear="  + new SimpleDateFormat("yyyy", Locale.getDefault()).format(calendar)
-                            + "&SearchMonth="+ new SimpleDateFormat("MM", Locale.getDefault()).format(calendar)
-                            + "&SearchDay="  + String.valueOf(i + 1) + "#diary_list";
+                            + "SearchYear="  + String.valueOf(year)
+                            + "&SearchMonth="+ String.valueOf(month)
+                            + "&SearchDay="  + String.valueOf(day) + "#diary_list";
                     Document doc = Jsoup.connect(url).get();
                     Log.d("url", url);
 
                     Elements data = doc.select("div.meal_content.col-md-7 div.meal_table table tbody");
                     int cnt = 0;
                     for(Element e: data) {
-                        mealData[i][cnt++] = e.text().trim();
+                        mealData[day - 1][cnt++] = e.text().trim();
                         Log.d("data", e.text().trim());
                     }
                 } catch (IOException e) {
@@ -263,11 +281,32 @@ class InitMealData
 
     @Override
     protected void onPostExecute(Boolean isInitialized) {
-        for(int i = 0; i < lastDay; i++) {
-            for(int j = 0; j < 2; j++) {
-                StringBuilder sb = new StringBuilder(mealData[i][j]);
-
+        if(isInitialized) {
+            for(int i = 0; i < lastDay; i++) {
+                for(int j = 0; j < 2; j++) {
+                    if(mealData[i][j].compareTo("등록된 식단 정보가 없습니다.") != 0) {
+                        StringBuilder sb = new StringBuilder(mealData[i][j]);
+                        for(int k = 0; k < sb.length(); k++) {
+                            if(sb.charAt(k) == ' ') {
+                                boolean isDeleted = false;
+                                for(int l = 0; l < 10; l++) {
+                                    if(String.valueOf(l).compareTo(String.valueOf(sb.charAt(k))) == 0) {
+                                        sb.deleteCharAt(j);
+                                        isDeleted = true;
+                                        break;
+                                    }
+                                }
+                                if(!isDeleted) {
+                                    sb.replace(j, j+1, "\n");
+                                }
+                            }
+                        }
+                        mealData[i][j] = sb.toString();
+                    }
+                }
             }
+            String LastUpdated = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
+
         }
     }
 }
