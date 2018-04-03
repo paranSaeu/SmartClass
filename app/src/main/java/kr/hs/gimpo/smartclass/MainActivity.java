@@ -25,11 +25,15 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
 import static kr.hs.gimpo.smartclass.DataSQLiteHelper.LAST_UPDATED;
+import static kr.hs.gimpo.smartclass.DataSQLiteHelper.MEAL_TABLE_CREATE;
+import static kr.hs.gimpo.smartclass.DataSQLiteHelper.MEAL_TABLE_DROP;
+import static kr.hs.gimpo.smartclass.DataSQLiteHelper.MEAL_TABLE_NAME;
 import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_DELETE;
 import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_JSON_DATA;
 import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_SELECT;
 import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_TABLE_CREATE;
 import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_TABLE_DROP;
+import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_TABLE_NAME;
 import static kr.hs.gimpo.smartclass.MainActivity.db;
 import static kr.hs.gimpo.smartclass.MainActivity.isConnected;
 
@@ -68,8 +72,11 @@ public class MainActivity extends AppCompatActivity {
     private void initData() {
         InitTimeData initTimeData = new InitTimeData();
         initTimeData.execute();
+        InitMealData initMealData = new InitMealData();
+        initMealData.execute();
         try {
             initTimeData.get();
+            initMealData.get();
         } catch(InterruptedException e) {
             e.printStackTrace();
         } catch(ExecutionException e) {
@@ -85,10 +92,11 @@ class DataSQLiteHelper
     private static final String DATABASE_NAME = "data.db";
     private static final int DATABASE_VERSION = 2;
     private static final String COLUMN_LAST_UPDATED = "LastUpdated";
-    private static final String TIME_TABLE_NAME = "TimeTable";
+    static final String TIME_TABLE_NAME = "TimeTable";
     private static final String COLUMN_TIME_JSON_DATA = "TimeJsonData";
-    private static final String MEAL_TABLE_NAME = "MealInfo";
+    static final String MEAL_TABLE_NAME = "MealInfo";
     private static final String COLUMN_MEAL_DAY = "MealDay";
+    private static final String COLUMN_MEAL_TIME = "MealTime";
     private static final String COLUMN_MEAL_DATA = "MealData";
 
     static final String TIME_TABLE_CREATE =
@@ -102,6 +110,7 @@ class DataSQLiteHelper
             "CREATE TABLE IF NOT EXISTS " + MEAL_TABLE_NAME + "(" +
                     COLUMN_LAST_UPDATED + " TEXT, " +
                     COLUMN_MEAL_DAY + " INT, " +
+                    COLUMN_MEAL_TIME + " INT, " +
                     COLUMN_MEAL_DATA + " TEXT)";
     static final String MEAL_TABLE_DROP =
             "DROP TABLE IF EXISTS " + MEAL_TABLE_NAME;
@@ -184,10 +193,12 @@ class InitTimeData
             }
             jsonData = sb.toString();
             String LastUpdated = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
-            String sqlInsert = "insert or replace into TimeTable values(\"" + LastUpdated + "\", \"" + jsonData + "\")";
+            String sqlInsert = "insert or replace into " + TIME_TABLE_NAME +" values(\"" + LastUpdated + "\", \"" + jsonData + "\")";
             db.getWritableDatabase().execSQL(TIME_TABLE_DROP);
             db.getWritableDatabase().execSQL(TIME_TABLE_CREATE);
             db.getWritableDatabase().execSQL(sqlInsert);
+
+
             Cursor cursor = db.getReadableDatabase().rawQuery(TIME_SELECT, null);
 
             if(cursor.moveToFirst()) {
@@ -233,7 +244,7 @@ class InitTimeData
 class InitMealData
         extends AsyncTask<Void, Void, Boolean> {
 
-    int lastDay;
+    private int lastDay = Integer.parseInt(new SimpleDateFormat("dd", Locale.getDefault()).format(Calendar.getInstance().getTime()));
     private String[][] mealData = new String[lastDay][2];
 
     @Override
@@ -249,9 +260,8 @@ class InitMealData
             calendar.add(Calendar.MONTH, 1);
             calendar.set(Calendar.DAY_OF_MONTH, 1);
             calendar.add(Calendar.DATE, -1);
-            lastDay = Integer.parseInt(new SimpleDateFormat("dd", Locale.getDefault()).format(calendar));
-            int year = Integer.getInteger(new SimpleDateFormat("yyyy", Locale.getDefault()).format(calendar));
-            int month = Integer.getInteger(new SimpleDateFormat("MM", Locale.getDefault()).format(calendar));
+            int year = Integer.parseInt(new SimpleDateFormat("yyyy", Locale.getDefault()).format(calendar.getTime()));
+            int month = Integer.parseInt(new SimpleDateFormat("MM", Locale.getDefault()).format(calendar.getTime()));
             for(int day = 1; day <= lastDay; day++) {
                 try {
                     // 급식 정보는 http://www.gimpo.hs.kr/main.php?menugrp=021100&master=meal2&act=list&SearchYear=year&SearchMonth=month&SearchDay=day#diary_list에서 확인할 수 있음!
@@ -284,7 +294,7 @@ class InitMealData
         if(isInitialized) {
             for(int i = 0; i < lastDay; i++) {
                 for(int j = 0; j < 2; j++) {
-                    if(mealData[i][j].compareTo("등록된 식단 정보가 없습니다.") != 0) {
+                    if(mealData[i][j] != null && mealData[i][j].compareTo("등록된 식단 정보가 없습니다.") != 0) {
                         StringBuilder sb = new StringBuilder(mealData[i][j]);
                         for(int k = 0; k < sb.length(); k++) {
                             if(sb.charAt(k) == ' ') {
@@ -302,10 +312,15 @@ class InitMealData
                             }
                         }
                         mealData[i][j] = sb.toString();
+                        Log.d("data" + i + "," + j, mealData[i][j]);
                     }
+                    String LastUpdated = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
+                    String sqlInsert = "insert or replace into " + MEAL_TABLE_NAME + " values(\"" + LastUpdated + "\", \"" + i + 1 + "\", \"" + j + "\", \"" + mealData[i][j] + "\")";
+                    db.getWritableDatabase().execSQL(MEAL_TABLE_DROP);
+                    db.getWritableDatabase().execSQL(MEAL_TABLE_CREATE);
+                    db.getWritableDatabase().execSQL(sqlInsert);
                 }
             }
-            String LastUpdated = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
 
         }
     }
