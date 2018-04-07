@@ -1,1 +1,1 @@
-[{"outputType":{"type":"APK"},"apkInfo":{"type":"MAIN","splits":[],"versionCode":331},"path":"app-beta-release.apk","properties":{"packageId":"kr.hs.gimpo.smartclass","split":"","minSdkVersion":"16"}}]
+[{"outputType":{"type":"APK"},"apkInfo":{"type":"MAIN","splits":[],"versionCode":332,"versionName":"3.3.2-beta","enabled":true,"outputFile":"app-beta-release.apk","fullName":"betaRelease","baseName":"beta-release"},"path":"app-beta-release.apk","properties":{}}]

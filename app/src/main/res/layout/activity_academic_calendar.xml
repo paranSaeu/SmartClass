@@ -9,7 +9,7 @@
     tools:openDrawer="start">
 
     <include
-        layout="@layout/app_bar_academic_calendar"
+        layout="@layout/app_bar_school_event"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

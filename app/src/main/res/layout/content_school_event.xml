@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="kr.hs.gimpo.smartclass.AcademicCalendarActivity"
-    tools:showIn="@layout/app_bar_academic_calendar">
+    tools:context="kr.hs.gimpo.smartclass.SchoolEventActivity"
+    tools:showIn="@layout/app_bar_school_event">
 
     <TextView
         android:id="@+id/textView3"
