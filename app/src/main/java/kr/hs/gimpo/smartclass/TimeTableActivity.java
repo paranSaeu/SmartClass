@@ -5,8 +5,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -21,31 +19,16 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
-import java.sql.Time;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 public class TimeTableActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -67,6 +50,7 @@ public class TimeTableActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        /*
         JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
         jsoupAsyncTask.setUrl("http://comcigan.com:4082/_hourdat?sc=26203");
         System.out.println("trying to connect to " + jsoupAsyncTask.getUrl());
@@ -78,6 +62,7 @@ public class TimeTableActivity extends AppCompatActivity
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
+        */
 
         final TextView time_class  = (TextView) findViewById(R.id.time_class);
         time_class.setText(refreshClassNo());
@@ -214,7 +199,7 @@ public class TimeTableActivity extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.nav_calendar) {
-            intent = new Intent(TimeTableActivity.this, AcademicCalendarActivity.class);
+            intent = new Intent(TimeTableActivity.this, SchoolEventActivity.class);
             startActivity(intent);
             finish();
         } else if (id == R.id.nav_setting) {
@@ -429,6 +414,7 @@ public class TimeTableActivity extends AppCompatActivity
                     .getAsInt();
             String[] timeData = new String[2];
             timeData[0] = getSubject(temp);
+            Log.d("getTime", "time = " + temp + " in grade " + (classGrade + 1) + " class " + (classNo + 1) + " dow " + (dow + 1) + " period " + (period + 1));
             timeData[1] = getTeacher(temp);
             return timeData;
         }
@@ -448,6 +434,7 @@ public class TimeTableActivity extends AppCompatActivity
         }
 
         private String getTeacher(int time) {
+            Log.d("getTeacher", "time = " + time);
             int subject = time;
             for(;;) {
                 if(subject >= 100) {
@@ -456,7 +443,9 @@ public class TimeTableActivity extends AppCompatActivity
                     break;
                 }
             }
+            Log.d("getTeacher", "subject = " + subject);
             time = (time - subject) / 100;
+            Log.d("getTeacher", "teacherIndex = " + time);
             return parsedData.getAsJsonObject().get("성명")
                     .getAsJsonArray().get(time)
                     .getAsString();

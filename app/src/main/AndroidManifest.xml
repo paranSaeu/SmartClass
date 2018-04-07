@@ -13,8 +13,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".IntroActivity"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".HomeActivity"
+            android:name=".MainActivity"
             android:label="@string/home_title"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -34,7 +34,7 @@
             android:label="@string/meal_title"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".AcademicCalendarActivity"
+            android:name=".SchoolEventActivity"
             android:label="@string/event_title"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>

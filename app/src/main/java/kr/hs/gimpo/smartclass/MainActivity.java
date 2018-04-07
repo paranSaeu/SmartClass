@@ -1,17 +1,26 @@
 package kr.hs.gimpo.smartclass;
 
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
+import android.view.View;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -21,348 +30,332 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
-import static kr.hs.gimpo.smartclass.DataSQLiteHelper.LAST_UPDATED;
-import static kr.hs.gimpo.smartclass.DataSQLiteHelper.MEAL_TABLE_CREATE;
-import static kr.hs.gimpo.smartclass.DataSQLiteHelper.MEAL_TABLE_DROP;
-import static kr.hs.gimpo.smartclass.DataSQLiteHelper.MEAL_TABLE_NAME;
-import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_DELETE;
-import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_JSON_DATA;
-import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_SELECT;
-import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_TABLE_CREATE;
-import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_TABLE_DROP;
-import static kr.hs.gimpo.smartclass.DataSQLiteHelper.TIME_TABLE_NAME;
-import static kr.hs.gimpo.smartclass.MainActivity.db;
-import static kr.hs.gimpo.smartclass.MainActivity.isConnected;
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener,AdapterView.OnItemSelectedListener,onCardChangeListener {
 
-public class MainActivity extends AppCompatActivity {
-    public static DataSQLiteHelper db;
-    public static boolean isConnected = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ConnectivityManager cm =
-                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(cm != null) {
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            isConnected = activeNetwork != null &&
-                    activeNetwork.isConnectedOrConnecting();
+        // Check that the activity is using the layout version with
+        // the fragment_container FrameLayout
+        if (findViewById(R.id.home_card_fragment) != null) {
+
+            // However, if we're being restored from a previous state,
+            // then we don't need to do anything and should return or else
+            // we could end up with overlapping fragments.
+            if (savedInstanceState != null) {
+                return;
+            }
+
+            // Create a new Fragment to be placed in the activity layout
+            Fragment firstFragment = new TimeFragment();
+
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            firstFragment.setArguments(getIntent().getExtras());
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.home_card_fragment, firstFragment).commit();
         }
 
-        try {
-            db = new DataSQLiteHelper(getApplicationContext());
-            String sqlInsert = "create table if not exists TimeTable (LastUpdated text, JsonData text);";
-            db.getWritableDatabase().execSQL(sqlInsert);
-        } catch (SQLiteException e) {
-            e.printStackTrace();
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_home);
+        toolbar.setTitle(R.string.home_title);
+        setSupportActionBar(toolbar);
+
+        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        timeNow = new Date(System.currentTimeMillis());
+        hourFormat = new SimpleDateFormat("HH", Locale.getDefault());
+        hourNow = hourFormat.format(timeNow);
+        timeNow = Calendar.getInstance().getTime();
+        Log.d("init", "hourNow");
+        dateFormat[0] = new SimpleDateFormat("yyyy", Locale.getDefault());
+        dateFormat[1] = new SimpleDateFormat("MM", Locale.getDefault());
+        dateFormat[2] = new SimpleDateFormat("dd", Locale.getDefault());
+        for(int i = 0; i < 3; i++) {
+            dateNow[i] = dateFormat[i].format(timeNow);
         }
 
-        initData();
+        final Spinner spinner = (Spinner) findViewById(R.id.home_spinner);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter;
 
-        Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-        startActivity(intent);
-        finish();
+        if(Integer.parseInt(hourNow) < 14) {
+            adapter = ArrayAdapter.createFromResource(this,
+                    R.array.home_spinner_day, android.R.layout.simple_spinner_item);
+        } else {
+            adapter = ArrayAdapter.createFromResource(this,
+                    R.array.home_spinner_night, android.R.layout.simple_spinner_item);
+        }
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+        spinner.setSelection(home_spinner_selected);
 
+        final ImageButton button_left = (ImageButton) findViewById(R.id.home_button_left);
+        button_left.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Do something in response to button click
+                if(home_spinner_selected != 0) {
+                    home_spinner_selected--;
+                } else {
+                    home_spinner_selected = 3;
+                }
+                spinner.setSelection(home_spinner_selected);
+            }
+        });
+
+        final ImageButton button_right = (ImageButton) findViewById(R.id.home_button_right);
+        button_right.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(home_spinner_selected != 3) {
+                    home_spinner_selected++;
+                } else {
+                    home_spinner_selected = 0;
+                }
+                spinner.setSelection(home_spinner_selected);
+            }
+        });
+
+        jsoupAsyncTask.execute();
     }
 
-    private void initData() {
-        InitTimeData initTimeData = new InitTimeData();
-        initTimeData.execute();
-        InitMealData initMealData = new InitMealData();
-        initMealData.execute();
-        try {
-            initTimeData.get();
-            initMealData.get();
-        } catch(InterruptedException e) {
-            e.printStackTrace();
-        } catch(ExecutionException e) {
-            e.printStackTrace();
+    private JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
+    private int home_spinner_selected = 0;
+    private Date timeNow;
+    private String hourNow;
+    private String dateNow[] = new String[3];
+    private SimpleDateFormat hourFormat;
+    private SimpleDateFormat dateFormat[] = new SimpleDateFormat[3];
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            //super.onBackPressed();
+            finish();
         }
     }
 
-}
-
-class DataSQLiteHelper
-        extends SQLiteOpenHelper {
-
-    private static final String DATABASE_NAME = "data.db";
-    private static final int DATABASE_VERSION = 2;
-    private static final String COLUMN_LAST_UPDATED = "LastUpdated";
-    static final String TIME_TABLE_NAME = "TimeTable";
-    private static final String COLUMN_TIME_JSON_DATA = "TimeJsonData";
-    static final String MEAL_TABLE_NAME = "MealInfo";
-    private static final String COLUMN_MEAL_DAY = "MealDay";
-    private static final String COLUMN_MEAL_TIME = "MealTime";
-    private static final String COLUMN_MEAL_DATA = "MealData";
-
-    static final String TIME_TABLE_CREATE =
-            "CREATE TABLE IF NOT EXISTS " + TIME_TABLE_NAME + "(" +
-                    COLUMN_LAST_UPDATED + " TEXT, " +
-                    COLUMN_TIME_JSON_DATA + " TEXT)";
-    static final String TIME_TABLE_DROP =
-            "DROP TABLE IF EXISTS " + TIME_TABLE_NAME;
-
-    static final String MEAL_TABLE_CREATE =
-            "CREATE TABLE IF NOT EXISTS " + MEAL_TABLE_NAME + "(" +
-                    COLUMN_LAST_UPDATED + " TEXT, " +
-                    COLUMN_MEAL_DAY + " INT, " +
-                    COLUMN_MEAL_TIME + " INT, " +
-                    COLUMN_MEAL_DATA + " TEXT)";
-    static final String MEAL_TABLE_DROP =
-            "DROP TABLE IF EXISTS " + MEAL_TABLE_NAME;
-
-
-    static final int LAST_UPDATED = 0;
-    static final int TIME_JSON_DATA = 1;
-
-    static final String TIME_SELECT =
-            "SELECT * FROM " + TIME_TABLE_NAME;
-    static final String TIME_DELETE =
-            "DELETE FROM " + TIME_TABLE_NAME;
-
-
-    DataSQLiteHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.home, menu);
+        return true;
     }
 
     @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(TIME_TABLE_CREATE);
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+        Intent intent;
+        if (id == R.id.nav_home) {
 
-    }
-}
-
-//TODO: 데이터 초기화 스레드 만들기
-
-class InitTimeData
-        extends AsyncTask<Void, Void, Boolean> {
-
-    private String jsonData = "";
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
-    @Override
-    protected Boolean doInBackground(Void... voids) {
-
-        if(isConnected) {
+        } else if (id == R.id.nav_table) {
+            intent = new Intent(MainActivity.this, TimeTableActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_meal) {
+            intent = new Intent(MainActivity.this, MealInfoActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_calendar) {
+            intent = new Intent(MainActivity.this, SchoolEventActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_setting) {
+            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
+        } else if (id == R.id.nav_info) {
             try {
-                // 김포고등학교의 실시간 시간표 정보는 http://comcigan.com:4082/_hourdat?sc=26203에서 확인할 수 있다!
-                // sc=26203: 김포고등학교의 데이터
-                Document doc = Jsoup.connect("http://comcigan.com:4082/_hourdat?sc=26203").get();
+                CharSequence version = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
+                CharSequence versionName = getResources().getString(R.string.noti_version_is) + " " + version.toString();
+                Toast.makeText(getApplicationContext(),versionName,Toast.LENGTH_SHORT).show();
+            } catch (PackageManager.NameNotFoundException e) { }
+        }
 
-                // 시간표 데이터는 <body>에 있다!
-                Element data = doc.body();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 
+    public void onItemSelected(AdapterView<?> parent, View view,
+                               int pos, long id) {
+        // An item was selected. You can retrieve the selected item using
+        // parent.getItemAtPosition(pos)
+
+        jsoupAsyncTask = new JsoupAsyncTask();
+        jsoupAsyncTask.execute();
+    }
+
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    public void onCardChanged(String data) {
+        switch (home_spinner_selected) {
+            case 0: {
+
+            } break;
+            case 1: {
+
+            } break;
+            case 2: {
+
+            } break;
+            case 3: {
+
+            }
+            default: {
+
+            } break;
+        }
+    }
+
+    private class JsoupAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        private String air_data;
+        private String meal_data[] = new String[2];
+        private String meal_url;
+
+        private String airQualityData[] = new String[8];
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                Document doc;
                 System.out.println("------------------------------");
-                System.out.println("data: " + data.text());
-                System.out.println("------------------------------");
+                switch (home_spinner_selected) {
+                    case 0:
+                        break;
+                    case 1: {
+                        meal_url = "http://www.gimpo.hs.kr/main.php?menugrp=021100&master=meal2&act=list&SearchYear="+dateNow[0]+"&SearchMonth="+dateNow[1]+"&SearchDay="+dateNow[2]+"#diary_list";
+                        doc = Jsoup.connect(meal_url).get();
+                        meal_data[0] = getResources().getString(R.string.meal_card_data_null);
+                        meal_data[1] = getResources().getString(R.string.meal_card_data_null);
 
-                jsonData += data.text().trim();
+                        Elements mealData = doc.select("div.meal_content.col-md-7 div.meal_table table tbody");
+
+                        int cnt = 0;
+                        for(Element e: mealData) {
+                            System.out.println("data:" + e.text());
+                            meal_data[cnt] = e.text().trim();
+                            cnt++;
+                        }
+                        break; }
+                    case 2:
+                        break;
+                    case 3: {
+                        doc = Jsoup.connect("http://m.airkorea.or.kr/sub_new/sub41.jsp")
+                                .cookie("isGps","N")
+                                .cookie("station","131471")
+                                .cookie("lat", "37.619355")
+                                .cookie("lng","126,716748")
+                                .get();
+                        air_data = "";
+                        Elements airData = doc.select("div#detailContent div");
+                        int cnt = 0;
+                        for(Element e: airData) {
+                            System.out.println("place: " + e.text());
+                            airQualityData[cnt] = e.text().trim();
+                            cnt++;
+                        }
+                        break; }
+                    default:
+                        break;
+                }
+                System.out.println("------------------------------");
 
             } catch (IOException e) {
                 e.printStackTrace();
-                return false;
             }
-
-            return true;
+            return null;
         }
-        return false;
-    }
 
-    @Override
-    protected void onPostExecute(Boolean isInitialized) {
-        if(isInitialized) {
-            StringBuilder sb = new StringBuilder(jsonData);
-            for(int i = 0; i < sb.length(); i++) {
-                if(sb.charAt(i) == '\"') {
-                    sb.replace(i, i + 1, "\"\"");
-                    Log.d("jsonDatainit", "changed " + String.valueOf(i) + "/" + sb.length());
-                    i++;
-                }
-            }
-            jsonData = sb.toString();
-            String LastUpdated = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
-            String sqlInsert = "insert or replace into " + TIME_TABLE_NAME +" values(\"" + LastUpdated + "\", \"" + jsonData + "\")";
-            db.getWritableDatabase().execSQL(TIME_TABLE_DROP);
-            db.getWritableDatabase().execSQL(TIME_TABLE_CREATE);
-            db.getWritableDatabase().execSQL(sqlInsert);
-
-
-            Cursor cursor = db.getReadableDatabase().rawQuery(TIME_SELECT, null);
-
-            if(cursor.moveToFirst()) {
-                String time = cursor.getString(LAST_UPDATED);
-                String data = cursor.getString(TIME_JSON_DATA);
-
-                Log.d(time, data);
-            }
-        } else {
-            Cursor cursor = db.getReadableDatabase().rawQuery(TIME_SELECT, null);
-
-            if(cursor.moveToFirst()) {
-                String time = cursor.getString(LAST_UPDATED);
-                String data = cursor.getString(TIME_JSON_DATA);
-
-                Log.d(time, data);
-            } else {
-                String temp = "{\"성명\":[\" \", \" \"],\"긴과목명\":[\" \", \" \"],\"과목명\":[\" \", \" \"],\"시간표\":[[[]],[[],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]],[[],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]],[[],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]]],\"학급시간표\":[[[]],[[],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]],[[],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]],[[],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]],[[],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]]]],\"저장일\":\"0000-00-00 00:00:00\",\"일자자료\":[[1,\"00-00-00 ~ 00-00-00\"],[2,\"00-00-00 ~ 00-00-00\"]]}";
-                StringBuilder sb = new StringBuilder(temp);
-                for(int i = 0; i < sb.length(); i++) {
-                    if(sb.charAt(i) == '\"') {
-                        sb.replace(i, i + 1, "\"\"");
-                        Log.d("jsonDatainit", "changed " + String.valueOf(i) + "/" + sb.length());
-                        i++;
-                    }
-                }
-                jsonData = sb.toString();
-                String LastUpdated = "0000-12-31 23:59:59";
-                String sqlInsert = "insert or replace into TimeTable values(\"" + LastUpdated + "\", \"" + jsonData + "\")";
-                db.getWritableDatabase().execSQL(TIME_TABLE_DROP);
-                db.getWritableDatabase().execSQL(TIME_TABLE_CREATE);
-                db.getWritableDatabase().execSQL(sqlInsert);
-
-                String time = cursor.getString(LAST_UPDATED);
-                String data = cursor.getString(TIME_JSON_DATA);
-
-                Log.d(time, data);
-            }
-        }
-    }
-}
-
-class InitMealData
-        extends AsyncTask<Void, Void, Boolean> {
-
-    private int lastDay = Integer.parseInt(new SimpleDateFormat("dd", Locale.getDefault()).format(Calendar.getInstance().getTime()));
-    private String[][] mealData = new String[lastDay][2];
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
-    @Override
-    protected Boolean doInBackground(Void... voids) {
-        if(isConnected) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(Calendar.getInstance().getTime());
-            calendar.add(Calendar.MONTH, 1);
-            calendar.set(Calendar.DAY_OF_MONTH, 1);
-            calendar.add(Calendar.DATE, -1);
-            int year = Integer.parseInt(new SimpleDateFormat("yyyy", Locale.getDefault()).format(calendar.getTime()));
-            int month = Integer.parseInt(new SimpleDateFormat("MM", Locale.getDefault()).format(calendar.getTime()));
-            for(int day = 1; day <= lastDay; day++) {
-                try {
-                    // 급식 정보는 http://www.gimpo.hs.kr/main.php?menugrp=021100&master=meal2&act=list&SearchYear=year&SearchMonth=month&SearchDay=day#diary_list에서 확인할 수 있음!
-                    // year,month,day: 연,월,일 날짜
-                    String url = "http://www.gimpo.hs.kr/main.php?menugrp=021100&master=meal2&act=list&"
-                            + "SearchYear="  + String.valueOf(year)
-                            + "&SearchMonth="+ String.valueOf(month)
-                            + "&SearchDay="  + String.valueOf(day) + "#diary_list";
-                    Document doc = Jsoup.connect(url).get();
-                    Log.d("url", url);
-
-                    Elements data = doc.select("div.meal_content.col-md-7 div.meal_table table tbody");
-                    int cnt = 0;
-                    for(Element e: data) {
-                        mealData[day - 1][cnt++] = e.text().trim();
-                        Log.d("data", e.text().trim());
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-            }
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    protected void onPostExecute(Boolean isInitialized) {
-        if(isInitialized) {
-            for(int i = 0; i < lastDay; i++) {
-                for(int j = 0; j < 2; j++) {
-                    if(mealData[i][j] != null && mealData[i][j].compareTo("등록된 식단 정보가 없습니다.") != 0) {
-                        StringBuilder sb = new StringBuilder(mealData[i][j]);
-                        for(int k = 0; k < sb.length(); k++) {
-                            if(sb.charAt(k) == ' ') {
-                                boolean isDeleted = false;
-                                for(int l = 0; l < 10; l++) {
-                                    if(String.valueOf(l).compareTo(String.valueOf(sb.charAt(k))) == 0) {
+        @Override
+        protected void onPostExecute(Void result) {
+            switch (home_spinner_selected) {
+                case 0:
+                    onCardChanged("");
+                    break;
+                case 1:
+                    for(int i = 0; i < 2; i++) {
+                        StringBuilder sb = new StringBuilder(meal_data[i]);
+                        if(meal_data[i].compareTo(getResources().getString(R.string.meal_card_data_null))!=0) {
+                            for(int j = 0; j < sb.length(); j++) {
+                                if(sb.charAt(j) == ' ') {
+                                    if(sb.charAt(j+1) == '1' || sb.charAt(j+1) == '2' || sb.charAt(j+1) == '3' || sb.charAt(j+1) == '4' || sb.charAt(j+1) == '5' || sb.charAt(j+1) == '6' || sb.charAt(j+1) == '7' || sb.charAt(j+1) == '8' || sb.charAt(j+1) == '9' || sb.charAt(j+1) == '0') {
                                         sb.deleteCharAt(j);
-                                        isDeleted = true;
-                                        break;
+                                    } else {
+                                        sb.replace(j, j+1, "\n");
                                     }
                                 }
-                                if(!isDeleted) {
-                                    sb.replace(j, j+1, "\n");
-                                }
                             }
+                            meal_data[i] = sb.toString();
                         }
-                        mealData[i][j] = sb.toString();
-                        Log.d("data" + i + "," + j, mealData[i][j]);
+                        meal_data[i] = String.format(Locale.getDefault(), getResources().getString(R.string.date_format), dateNow[0], dateNow[1], dateNow[2]) + "\n" + meal_data[i];
                     }
-                    String LastUpdated = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
-                    String sqlInsert = "insert or replace into " + MEAL_TABLE_NAME + " values(\"" + LastUpdated + "\", \"" + i + 1 + "\", \"" + j + "\", \"" + mealData[i][j] + "\")";
-                    db.getWritableDatabase().execSQL(MEAL_TABLE_DROP);
-                    db.getWritableDatabase().execSQL(MEAL_TABLE_CREATE);
-                    db.getWritableDatabase().execSQL(sqlInsert);
-                }
+                    if(Integer.parseInt(hourNow) < 14) {
+                        onCardChanged(meal_data[0]);
+                    } else {
+                        onCardChanged(meal_data[1]);
+                    }
+                    break;
+                case 2:
+                    onCardChanged("");
+                    break;
+                case 3:
+                    air_data = String.format(Locale.getDefault(),
+                            getResources().getString(R.string.home_card_air_quality_format),
+                            airQualityData[0],
+                            airQualityData[1],
+                            airQualityData[2],
+                            airQualityData[3],
+                            airQualityData[4],
+                            airQualityData[5],
+                            airQualityData[6],
+                            airQualityData[7]);
+                    onCardChanged(air_data);
+                    break;
+                default:
+                    break;
             }
-
         }
     }
+
 }
-
-class InitEventData
-        extends AsyncTask<Void, Void, Boolean> {
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
-    @Override
-    protected Boolean doInBackground(Void... voids) {
-
-        return false;
-    }
-
-    @Override
-    protected void onPostExecute(Boolean isInitialized) {
-
-    }
-}
-
-class InitAirQualData
-        extends AsyncTask<Void, Void, Boolean> {
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
-
-    @Override
-    protected Boolean doInBackground(Void... voids) {
-
-        return false;
-    }
-
-    @Override
-    protected void onPostExecute(Boolean isInitialized) {
-
-    }
-}
-
