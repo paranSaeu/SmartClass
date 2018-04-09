@@ -29,6 +29,7 @@ import org.jsoup.nodes.Element;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class TimeTableActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -50,9 +51,9 @@ public class TimeTableActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        /*
+
         JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
-        jsoupAsyncTask.setUrl("http://comcigan.com:4082/_hourdat?sc=26203");
+        jsoupAsyncTask.setUrl("http://comcigan.com:4082/_hourdata?sc=26203");
         System.out.println("trying to connect to " + jsoupAsyncTask.getUrl());
         jsoupAsyncTask.execute();
         try{
@@ -62,7 +63,7 @@ public class TimeTableActivity extends AppCompatActivity
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-        */
+
 
         final TextView time_class  = (TextView) findViewById(R.id.time_class);
         time_class.setText(refreshClassNo());

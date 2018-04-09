@@ -16,7 +16,10 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 public class LoadData {
@@ -95,9 +98,11 @@ class InitTimeData
 
     private String jsonData = "";
     private DataSQLiteHelper db;
+    private DataFormat dataFormat;
 
-    InitTimeData(DataSQLiteHelper db) {
+    InitTimeData(DataSQLiteHelper db, DataFormat dataFormat) {
         this.db = db;
+        this.dataFormat = dataFormat;
     }
 
     @Override
@@ -112,7 +117,7 @@ class InitTimeData
             try {
                 // 김포고등학교의 실시간 시간표 정보는 http://comcigan.com:4082/_hourdat?sc=26203에서 확인할 수 있다!
                 // sc=26203: 김포고등학교의 데이터
-                Document doc = Jsoup.connect("http://comcigan.com:4082/_hourdat?sc=26203").get();
+                Document doc = Jsoup.connect("http://comcigan.com:4082/_hourdata?sc=26203").get();
 
                 // 시간표 데이터는 <body>에 있다!
                 Element data = doc.body();
@@ -123,11 +128,12 @@ class InitTimeData
 
                 jsonData += data.text().trim();
 
+                dataFormat.timeData = new Time(jsonData);
+
             } catch (IOException e) {
                 e.printStackTrace();
                 return false;
             }
-
             return true;
         }
         return false;
@@ -136,6 +142,9 @@ class InitTimeData
     @Override
     protected void onPostExecute(Boolean isInitialized) {
         if(isInitialized) {
+
+            //dataFormat.timeData = new Time(jsonData);
+
             StringBuilder sb = new StringBuilder(jsonData);
             for(int i = 0; i < sb.length(); i++) {
                 if(sb.charAt(i) == '\"') {
@@ -146,6 +155,10 @@ class InitTimeData
             jsonData = sb.toString();
 
             String LastUpdated = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
+
+
+
+            /*
             String sqlInsert = "insert or replace into " + DataSQLiteHelper.TIME_TABLE_NAME +" values(\"" + LastUpdated + "\", \"" + jsonData + "\")";
             db.getWritableDatabase().execSQL(DataSQLiteHelper.TIME_TABLE_DROP);
             db.getWritableDatabase().execSQL(DataSQLiteHelper.TIME_TABLE_CREATE);
@@ -186,7 +199,7 @@ class InitTimeData
                 String data = cursor.getString(DataSQLiteHelper.TIME_JSON_DATA);
             }
 
-            cursor.close();
+            cursor.close();*/
         }
     }
 }
@@ -196,10 +209,13 @@ class InitMealData
 
     private int lastDay = initLastDay();
     private String[][] mealData = new String[lastDay][2];
+    private List<List<String>> mealDataList = new ArrayList<>();
     private DataSQLiteHelper db;
+    private DataFormat dataFormat;
 
-    InitMealData(DataSQLiteHelper db) {
+    InitMealData(DataSQLiteHelper db, DataFormat dataFormat) {
         this.db = db;
+        this.dataFormat = dataFormat;
     }
 
     private int initLastDay() {
@@ -250,15 +266,8 @@ class InitMealData
                     return false;
                 }
             }
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    protected void onPostExecute(Boolean isInitialized) {
-        if(isInitialized) {
             for(int i = 0; i < lastDay; i++) {
+                List<String> temp = new ArrayList<>();
                 for(int j = 0; j < 2; j++) {
                     if(mealData[i][j] != null && mealData[i][j].compareTo("등록된 식단 정보가 없습니다.") != 0) {
                         StringBuilder sb = new StringBuilder(mealData[i][j]);
@@ -278,17 +287,60 @@ class InitMealData
                             }
                         }
                         mealData[i][j] = sb.toString();
+                        temp.add(sb.toString());
                         Log.d("data" + i + "," + j, mealData[i][j]);
                     }
-                    String LastUpdated = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
+                    /*String LastUpdated = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
                     String sqlInsert = "insert or replace into " + DataSQLiteHelper.MEAL_TABLE_NAME + " values(\"" + LastUpdated + "\", \"" + i + 1 + "\", \"" + j + "\", \"" + mealData[i][j] + "\")";
                     db.getWritableDatabase().execSQL(DataSQLiteHelper.MEAL_TABLE_DROP);
                     db.getWritableDatabase().execSQL(DataSQLiteHelper.MEAL_TABLE_CREATE);
-                    db.getWritableDatabase().execSQL(sqlInsert);
+                    db.getWritableDatabase().execSQL(sqlInsert);*/
                 }
+                mealDataList.add(temp);
             }
-
+            dataFormat.mealData = new Meal(Integer.parseInt(new SimpleDateFormat("MM", Locale.getDefault()).format(Calendar.getInstance().getTime())) ,mealDataList);
+            return true;
         }
+        return false;
+    }
+
+    @Override
+    protected void onPostExecute(Boolean isInitialized) {
+        /*if(isInitialized) {
+            for(int i = 0; i < lastDay; i++) {
+                List<String> temp = new ArrayList<>();
+                for(int j = 0; j < 2; j++) {
+                    if(mealData[i][j] != null && mealData[i][j].compareTo("등록된 식단 정보가 없습니다.") != 0) {
+                        StringBuilder sb = new StringBuilder(mealData[i][j]);
+                        for(int k = 0; k < sb.length(); k++) {
+                            if(sb.charAt(k) == ' ') {
+                                boolean isDeleted = false;
+                                for(int l = 0; l < 10; l++) {
+                                    if(String.valueOf(l).compareTo(String.valueOf(sb.charAt(k))) == 0) {
+                                        sb.deleteCharAt(j);
+                                        isDeleted = true;
+                                        break;
+                                    }
+                                }
+                                if(!isDeleted) {
+                                    sb.replace(j, j+1, "\n");
+                                }
+                            }
+                        }
+                        mealData[i][j] = sb.toString();
+                        temp.add(sb.toString());
+                        Log.d("data" + i + "," + j, mealData[i][j]);
+                    }
+                    /*String LastUpdated = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
+                    String sqlInsert = "insert or replace into " + DataSQLiteHelper.MEAL_TABLE_NAME + " values(\"" + LastUpdated + "\", \"" + i + 1 + "\", \"" + j + "\", \"" + mealData[i][j] + "\")";
+                    db.getWritableDatabase().execSQL(DataSQLiteHelper.MEAL_TABLE_DROP);
+                    db.getWritableDatabase().execSQL(DataSQLiteHelper.MEAL_TABLE_CREATE);
+                    db.getWritableDatabase().execSQL(sqlInsert);*//*
+                }
+                mealDataList.add(temp);
+            }
+            dataFormat.mealData = new Meal(Integer.parseInt(new SimpleDateFormat("MM", Locale.getDefault()).format(Calendar.getInstance().getTime())) ,mealDataList);
+        }*/
     }
 }
 
@@ -296,9 +348,11 @@ class InitEventData
         extends AsyncTask<Boolean, Void, Boolean> {
 
     private DataSQLiteHelper db;
+    private DataFormat dataFormat;
 
-    InitEventData(DataSQLiteHelper db) {
+    InitEventData(DataSQLiteHelper db, DataFormat dataFormat) {
         this.db = db;
+        this.dataFormat = dataFormat;
     }
 
     @Override
@@ -325,10 +379,12 @@ class InitAirQualData
     private String airQualityFormat;
     private String[] airQualityData = new String[8];
     private DataSQLiteHelper db;
+    private DataFormat dataFormat;
 
-    InitAirQualData(DataSQLiteHelper db, String airQualityFormat) {
+    InitAirQualData(DataSQLiteHelper db, DataFormat dataFormat, String airQualityFormat) {
         this.db = db;
         this.airQualityFormat = airQualityFormat;
+        this.dataFormat = dataFormat;
     }
 
     @Override
@@ -353,12 +409,12 @@ class InitAirQualData
                 airQualityData[cnt] = e.text().trim();
                 cnt++;
             }
+            dataFormat.airQualData = new AirQual(new SimpleDateFormat("yyyy-MM-dd HH", Locale.getDefault()).format(Calendar.getInstance().getTime()), Arrays.asList(airQualityData));
+            return true;
         } catch(IOException e) {
             e.printStackTrace();
+            return false;
         }
-
-
-        return false;
     }
 
     @Override
@@ -373,11 +429,12 @@ class InitAirQualData
                 airQualityData[5],
                 airQualityData[6],
                 airQualityData[7]);
-        String LastUpdated = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
+        //dataFormat.airQualData = new AirQual(new SimpleDateFormat("yyyy-MM-dd HH", Locale.getDefault()).format(Calendar.getInstance().getTime()), Arrays.asList(airQualityData));
+        /*String LastUpdated = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
         String sqlInsert = "insert or replace into " + DataSQLiteHelper.AIR_TABLE_NAME +" values(\"" + LastUpdated + "\", \"" + airData + "\")";
         db.getWritableDatabase().execSQL(DataSQLiteHelper.AIR_TABLE_DROP);
         db.getWritableDatabase().execSQL(DataSQLiteHelper.AIR_TABLE_CREATE);
-        db.getWritableDatabase().execSQL(sqlInsert);
+        db.getWritableDatabase().execSQL(sqlInsert);*/
 
     }
 }

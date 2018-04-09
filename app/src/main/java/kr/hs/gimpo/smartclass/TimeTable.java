@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/*
 public class TimeTable {
     List<List<List<List<Time>>>> tableData = new ArrayList<>();
     List<List<List<Time>>> classGrade = new ArrayList<>();
@@ -83,3 +83,4 @@ class Time {
         return (rawData - getSubject(rawData)) / 100;
     }
 }
+*/

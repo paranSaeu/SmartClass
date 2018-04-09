@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
@@ -225,18 +226,62 @@ public class MainActivity extends AppCompatActivity
     public void onCardChanged(String data) {
         switch (home_spinner_selected) {
             case 0: {
+                TimeFragment newFragment = new TimeFragment();
+
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
+                fragmentTransaction.addToBackStack(null);
+
+                fragmentTransaction.commit();
 
             } break;
             case 1: {
 
+                MealFragment newFragment = new MealFragment();
+
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
+                fragmentTransaction.addToBackStack(null);
+
+                fragmentTransaction.commit();
+
             } break;
             case 2: {
+
+                EventFragment newFragment = new EventFragment();
+
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
+                fragmentTransaction.addToBackStack(null);
+
+                fragmentTransaction.commit();
 
             } break;
             case 3: {
 
+                AirFragment newFragment = new AirFragment();
+
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
+                fragmentTransaction.addToBackStack(null);
+
+                fragmentTransaction.commit();
+
             }
             default: {
+
+                AirFragment newFragment = new AirFragment();
+
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
+                fragmentTransaction.addToBackStack(null);
+
+                fragmentTransaction.commit();
 
             } break;
         }

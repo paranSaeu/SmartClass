@@ -1,15 +1,18 @@
 package kr.hs.gimpo.smartclass;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 
-public class TimeFragment extends android.support.v4.app.Fragment {
+public class TimeFragment
+        extends Fragment {
+
+    String text;
 
     onCardChangeListener mCallback;
 
@@ -17,9 +20,17 @@ public class TimeFragment extends android.support.v4.app.Fragment {
 
     }
 
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.home_card_frag_time, container, false);
     }
@@ -33,12 +44,11 @@ public class TimeFragment extends android.support.v4.app.Fragment {
         } catch(ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnCardChangeListener");
-
         }
     }
 
     public void setText(String data) {
-
+        this.text = data;
     }
 
 }
