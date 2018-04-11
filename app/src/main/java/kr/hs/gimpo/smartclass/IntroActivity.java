@@ -17,7 +17,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.concurrent.ExecutionException;
 
 public class IntroActivity extends AppCompatActivity {
-    DataSQLiteHelper db;
 
     private DatabaseReference mDatabase;
     @Override
@@ -41,15 +40,7 @@ public class IntroActivity extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference("test");
 
-        try {
-            db = new DataSQLiteHelper(getApplicationContext());
-            String sqlInsert = "create table if not exists TimeTable (LastUpdated text, JsonData text);";
-            db.getWritableDatabase().execSQL(sqlInsert);
-        } catch (SQLiteException e) {
-            e.printStackTrace();
-        }
-
-        initData(isConnected, db, mDatabase);
+        initData(isConnected, mDatabase);
 
         Intent intent = new Intent(IntroActivity.this, MainActivity.class);
         startActivity(intent);
@@ -57,15 +48,14 @@ public class IntroActivity extends AppCompatActivity {
 
     }
 
-    private void initData(Boolean isConnected, DataSQLiteHelper db, DatabaseReference mDatabase) {
-        DataFormat dataFormat = new DataFormat();
-        InitTimeData initTimeData = new InitTimeData(db, dataFormat);
+    private void initData(Boolean isConnected, DatabaseReference mDatabase) {
+        InitTimeData initTimeData = new InitTimeData();
         initTimeData.execute(isConnected);
-        InitMealData initMealData = new InitMealData(db, dataFormat);
+        InitMealData initMealData = new InitMealData();
         initMealData.execute(isConnected);
-        InitEventData initEventData = new InitEventData(db, dataFormat);
+        InitEventData initEventData = new InitEventData();
         initEventData.execute(isConnected);
-        InitAirQualData initAirQualData = new InitAirQualData(db, dataFormat, getResources().getString(R.string.home_card_air_quality_format));
+        InitAirQualData initAirQualData = new InitAirQualData(getResources().getString(R.string.home_card_air_quality_format));
         initAirQualData.execute(isConnected);
         try {
             initTimeData.get();
@@ -76,10 +66,6 @@ public class IntroActivity extends AppCompatActivity {
             e.printStackTrace();
         } catch(ExecutionException e) {
             e.printStackTrace();
-        }
-        if(isConnected) {
-            mDatabase.setValue(dataFormat);
-            Log.d("setValue", "ok.");
         }
 
     }

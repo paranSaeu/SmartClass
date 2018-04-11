@@ -280,8 +280,15 @@ public class MainActivity extends AppCompatActivity
 
                 fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
                 fragmentTransaction.addToBackStack(null);
-
                 fragmentTransaction.commit();
+
+                Bundle bundle = new Bundle();
+
+                bundle.putString("airData", " ");
+                bundle.putString("airData_default", getResources().getString(R.string.home_card_air_help));
+                newFragment.setArguments(bundle);
+
+                newFragment.setText();
 
             } break;
         }

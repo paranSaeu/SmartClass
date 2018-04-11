@@ -7,20 +7,13 @@ import java.util.Locale;
 
 public class DataFormat {
 
-    public Time timeData;
-    public Meal mealData;
-    public Event eventData;
-    public AirQual airQualData;
+    public static Time timeData;
+    public static Meal mealData;
+    public static Event eventData;
+    public static AirQual airQualData;
 
     public DataFormat() {
 
-    }
-
-    public DataFormat(Time timeData, Meal mealData, Event eventData, AirQual airQualData) {
-        this.timeData = timeData;
-        this.mealData = mealData;
-        this.eventData = eventData;
-        this.airQualData = airQualData;
     }
 }
 

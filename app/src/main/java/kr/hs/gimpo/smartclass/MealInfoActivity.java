@@ -67,17 +67,6 @@ public class MealInfoActivity extends AppCompatActivity
         jsoupAsyncTask = new JsoupAsyncTask();
         jsoupAsyncTask.execute();
 
-        /*Button htmlTitleButton = (Button)findViewById(R.id.button);
-        htmlTitleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.out.println( (cnt+1) +"번째 파싱");
-                JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
-                jsoupAsyncTask.execute();
-                cnt++;
-            }
-        });*/
-
         final ImageButton month_left = (ImageButton) findViewById(R.id.meal_button_month_back);
         month_left.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +77,6 @@ public class MealInfoActivity extends AppCompatActivity
                 month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
                 year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
                 initDate(year, month, day);
-                //jsoupAsyncTask.execute();
             }
         });
 
@@ -102,7 +90,6 @@ public class MealInfoActivity extends AppCompatActivity
                 month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
                 year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
                 initDate(year, month, day);
-                //jsoupAsyncTask.execute();
             }
         });
 
@@ -116,7 +103,6 @@ public class MealInfoActivity extends AppCompatActivity
                 month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
                 year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
                 initDate(year, month, day);
-                //jsoupAsyncTask.execute();
             }
         });
 
@@ -130,7 +116,6 @@ public class MealInfoActivity extends AppCompatActivity
                 month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
                 year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
                 initDate(year, month, day);
-                //jsoupAsyncTask.execute();
             }
         });
     }
