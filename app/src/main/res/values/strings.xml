@@ -50,7 +50,7 @@
         <item>@string/home_card_air_title</item>
     </string-array>
 
-    <string name="home_card_air_quality_format">%s\n미세먼지(PM10): %s\n미세먼지(PM2.5): %s\n오존(O₃): %s\n이산화질소(NO₂): %s\n일산화탄소(CO): %s\n아황산가스(SO₂): %s\n통합대기환경지수: %s</string>
+    <string name="home_card_air_quality_format">%s\n미세먼지(PM10): %s\n초미세먼지(PM2.5): %s\n오존(O₃): %s\n이산화질소(NO₂): %s\n일산화탄소(CO): %s\n아황산가스(SO₂): %s\n통합대기환경지수: %s</string>
 
     <!-- TimeTableActivity -->
 

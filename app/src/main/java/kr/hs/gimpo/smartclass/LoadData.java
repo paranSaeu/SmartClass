@@ -5,12 +5,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.AsyncTask;
+import android.provider.ContactsContract;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -32,12 +36,14 @@ public class LoadData {
 //TODO: 데이터 초기화 스레드 만들기
 
 class InitTimeData
-        extends AsyncTask<Boolean, Void, Boolean> {
+        extends AsyncTask<Void, Void, Boolean> {
+
+    private DatabaseReference mDatabase;
 
     private String jsonData = "";
 
-    InitTimeData() {
-
+    InitTimeData(DatabaseReference mDatabase) {
+        this.mDatabase = mDatabase;
     }
 
     @Override
@@ -46,49 +52,72 @@ class InitTimeData
     }
 
     @Override
-    protected Boolean doInBackground(Boolean... isConnected) {
+    protected Boolean doInBackground(Void... param) {
+        try {
+            // 김포고등학교의 실시간 시간표 정보는 http://comcigan.com:4082/_hourdat?sc=26203에서 확인할 수 있다!
+            // 변경: http://comcigan.com:4082/_hourdata?sc=26203에서 확인 가능!
+            // 변경: http://comcigan.com:4082/_h119870?sc=26203
+            // http://comcigan.com:4083/_h119293?sc=26203
+            // http://comcigan.com:4082/_h177193?sc=26203
 
-        if(isConnected[0]) {
-            try {
-                // 김포고등학교의 실시간 시간표 정보는 http://comcigan.com:4082/_hourdat?sc=26203에서 확인할 수 있다!
-                // sc=26203: 김포고등학교의 데이터
-                Document doc = Jsoup.connect("http://comcigan.com:4082/_hourdata?sc=26203").get();
+            // <body><script></script></body> 사이에 있는 var stor='?'의 ?에 해당하는 부분이 바뀐다는 것을 알아내었다!
+            // 포트를 4082로 고정하고 /st에서 <body><script></script></body>를 불러와 stor의 값을 읽으면
+            // 시간표를 정상적으로 읽어올 수 있을 것이다!
 
-                // 시간표 데이터는 <body>에 있다!
-                Element data = doc.body();
+            // sc=26203: 김포고등학교의 데이터
 
-                System.out.println("------------------------------");
-                System.out.println("data: " + data.text());
-                System.out.println("------------------------------");
+            Document doc = Jsoup.connect("http://comcigan.com:4082/st").get();
+            Elements urlData = doc.select("body script");
+            String temp = urlData.toString();
+            int idx = temp.lastIndexOf("stor='");
+            temp = temp.substring(idx+6);
+            idx = temp.indexOf("';");
+            String stor = temp.substring(0, idx);
+            System.out.println("------------------------------");
+            System.out.println(stor);
+            System.out.println("------------------------------");
 
-                jsonData += data.text().trim();
+            doc = Jsoup.connect("http://comcigan.com:4082/"+stor+"?sc=26203").get();
 
-                DataFormat.timeData = new Time(jsonData);
+            // 시간표 데이터는 <body>에 있다!
+            Element data = doc.body();
 
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
+            System.out.println("------------------------------");
+            System.out.println("data: " + data.text());
+            System.out.println("------------------------------");
+
+            jsonData += data.text().trim();
+
+            if(jsonData.compareTo("") != 0) {
+                DataFormat.timeDataFormat = new Time(jsonData);
+                mDatabase.child("timeDataFormat").setValue(DataFormat.timeDataFormat);
             }
-            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
         }
-        return false;
+        return true;
     }
 
     @Override
     protected void onPostExecute(Boolean isInitialized) {
-
     }
 }
 
 class InitMealData
-        extends AsyncTask<Boolean, Void, Boolean> {
+        extends AsyncTask<Void, Void, Boolean> {
 
     private int lastDay = initLastDay();
     private String[][] mealData = new String[lastDay][2];
     private List<List<String>> mealDataList = new ArrayList<>();
+    private DatabaseReference mDatabase;
+    private Integer thisMonth;
+    private boolean isUpdateNeed;
 
-    InitMealData() {
-
+    InitMealData(DatabaseReference mDatabase, Integer thisMonth) {
+        this.mDatabase = mDatabase;
+        this.thisMonth = thisMonth;
+        this.isUpdateNeed = this.thisMonth != Integer.parseInt(new SimpleDateFormat("MM", Locale.getDefault()).format(Calendar.getInstance().getTime()));
     }
 
     private int initLastDay() {
@@ -108,8 +137,8 @@ class InitMealData
     }
 
     @Override
-    protected Boolean doInBackground(Boolean... isConnected) {
-        if(isConnected[0]) {
+    protected Boolean doInBackground(Void... param) {
+        if(isUpdateNeed) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(Calendar.getInstance().getTime());
             calendar.add(Calendar.MONTH, 1);
@@ -149,40 +178,42 @@ class InitMealData
                         StringBuilder sb = new StringBuilder(mealData[i][j]);
                         for(int k = 0; k < sb.length(); k++) {
                             if(sb.charAt(k) == ' ') {
+                                boolean isChanged = false;
                                 for(int l = 0; l < 10; l++) {
                                     if(sb.charAt(k + 1) == String.valueOf(l).charAt(0)) {
                                         sb.deleteCharAt(k);
-                                        l = 10;
+                                        isChanged = true;
                                     }
-                                    if(l == 10) {
-                                        sb.replace(k, k+1, "\n");
-                                    }
+                                }
+                                if(!isChanged) {
+                                    sb.replace(k, k+1, "\n");
                                 }
                             }
                         }
                         temp.add(sb.toString());
-                        Log.d("data" + i + "," + j, mealData[i][j]);
                     }
                 }
                 mealDataList.add(temp);
             }
-            DataFormat.mealData = new Meal(Integer.parseInt(new SimpleDateFormat("MM", Locale.getDefault()).format(Calendar.getInstance().getTime())) ,mealDataList);
-            return true;
+            DataFormat.mealDataFormat = new Meal(Integer.parseInt(new SimpleDateFormat("MM", Locale.getDefault()).format(Calendar.getInstance().getTime())) ,mealDataList);
+            mDatabase.child("mealDataFormat").setValue(DataFormat.mealDataFormat);
         }
-        return false;
+
+        return true;
     }
 
     @Override
     protected void onPostExecute(Boolean isInitialized) {
-
     }
 }
 
 class InitEventData
-        extends AsyncTask<Boolean, Void, Boolean> {
+        extends AsyncTask<Void, Void, Boolean> {
 
+    private DatabaseReference mDatabase;
 
-    InitEventData() {
+    InitEventData(DatabaseReference mDatabase) {
+        this.mDatabase = mDatabase;
     }
 
     @Override
@@ -191,7 +222,7 @@ class InitEventData
     }
 
     @Override
-    protected Boolean doInBackground(Boolean... isConnected) {
+    protected Boolean doInBackground(Void... param) {
 
         return false;
     }
@@ -203,13 +234,18 @@ class InitEventData
 }
 
 class InitAirQualData
-        extends AsyncTask<Boolean, Void, Boolean> {
+        extends AsyncTask<Void, Void, Boolean> {
 
-    private String airQualityFormat;
     private String[] airData = new String[8];
+    private DatabaseReference mDatabase;
+    private String thisTime;
+    private boolean isUpdateNeed;
 
-    InitAirQualData(String airQualityFormat) {
-        this.airQualityFormat = airQualityFormat;
+    InitAirQualData(DatabaseReference mDatabase, String thisTime) {
+        this.mDatabase = mDatabase;
+        this.thisTime = thisTime;
+
+        this.isUpdateNeed = this.thisTime.compareTo(new SimpleDateFormat("yyyy-MM-dd HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) != 0;
     }
 
     @Override
@@ -218,34 +254,37 @@ class InitAirQualData
     }
 
     @Override
-    protected Boolean doInBackground(Boolean... isConnected) {
-        try{
-            Document doc = Jsoup.connect("http://m.airkorea.or.kr/sub_new/sub41.jsp")
-                    .cookie("isGps","N")
-                    .cookie("station","131471")
-                    .cookie("lat", "37.619355")
-                    .cookie("lng","126,716748")
-                    .get();
-            Elements data = doc.select("div#detailContent div");
-            int cnt = 0;
-            for(Element e: data) {
-                System.out.println("place: " + e.text());
-                airData[cnt] = e.text().trim();
-                cnt++;
+    protected Boolean doInBackground(Void... param) {
+        if(isUpdateNeed) {
+            try{
+                Document doc = Jsoup.connect("http://m.airkorea.or.kr/sub_new/sub41.jsp")
+                        .cookie("isGps","N")
+                        .cookie("station","131471")
+                        .cookie("lat", "37.619355")
+                        .cookie("lng","126,716748")
+                        .get();
+                Elements data = doc.select("div#detailContent div");
+                int cnt = 0;
+                for(Element e: data) {
+                    System.out.println("place: " + e.text());
+                    airData[cnt] = e.text().trim();
+                    cnt++;
+                }
+                DataFormat.airQualDataFormat = new AirQual(Arrays.asList(airData));
+
+                mDatabase.child("airQualDataFormat").setValue(DataFormat.airQualDataFormat);
+                return true;
+            } catch(IOException e) {
+                e.printStackTrace();
+                return false;
             }
-            DataFormat.airQualData = new AirQual(new SimpleDateFormat("yyyy-MM-dd HH", Locale.getDefault()).format(Calendar.getInstance().getTime()), Arrays.asList(airData));
-            return true;
-        } catch(IOException e) {
-            e.printStackTrace();
-            return false;
         }
+        return false;
     }
 
     @Override
     protected void onPostExecute(Boolean isInitialized) {
         if(isInitialized) {
-            DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("test").child("airQualData");
-            mDatabase.setValue(DataFormat.airQualData);
             Log.d("setValue", "ok.");
         }
     }

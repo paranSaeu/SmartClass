@@ -27,11 +27,9 @@ public class AirFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.home_card_frag_air, container, false);
 
-        return view;
-    }
-
-    public void setText() {
-        targetTextView = getActivity().findViewById(R.id.home_card_air_data);
+        targetTextView = view.findViewById(R.id.home_card_air_data);
         targetTextView.setText(data);
+
+        return view;
     }
 }

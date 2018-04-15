@@ -54,5 +54,5 @@ public class TimeFragment
 }
 
 interface onCardChangeListener {
-    void onCardChanged(String data);
+    void onCardChanged(int pos, String data);
 }

@@ -1,7 +1,10 @@
 package kr.hs.gimpo.smartclass;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
@@ -18,6 +21,12 @@ import android.widget.TextView;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -28,9 +37,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class MealInfoActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("test");
+    boolean isConnected;
+    Integer thisMonth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +69,51 @@ public class MealInfoActivity extends AppCompatActivity
         day = new SimpleDateFormat("dd", Locale.getDefault()).format(today);
         month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
         year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
+
+        /*ConnectivityManager cm =
+                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(cm != null) {
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            isConnected = activeNetwork != null &&
+                    activeNetwork.isConnectedOrConnecting();
+        }
+
+        mDatabase.child("mealDataFormat").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println(dataSnapshot);
+                thisMonth = dataSnapshot.child("thisMonth").getValue(Integer.class);
+                System.out.println(thisMonth);
+
+                if(isConnected) {
+                    InitMealData initMealData = new InitMealData(mDatabase, thisMonth);
+                    initMealData.execute();
+                    try {
+                        initMealData.get();
+                    } catch(InterruptedException e) {
+                        e.printStackTrace();
+                    } catch(ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if(!(calendar.get(Calendar.DAY_OF_WEEK) == 1 || calendar.get(Calendar.DAY_OF_WEEK) == 7)) {
+                    System.out.println(dataSnapshot);
+                    DataFormat.mealDataFormat = dataSnapshot.getValue(Meal.class);
+                    int thisDay = Integer.parseInt(new SimpleDateFormat("dd", Locale.getDefault()).format(Calendar.getInstance().getTime()));
+                    int thisMeal = Integer.parseInt(new SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) < 14? 0 : 1;
+                    if() {DataFormat.mealDataFormat.mealData.get(thisDay - 1).get(thisMeal);
+                } else {
+                    getResources().getString(R.string.meal_card_data_null));
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
 
         initDate(year, month, day);
 

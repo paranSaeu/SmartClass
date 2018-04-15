@@ -11,20 +11,29 @@ import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.concurrent.ExecutionException;
 
 public class IntroActivity extends AppCompatActivity {
 
-    private DatabaseReference mDatabase;
+    DatabaseReference mDatabase;
+    Integer thisMonth;
+    String thisTime;
+
+    boolean isConnected;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
 
-        boolean isConnected = false;
+        isConnected = false;
         ConnectivityManager cm =
                 (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         if(cm != null) {
@@ -33,12 +42,62 @@ public class IntroActivity extends AppCompatActivity {
                     activeNetwork.isConnectedOrConnecting();
         }
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
 
-        myRef.setValue("Hello, World!");
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         mDatabase = FirebaseDatabase.getInstance().getReference("test");
+        mDatabase.keepSynced(true);
+
+        mDatabase.child("mealDataFormat").child("thisMonth").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println(dataSnapshot);
+                thisMonth = dataSnapshot.getValue(Integer.class);
+                System.out.println(thisMonth);
+
+                if(isConnected) {
+                    InitMealData initMealData = new InitMealData(mDatabase, thisMonth);
+                    initMealData.execute();
+                    try {
+                        initMealData.get();
+                    } catch(InterruptedException e) {
+                        e.printStackTrace();
+                    } catch(ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println(dataSnapshot);
+                thisTime = dataSnapshot.getValue(String.class);
+                System.out.println(thisTime);
+                if(isConnected) {
+                    InitAirQualData initAirQualData = new InitAirQualData(mDatabase, thisTime);
+                    initAirQualData.execute();
+                    try {
+                        initAirQualData.get();
+                    } catch(InterruptedException e) {
+                        e.printStackTrace();
+                    } catch(ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         initData(isConnected, mDatabase);
 
@@ -49,26 +108,20 @@ public class IntroActivity extends AppCompatActivity {
     }
 
     private void initData(Boolean isConnected, DatabaseReference mDatabase) {
-        InitTimeData initTimeData = new InitTimeData();
-        initTimeData.execute(isConnected);
-        InitMealData initMealData = new InitMealData();
-        initMealData.execute(isConnected);
-        InitEventData initEventData = new InitEventData();
-        initEventData.execute(isConnected);
-        InitAirQualData initAirQualData = new InitAirQualData(getResources().getString(R.string.home_card_air_quality_format));
-        initAirQualData.execute(isConnected);
-        try {
-            initTimeData.get();
-            initMealData.get();
-            initEventData.get();
-            initAirQualData.get();
-        } catch(InterruptedException e) {
-            e.printStackTrace();
-        } catch(ExecutionException e) {
-            e.printStackTrace();
+        if(isConnected) {
+            InitTimeData initTimeData = new InitTimeData(mDatabase);
+            initTimeData.execute();
+            InitEventData initEventData = new InitEventData(mDatabase);
+            initEventData.execute();
+            try {
+                initTimeData.get();
+                initEventData.get();
+            } catch(InterruptedException e) {
+                e.printStackTrace();
+            } catch(ExecutionException e) {
+                e.printStackTrace();
+            }
         }
-
     }
-
 }
 
