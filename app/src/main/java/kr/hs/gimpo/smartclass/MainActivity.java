@@ -3,6 +3,7 @@ package kr.hs.gimpo.smartclass;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -28,6 +30,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -40,7 +44,28 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        String today = new SimpleDateFormat("MM-dd", Locale.getDefault()).format(Calendar.getInstance().getTime());
+        if(today.compareTo("04-16")==0 ||today.compareTo("04-15")==0||today.compareTo("04-17")==0) {
+
+            setTheme(R.style.remember0416);
+
+            setContentView(R.layout.activity_main);
+
+            TextView textView = (TextView) findViewById(R.id.home_header_school_motto);
+            textView.setTypeface(Typeface.DEFAULT_BOLD);
+            textView.setText(R.string.home_header_remember20140416);
+
+        } else {
+
+            setTheme(R.style.AppTheme_NoActionBar);
+
+            setContentView(R.layout.activity_main);
+
+            TextView textView = (TextView) findViewById(R.id.home_header_school_motto);
+            textView.setTypeface(Typeface.DEFAULT);
+            textView.setText(R.string.school_motto);
+        }
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
@@ -180,6 +205,8 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+
+
     }
     Integer thisMonth;
     String thisTime;
@@ -260,7 +287,13 @@ public class MainActivity extends AppCompatActivity
         // An item was selected. You can retrieve the selected item using
         // parent.getItemAtPosition(pos)
 
-
+        ConnectivityManager cm =
+                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(cm != null) {
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            isConnected = activeNetwork != null &&
+                    activeNetwork.isConnectedOrConnecting();
+        }
 
         switch(pos) {
             case 0:
@@ -302,7 +335,10 @@ public class MainActivity extends AppCompatActivity
                             DataFormat.mealDataFormat = dataSnapshot.getValue(Meal.class);
                             int thisDay = Integer.parseInt(new SimpleDateFormat("dd", Locale.getDefault()).format(Calendar.getInstance().getTime()));
                             int thisMeal = Integer.parseInt(new SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) < 14? 0 : 1;
-                            onCardChanged(pos, DataFormat.mealDataFormat.mealData.get(thisDay - 1).get(thisMeal));
+                            String temp =
+                                    new SimpleDateFormat("yyyy'년 'MM'월 'dd'일 '", Locale.getDefault()).format(Calendar.getInstance().getTime())
+                                            + (thisMeal == 0 ? " [중식]":" [석식]") + "\n"+DataFormat.mealDataFormat.mealData.get(thisDay - 1).get(thisMeal);
+                            onCardChanged(pos, temp);
                         } else {
                             onCardChanged(pos, getResources().getString(R.string.meal_card_data_null));
                         }

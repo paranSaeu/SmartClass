@@ -111,13 +111,17 @@ class InitMealData
     private String[][] mealData = new String[lastDay][2];
     private List<List<String>> mealDataList = new ArrayList<>();
     private DatabaseReference mDatabase;
-    private Integer thisMonth;
     private boolean isUpdateNeed;
 
     InitMealData(DatabaseReference mDatabase, Integer thisMonth) {
         this.mDatabase = mDatabase;
-        this.thisMonth = thisMonth;
-        this.isUpdateNeed = this.thisMonth != Integer.parseInt(new SimpleDateFormat("MM", Locale.getDefault()).format(Calendar.getInstance().getTime()));
+
+        if(thisMonth != null) {
+            this.isUpdateNeed = (thisMonth != Integer.parseInt(new SimpleDateFormat("MM", Locale.getDefault()).format(Calendar.getInstance().getTime())));
+        } else {
+            this.isUpdateNeed = true;
+        }
+
     }
 
     private int initLastDay() {
@@ -238,14 +242,16 @@ class InitAirQualData
 
     private String[] airData = new String[8];
     private DatabaseReference mDatabase;
-    private String thisTime;
     private boolean isUpdateNeed;
 
     InitAirQualData(DatabaseReference mDatabase, String thisTime) {
         this.mDatabase = mDatabase;
-        this.thisTime = thisTime;
 
-        this.isUpdateNeed = this.thisTime.compareTo(new SimpleDateFormat("yyyy-MM-dd HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) != 0;
+        if(thisTime != null) {
+            this.isUpdateNeed = (thisTime.compareTo(new SimpleDateFormat("yyyy-MM-dd HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) != 0);
+        } else {
+            this.isUpdateNeed = true;
+        }
     }
 
     @Override

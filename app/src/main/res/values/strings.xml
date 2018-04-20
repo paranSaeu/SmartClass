@@ -22,12 +22,13 @@
     <string name="Subject">과목</string>
     <string name="Teacher">선생님</string>
 
-    <string name="lunch">점심 메뉴</string>
-    <string name="dinner">저녁 메뉴</string>
+    <string name="lunch">[ 중식 ]</string>
+    <string name="dinner">[ 석식 ]</string>
 
     <!-- HomeActivity -->
 
     <string name="home_title">메인</string>
+    <string name="home_header_remember20140416">2014년 4월 16일, 잊지 않겠습니다.</string>
 
     <string name="home_card_meal_title_am">오늘의 중식</string>
     <string name="home_card_meal_title_pm">오늘의 석식</string>
@@ -97,14 +98,14 @@
 
     <string name="time_card_period">교시</string>
 
-    <string name="time_table_info">시간표를 업데이트하는 중입니다...</string>
+    <string name="time_table_info">시간표를 업데이트하는 중입니다&#8230;</string>
 
 
     <!-- MealInfoActivity -->
 
     <string name="meal_title">급식 정보</string>
 
-    <string name="meal_allergic_info">알레르기 정보\n1 난류 2 우유 3 메밀 4 땅콩 5 대두 6 밀 7 고등어 8 게 9 새우 10 돼지고기 11 복숭아 12 토마토 13 아황산염 14 호두 15 닭고기 16 소고기 17 오징어 18 전복 19 홍합</string>
+    <string name="meal_allergic_info">[ 알레르기 정보 ]\n1 난류 2 우유 3 메밀 4 땅콩 5 대두 6 밀 7 고등어 8 게 9 새우 10 돼지고기 11 복숭아 12 토마토 13 아황산염 14 호두 15 닭고기 16 소고기 17 오징어 18 전복 19 홍합</string>
 
     <!-- SchoolEventActivity -->
 
