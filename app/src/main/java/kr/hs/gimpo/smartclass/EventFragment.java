@@ -16,7 +16,7 @@ public class EventFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.home_card_frag_event, container, false);
+        return inflater.inflate(R.layout.card_frag_event, container, false);
     }
 
     public void setText(String data) {

@@ -25,6 +25,25 @@
     <string name="lunch">[ 중식 ]</string>
     <string name="dinner">[ 석식 ]</string>
 
+    <!-- %s\n미세먼지(PM10): %s\n초미세먼지(PM2.5): %s\n오존(O₃): %s\n이산화질소(NO₂): %s\n일산화탄소(CO): %s\n아황산가스(SO₂): %s\n통합대기환경지수: %s -->
+
+    <string name="measure_type">측정항목</string>
+    <string name="measure_value">측정값</string>
+    <string name="measure_status">상태</string>
+    <string name="pm10">미세먼지(PM10)</string>
+    <string name="pm25">초미세먼지(PM2.5)</string>
+    <string name="o3">오존(O₃)</string>
+    <string name="no2">이산화질소(NO₂)</string>
+    <string name="co">일산화탄소(CO)</string>
+    <string name="so2">아황산가스(SO₂)</string>
+    <string name="qual">통합대기환경지수</string>
+
+    <string name="vgood">[ 좋음 ]</string>
+    <string name="good">[ 보통 ]</string>
+    <string name="bad">[ 나쁨 ]</string>
+    <string name="vbad">[ 위험 ]</string>
+    <string name="unknown">[ 없음 ]</string>
+
     <!-- HomeActivity -->
 
     <string name="home_title">메인</string>

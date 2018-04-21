@@ -277,12 +277,14 @@ public class TimeTableActivity extends AppCompatActivity
                     }
                     TargetTextView = (TextView) findViewById(getResources().getIdentifier(id, "id", getPackageName()));
                     Log.d("TargetTextView", id);
-                    if(table_data_default[classGrade][classNo][i][j][k].compareTo(table_data_updated[classGrade][classNo][i][j][k]) != 0) {
+                    /*if(table_data_default[classGrade][classNo][i][j][k].compareTo(table_data_updated[classGrade][classNo][i][j][k]) != 0) {
                         TargetTextView.setTypeface(Typeface.DEFAULT_BOLD);
                     } else {
                         TargetTextView.setTypeface(Typeface.DEFAULT);
-                    }
-                    TargetTextView.setText(table_data_updated[classGrade][classNo][i][j][k]);
+                    }*/
+                    // 원래대로라면
+                    //TargetTextView.setText(table_data_updated[classGrade][classNo][i][j][k]);
+                    TargetTextView.setText(table_data_default[classGrade][classNo][i][j][k].compareTo("")!=0?table_data_default[classGrade][classNo][i][j][k]:table_data_updated[classGrade][classNo][i][j][k]);
                 }
             }
         }
@@ -344,7 +346,7 @@ public class TimeTableActivity extends AppCompatActivity
             String temp = parsedData.getAsJsonObject().get("과목명")
                     .getAsJsonArray().get(time)
                     .getAsString();
-            return temp.compareTo("60") != 0 ? temp : " ";
+            return temp.compareTo("60") != 0 ? temp : "";
         }
 
         private String getTeacher(int time) {

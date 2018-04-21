@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 
 public class TimeFragment
@@ -32,7 +31,7 @@ public class TimeFragment
 
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.home_card_frag_time, container, false);
+        return inflater.inflate(R.layout.card_frag_time, container, false);
     }
 
     @Override
@@ -54,5 +53,5 @@ public class TimeFragment
 }
 
 interface onCardChangeListener {
-    void onCardChanged(int pos, String data);
+    void onCardChanged(int pos, Bundle data);
 }

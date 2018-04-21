@@ -221,7 +221,8 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
+            finish();
         }
     }
 
@@ -294,10 +295,13 @@ public class MainActivity extends AppCompatActivity
             isConnected = activeNetwork != null &&
                     activeNetwork.isConnectedOrConnecting();
         }
+        
 
         switch(pos) {
-            case 0:
-                onCardChanged(pos, "");
+            case 0: {
+                Bundle bundle = new Bundle();
+                onCardChanged(pos, bundle);
+                }
                 break;
             case 1:
                 mDatabase.child("mealDataFormat").child("thisMonth").addValueEventListener(new ValueEventListener() {
@@ -330,18 +334,25 @@ public class MainActivity extends AppCompatActivity
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         Calendar calendar = Calendar.getInstance();
                         calendar.setTime(Calendar.getInstance().getTime());
+                        Bundle bundle = new Bundle();
+                        int thisDay = Integer.parseInt(new SimpleDateFormat("dd", Locale.getDefault()).format(Calendar.getInstance().getTime()));
+                        int thisMeal = Integer.parseInt(new SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) < 14? 0 : 1;
+                        bundle.putInt("mealTime", thisMeal);
+                        bundle.putString(
+                                "mealDate",
+                                new SimpleDateFormat("yyyy'년 'MM'월 'dd'일 '", Locale.getDefault()).format(Calendar.getInstance().getTime()));
                         if(!(calendar.get(Calendar.DAY_OF_WEEK) == 1 || calendar.get(Calendar.DAY_OF_WEEK) == 7)) {
                             System.out.println(dataSnapshot);
                             DataFormat.mealDataFormat = dataSnapshot.getValue(Meal.class);
-                            int thisDay = Integer.parseInt(new SimpleDateFormat("dd", Locale.getDefault()).format(Calendar.getInstance().getTime()));
-                            int thisMeal = Integer.parseInt(new SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) < 14? 0 : 1;
-                            String temp =
-                                    new SimpleDateFormat("yyyy'년 'MM'월 'dd'일 '", Locale.getDefault()).format(Calendar.getInstance().getTime())
-                                            + (thisMeal == 0 ? " [중식]":" [석식]") + "\n"+DataFormat.mealDataFormat.mealData.get(thisDay - 1).get(thisMeal);
-                            onCardChanged(pos, temp);
+                            bundle.putString(
+                                    "mealData",
+                                    DataFormat.mealDataFormat.mealData.get(thisDay - 1).get(thisMeal));
                         } else {
-                            onCardChanged(pos, getResources().getString(R.string.meal_card_data_null));
+                            bundle.putString(
+                                    "mealData",
+                                    getResources().getString(R.string.meal_card_data_null));
                         }
+                        onCardChanged(pos, bundle);
                     }
 
                     @Override
@@ -350,8 +361,10 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
                 break;
-            case 2:
-                onCardChanged(pos, "");
+            case 2: {
+                  Bundle bundle = new Bundle();
+                  onCardChanged(pos, bundle);
+                }
                 break;
             case 3:
                 mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
@@ -396,7 +409,10 @@ public class MainActivity extends AppCompatActivity
                                 param[6],
                                 param[7]
                         );
-                        onCardChanged(pos, temp);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("airData", temp);
+                        bundle.putStringArray("airDataList", param);
+                        onCardChanged(pos, bundle);
                     }
 
                     @Override
@@ -405,8 +421,10 @@ public class MainActivity extends AppCompatActivity
                     }
                 });
                 break;
-            default:
-                onCardChanged(0, "");
+            default: {
+                    Bundle bundle = new Bundle();
+                    onCardChanged(pos, bundle);
+                }
                 break;
         }
     }
@@ -415,7 +433,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void onCardChanged(int pos, String data) {
+    public void onCardChanged(int pos, Bundle data) {
         switch (pos) {
             case 0: {
                 TimeFragment newFragment = new TimeFragment();
@@ -431,12 +449,9 @@ public class MainActivity extends AppCompatActivity
             case 1: {
 
                 MealFragment newFragment = new MealFragment();
-
-                Bundle bundle = new Bundle();
-
-                bundle.putString("mealData", data);
-                bundle.putString("mealData_default", getResources().getString(R.string.home_card_meal_title_help));
-                newFragment.setArguments(bundle);
+                data.putString("mealData_default", getResources().getString(R.string.home_card_meal_title_help));
+                data.putInt("displayMode", 0);
+                newFragment.setArguments(data);
 
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
@@ -462,11 +477,8 @@ public class MainActivity extends AppCompatActivity
 
                 AirFragment newFragment = new AirFragment();
 
-                Bundle bundle = new Bundle();
-
-                bundle.putString("airData", data);
-                bundle.putString("airData_default", getResources().getString(R.string.home_card_air_help));
-                newFragment.setArguments(bundle);
+                data.putString("airData_default", getResources().getString(R.string.home_card_air_help));
+                newFragment.setArguments(data);
 
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
@@ -480,11 +492,8 @@ public class MainActivity extends AppCompatActivity
 
                 AirFragment newFragment = new AirFragment();
 
-                Bundle bundle = new Bundle();
-
-                bundle.putString("airData", data);
-                bundle.putString("airData_default", getResources().getString(R.string.home_card_air_help));
-                newFragment.setArguments(bundle);
+                data.putString("airData_default", getResources().getString(R.string.home_card_air_help));
+                newFragment.setArguments(data);
 
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 

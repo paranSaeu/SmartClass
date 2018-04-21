@@ -59,10 +59,12 @@ class InitTimeData
             // 변경: http://comcigan.com:4082/_h119870?sc=26203
             // http://comcigan.com:4083/_h119293?sc=26203
             // http://comcigan.com:4082/_h177193?sc=26203
+            // http://comcigan.com:4081/119295?ODEwM18yNjIwM18xXz
 
             // <body><script></script></body> 사이에 있는 var stor='?'의 ?에 해당하는 부분이 바뀐다는 것을 알아내었다!
             // 포트를 4082로 고정하고 /st에서 <body><script></script></body>를 불러와 stor의 값을 읽으면
             // 시간표를 정상적으로 읽어올 수 있을 것이다!
+            // http://comcigan.com:4082/"+stor+"?sc=26203
 
             // sc=26203: 김포고등학교의 데이터
 
@@ -88,7 +90,7 @@ class InitTimeData
 
             jsonData += data.text().trim();
 
-            if(jsonData.compareTo("") != 0) {
+            if(jsonData.compareTo("") != 0 && jsonData.compareTo("{}") != 0) {
                 DataFormat.timeDataFormat = new Time(jsonData);
                 mDatabase.child("timeDataFormat").setValue(DataFormat.timeDataFormat);
             }
