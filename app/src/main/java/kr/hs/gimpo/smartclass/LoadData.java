@@ -60,6 +60,7 @@ class InitTimeData
             // http://comcigan.com:4083/_h119293?sc=26203
             // http://comcigan.com:4082/_h177193?sc=26203
             // http://comcigan.com:4081/119295?ODEwM18yNjIwM18xXz
+            // http://comcigan.com:4082/149249_T?NDE3NF8yNjIwM18xXzIwMTgtMDQtMjMgMTA6MDg6Mj
 
             // <body><script></script></body> 사이에 있는 var stor='?'의 ?에 해당하는 부분이 바뀐다는 것을 알아내었다!
             // 포트를 4082로 고정하고 /st에서 <body><script></script></body>를 불러와 stor의 값을 읽으면
@@ -79,7 +80,7 @@ class InitTimeData
             System.out.println(stor);
             System.out.println("------------------------------");
 
-            doc = Jsoup.connect("http://comcigan.com:4082/"+stor+"?sc=26203").get();
+            doc = Jsoup.connect("http://comcigan.com:4082/149249_T?NDE3NF8yNjIwM18xXzIwMTgtMDQtMjMgMTA6MDg6Mj").get();
 
             // 시간표 데이터는 <body>에 있다!
             Element data = doc.body();

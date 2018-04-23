@@ -168,10 +168,6 @@ public class AirFragment extends Fragment {
                     targetTextView.setTypeface(Typeface.DEFAULT);
                     targetTextView.setText(getResources().getString(R.string.unknown));
                     break;
-                case 0:
-                    targetTextView.setTypeface(Typeface.DEFAULT);
-                    targetTextView.setText(getResources().getString(R.string.unknown));
-                    break;
                 case 1:
                     targetTextView.setTypeface(Typeface.DEFAULT);
                     targetTextView.setText(getResources().getString(R.string.vgood));
