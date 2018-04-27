@@ -26,7 +26,7 @@ public class InitMealData
     private DatabaseReference mDatabase;
     private boolean isUpdateNeed;
     
-    InitMealData(DatabaseReference mDatabase, Integer thisMonth) {
+    public InitMealData(DatabaseReference mDatabase, Integer thisMonth) {
         this.mDatabase = mDatabase;
         
         if(thisMonth != null) {

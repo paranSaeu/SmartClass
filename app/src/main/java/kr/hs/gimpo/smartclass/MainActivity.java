@@ -31,8 +31,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -149,67 +147,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        ConnectivityManager cm =
-                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(cm != null) {
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            isConnected = activeNetwork != null &&
-                    activeNetwork.isConnectedOrConnecting();
-        }
-
-        mDatabase.child("mealDataFormat").child("thisMonth").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println(dataSnapshot);
-                thisMonth = dataSnapshot.getValue(Integer.class);
-                System.out.println(thisMonth);
-
-                if(isConnected) {
-                    InitMealData initMealData = new InitMealData(mDatabase, thisMonth);
-                    initMealData.execute();
-                    try {
-                        initMealData.get();
-                    } catch(InterruptedException e) {
-                        e.printStackTrace();
-                    } catch(ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-        mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println(dataSnapshot);
-                thisTime = dataSnapshot.getValue(String.class);
-                System.out.println(thisTime);
-                if(isConnected) {
-                    InitAirQualData initAirQualData = new InitAirQualData(mDatabase, thisTime);
-                    initAirQualData.execute();
-                    try {
-                        initAirQualData.get();
-                    } catch(InterruptedException e) {
-                        e.printStackTrace();
-                    } catch(ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-        getUpdatedBundle();
+        updateData();
     }
     Integer thisMonth;
     String thisTime;
@@ -261,8 +199,9 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
 
         } else if (id == R.id.nav_table) {
-            intent = new Intent(MainActivity.this, TimeTableActivity.class);
-            startActivity(intent);
+            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
+            /*intent = new Intent(MainActivity.this, TimeTableActivity.class);
+            startActivity(intent);*/
         } else if (id == R.id.nav_meal) {
             intent = new Intent(MainActivity.this, MealInfoActivity.class);
             startActivity(intent);
@@ -288,7 +227,7 @@ public class MainActivity extends AppCompatActivity
     
     private Bundle bundle = new Bundle();
     
-    private void getUpdatedBundle() {
+    private void updateData() {
         ConnectivityManager cm =
                 (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         if(cm != null) {
@@ -315,7 +254,6 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
             }
-        
             @Override
             public void onCancelled(DatabaseError databaseError) {
             
@@ -343,6 +281,8 @@ public class MainActivity extends AppCompatActivity
                             "mealData",
                             getResources().getString(R.string.meal_card_data_null));
                 }
+    
+                onCardChanged(home_spinner_selected, bundle);
             }
         
             @Override
@@ -350,7 +290,6 @@ public class MainActivity extends AppCompatActivity
             
             }
         });
-        
         mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -378,6 +317,7 @@ public class MainActivity extends AppCompatActivity
         mDatabase.child("airQualDataFormat").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println("changed!");
                 DataFormat.airQualDataFormat = dataSnapshot.getValue(DataFormat.AirQual.class);
                 String[] param = new String[15];
                 DataFormat.airQualDataFormat.airQualData.toArray(param);
@@ -395,6 +335,8 @@ public class MainActivity extends AppCompatActivity
                 );
                 bundle.putString("airData", temp);
                 bundle.putStringArray("airDataList", param);
+            
+                onCardChanged(home_spinner_selected, bundle);
             }
         
             @Override
@@ -416,8 +358,6 @@ public class MainActivity extends AppCompatActivity
             isConnected = activeNetwork != null &&
                     activeNetwork.isConnectedOrConnecting();
         }
-        
-        getUpdatedBundle();
 
         switch(pos) {
             case 0: {
@@ -486,7 +426,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case 3:
-                /*mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
+                mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         System.out.println(dataSnapshot);
@@ -504,39 +444,12 @@ public class MainActivity extends AppCompatActivity
                             }
                         }
                     }
-
+        
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+            
                     }
                 });
-                mDatabase.child("airQualDataFormat").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        DataFormat.airQualDataFormat = dataSnapshot.getValue(AirQual.class);
-                        String[] param = new String[15];
-                        DataFormat.airQualDataFormat.airQualData.toArray(param);
-                        String temp = String.format(
-                                Locale.getDefault(),
-                                getResources().getString(R.string.home_card_air_quality_format),
-                                param[0],
-                                param[1],
-                                param[2],
-                                param[3],
-                                param[4],
-                                param[5],
-                                param[6],
-                                param[7]
-                        );
-                        bundle.putString("airData", temp);
-                        bundle.putStringArray("airDataList", param);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });*/
     
                 onCardChanged(pos, bundle);
                 break;

@@ -11,7 +11,7 @@ public class InitTimeData
     
     private String jsonData = "";
     
-    InitTimeData(DatabaseReference mDatabase) {
+    public InitTimeData(DatabaseReference mDatabase) {
         this.mDatabase = mDatabase;
     }
     

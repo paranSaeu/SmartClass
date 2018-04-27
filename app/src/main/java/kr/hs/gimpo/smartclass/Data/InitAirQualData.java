@@ -22,7 +22,7 @@ public class InitAirQualData
     private DatabaseReference mDatabase;
     private boolean isUpdateNeed;
     
-    InitAirQualData(DatabaseReference mDatabase, String thisTime) {
+    public InitAirQualData(DatabaseReference mDatabase, String thisTime) {
         this.mDatabase = mDatabase;
         
         if(thisTime != null) {
@@ -40,7 +40,7 @@ public class InitAirQualData
     @Override
     protected Boolean doInBackground(Void... param) {
         System.out.println(isUpdateNeed);
-        if(/*isUpdateNeed*/true) {
+        if(isUpdateNeed) {
             try{
                 Document doc = Jsoup.connect("http://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty?serviceKey="+
                         "uTRaH16OBrv%2BrnhI1l%2BhctIkvNd6DwX%2FxpnCRXHGHLjpRpVqxmQJ7Q4cXR0wucoc%2Bx3v8hg%2BsVZRvhPTzXS1xw%3D%3D"+

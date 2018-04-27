@@ -3,6 +3,8 @@ package kr.hs.gimpo.smartclass.Data;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
+import org.hyunjun.school.SchoolSchedule;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -63,13 +65,13 @@ public class DataFormat {
     public static class Event {
         public String eventLastUpdated;
         public int thisYear;
-        public List<List<List<String>>> eventData;
+        public List<List<SchoolSchedule>> eventData;
         
         Event() {
         
         }
         
-        Event(int thisYear, List<List<List<String>>> eventData) {
+        Event(int thisYear, List<List<SchoolSchedule>> eventData) {
             this.thisYear = thisYear;
             this.eventData = eventData;
             
