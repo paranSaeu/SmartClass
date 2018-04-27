@@ -25,6 +25,12 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+import kr.hs.gimpo.smartclass.*;
+import kr.hs.gimpo.smartclass.Data.InitAirQualData;
+import kr.hs.gimpo.smartclass.Data.InitEventData;
+import kr.hs.gimpo.smartclass.Data.InitMealData;
+import kr.hs.gimpo.smartclass.Data.InitTimeData;
+
 public class IntroActivity extends AppCompatActivity {
 
     DatabaseReference mDatabase;

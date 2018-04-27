@@ -1,4 +1,4 @@
-package kr.hs.gimpo.smartclass;
+package kr.hs.gimpo.smartclass.Fragment;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -12,6 +12,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import kr.hs.gimpo.smartclass.R;
 
 public class AirFragment extends Fragment {
 
@@ -40,9 +42,9 @@ public class AirFragment extends Fragment {
 
         targetTextView = view.findViewById(R.id.home_card_air_place);
         try {
-            Date date = new SimpleDateFormat("yyyy-MM-dd HH'시 사우동측정소'", Locale.getDefault()).parse(dataList[0]);
+            Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(dataList[0]);
     
-            String _temp = new SimpleDateFormat("yyyy'년 'MM'월 'dd'일 'HH'시 사우동측정소'", Locale.getDefault()).format(date.getTime());
+            String _temp = new SimpleDateFormat("yyyy'년 'MM'월 'dd'일 'HH'시' mm'분'", Locale.getDefault()).format(date.getTime());
             targetTextView.setText(_temp);
         } catch(ParseException e) {
             e.printStackTrace();
@@ -57,11 +59,7 @@ public class AirFragment extends Fragment {
             
             targetTextView = view.findViewById(getResources().getIdentifier(statusId, "id", getContext().getPackageName()));
             System.out.println(dataList[i+1]);
-            System.out.println(dataList[i+1].indexOf(" "));
-            String temp = i < 6 ?
-                    dataList[i+1].substring(0, dataList[i+1].indexOf(" ")):
-                    dataList[i+1];
-            float value = temp.compareTo("--") != 0? Float.parseFloat(temp): -1;
+            float value = Float.parseFloat(dataList[i+1]);
             int stat = 0;
             switch(i) {
                 case 0:
