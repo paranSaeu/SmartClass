@@ -365,59 +365,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case 1:
-                /*mDatabase.child("mealDataFormat").child("thisMonth").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        thisMonth = dataSnapshot.getValue(Integer.class);
-                        System.out.println(thisMonth);
-
-                        if(isConnected) {
-                            InitMealData initMealData = new InitMealData(mDatabase, thisMonth);
-                            initMealData.execute();
-                            try {
-                                initMealData.get();
-                            } catch(InterruptedException e) {
-                                e.printStackTrace();
-                            } catch(ExecutionException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-                mDatabase.child("mealDataFormat").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(Calendar.getInstance().getTime());
-                        int thisDay = Integer.parseInt(new SimpleDateFormat("dd", Locale.getDefault()).format(Calendar.getInstance().getTime()));
-                        int thisMeal = Integer.parseInt(new SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) < 14? 0 : 1;
-                        bundle.putInt("mealTime", thisMeal);
-                        bundle.putString(
-                                "mealDate",
-                                new SimpleDateFormat("yyyy'년 'MM'월 'dd'일 '", Locale.getDefault()).format(Calendar.getInstance().getTime()));
-                        if(!(calendar.get(Calendar.DAY_OF_WEEK) == 1 || calendar.get(Calendar.DAY_OF_WEEK) == 7)) {
-                            System.out.println(dataSnapshot);
-                            DataFormat.mealDataFormat = dataSnapshot.getValue(Meal.class);
-                            bundle.putString(
-                                    "mealData",
-                                    DataFormat.mealDataFormat.mealData.get(thisDay - 1).get(thisMeal));
-                        } else {
-                            bundle.putString(
-                                    "mealData",
-                                    getResources().getString(R.string.meal_card_data_null));
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });*/
+                
     
                 onCardChanged(pos, bundle);
                 break;
