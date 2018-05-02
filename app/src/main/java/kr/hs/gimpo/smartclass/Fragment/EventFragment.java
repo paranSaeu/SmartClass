@@ -1,4 +1,4 @@
-package kr.hs.gimpo.smartclass;
+package kr.hs.gimpo.smartclass.Fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class MealFragment extends Fragment {
+import kr.hs.gimpo.smartclass.R;
 
-    public MealFragment() {
+public class EventFragment extends Fragment {
+
+    public EventFragment() {
 
     }
 
@@ -16,7 +18,7 @@ public class MealFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.home_card_frag_meal, container, false);
+        return inflater.inflate(R.layout.card_frag_event, container, false);
     }
 
     public void setText(String data) {

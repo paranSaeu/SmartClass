@@ -1,7 +1,10 @@
 package kr.hs.gimpo.smartclass;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
@@ -18,6 +21,12 @@ import android.widget.TextView;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -28,13 +37,24 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 public class MealInfoActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("test");
+    boolean isConnected;
+    Integer thisMonth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String date = new SimpleDateFormat("MM-dd", Locale.getDefault()).format(Calendar.getInstance().getTime());
+        if(date.compareTo("04-16")==0) {
+            setTheme(R.style.remember0416);
+        } else {
+            setTheme(R.style.AppTheme_NoActionBar);
+        }
         setContentView(R.layout.activity_meal_info);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.meal_title);
@@ -56,6 +76,51 @@ public class MealInfoActivity extends AppCompatActivity
         month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
         year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
 
+        /*ConnectivityManager cm =
+                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(cm != null) {
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            isConnected = activeNetwork != null &&
+                    activeNetwork.isConnectedOrConnecting();
+        }
+
+        mDatabase.child("mealDataFormat").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println(dataSnapshot);
+                thisMonth = dataSnapshot.child("thisMonth").getValue(Integer.class);
+                System.out.println(thisMonth);
+
+                if(isConnected) {
+                    InitMealData initMealData = new InitMealData(mDatabase, thisMonth);
+                    initMealData.execute();
+                    try {
+                        initMealData.get();
+                    } catch(InterruptedException e) {
+                        e.printStackTrace();
+                    } catch(ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if(!(calendar.get(Calendar.DAY_OF_WEEK) == 1 || calendar.get(Calendar.DAY_OF_WEEK) == 7)) {
+                    System.out.println(dataSnapshot);
+                    DataFormat.mealDataFormat = dataSnapshot.getValue(Meal.class);
+                    int thisDay = Integer.parseInt(new SimpleDateFormat("dd", Locale.getDefault()).format(Calendar.getInstance().getTime()));
+                    int thisMeal = Integer.parseInt(new SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) < 14? 0 : 1;
+                    if() {DataFormat.mealDataFormat.mealData.get(thisDay - 1).get(thisMeal);
+                } else {
+                    getResources().getString(R.string.meal_card_data_null));
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
+
         initDate(year, month, day);
 
         lunch_data = (TextView)findViewById(R.id.meal_card_lunch_data);
@@ -67,17 +132,6 @@ public class MealInfoActivity extends AppCompatActivity
         jsoupAsyncTask = new JsoupAsyncTask();
         jsoupAsyncTask.execute();
 
-        /*Button htmlTitleButton = (Button)findViewById(R.id.button);
-        htmlTitleButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.out.println( (cnt+1) +"번째 파싱");
-                JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
-                jsoupAsyncTask.execute();
-                cnt++;
-            }
-        });*/
-
         final ImageButton month_left = (ImageButton) findViewById(R.id.meal_button_month_back);
         month_left.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,7 +142,6 @@ public class MealInfoActivity extends AppCompatActivity
                 month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
                 year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
                 initDate(year, month, day);
-                //jsoupAsyncTask.execute();
             }
         });
 
@@ -102,7 +155,6 @@ public class MealInfoActivity extends AppCompatActivity
                 month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
                 year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
                 initDate(year, month, day);
-                //jsoupAsyncTask.execute();
             }
         });
 
@@ -116,7 +168,6 @@ public class MealInfoActivity extends AppCompatActivity
                 month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
                 year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
                 initDate(year, month, day);
-                //jsoupAsyncTask.execute();
             }
         });
 
@@ -130,7 +181,6 @@ public class MealInfoActivity extends AppCompatActivity
                 month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
                 year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
                 initDate(year, month, day);
-                //jsoupAsyncTask.execute();
             }
         });
     }
@@ -248,9 +298,10 @@ public class MealInfoActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             finish();
         } else if (id == R.id.nav_table) {
-            intent = new Intent(MealInfoActivity.this, TimeTableActivity.class);
+            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
+            /*intent = new Intent(MealInfoActivity.this, TimeTableActivity.class);
             startActivity(intent);
-            finish();
+            finish();*/
         } else if (id == R.id.nav_meal) {
 
         } else if (id == R.id.nav_calendar) {
@@ -260,7 +311,8 @@ public class MealInfoActivity extends AppCompatActivity
         } else if (id == R.id.nav_setting) {
             //intent = new Intent(MealInfoActivity.this, .class);
             //startActivity(intent);
-            finish();
+            //finish();
+            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_info) {
             try {
                 CharSequence version = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
