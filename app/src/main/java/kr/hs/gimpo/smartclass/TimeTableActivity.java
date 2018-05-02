@@ -40,6 +40,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+import kr.hs.gimpo.smartclass.*;
+import kr.hs.gimpo.smartclass.Data.DataFormat;
+import kr.hs.gimpo.smartclass.Data.InitTimeData;
 
 public class TimeTableActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -99,7 +102,7 @@ public class TimeTableActivity extends AppCompatActivity
 
                     updatedTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Calendar.getInstance().getTime());
                 }
-                DataFormat.timeDataFormat = dataSnapshot.getValue(Time.class);
+                DataFormat.timeDataFormat = dataSnapshot.getValue(DataFormat.Time.class);
                 InitDataThread[] initDataThread = new InitDataThread[11];
                 ArrayList<Thread> classNo = new ArrayList<>();
                 for(int i = 0; i < 11; i++) {

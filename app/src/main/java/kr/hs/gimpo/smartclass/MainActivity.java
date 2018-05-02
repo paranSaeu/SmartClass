@@ -31,12 +31,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
+
+import kr.hs.gimpo.smartclass.Fragment.*;
+import kr.hs.gimpo.smartclass.Data.*;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,AdapterView.OnItemSelectedListener,onCardChangeListener {
@@ -146,67 +147,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        ConnectivityManager cm =
-                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(cm != null) {
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            isConnected = activeNetwork != null &&
-                    activeNetwork.isConnectedOrConnecting();
-        }
-
-        mDatabase.child("mealDataFormat").child("thisMonth").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println(dataSnapshot);
-                thisMonth = dataSnapshot.getValue(Integer.class);
-                System.out.println(thisMonth);
-
-                if(isConnected) {
-                    InitMealData initMealData = new InitMealData(mDatabase, thisMonth);
-                    initMealData.execute();
-                    try {
-                        initMealData.get();
-                    } catch(InterruptedException e) {
-                        e.printStackTrace();
-                    } catch(ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
-        mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println(dataSnapshot);
-                thisTime = dataSnapshot.getValue(String.class);
-                System.out.println(thisTime);
-                if(isConnected) {
-                    InitAirQualData initAirQualData = new InitAirQualData(mDatabase, thisTime);
-                    initAirQualData.execute();
-                    try {
-                        initAirQualData.get();
-                    } catch(InterruptedException e) {
-                        e.printStackTrace();
-                    } catch(ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-
+        updateData();
     }
     Integer thisMonth;
     String thisTime;
@@ -258,8 +199,9 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
 
         } else if (id == R.id.nav_table) {
-            intent = new Intent(MainActivity.this, TimeTableActivity.class);
-            startActivity(intent);
+            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
+            /*intent = new Intent(MainActivity.this, TimeTableActivity.class);
+            startActivity(intent);*/
         } else if (id == R.id.nav_meal) {
             intent = new Intent(MainActivity.this, MealInfoActivity.class);
             startActivity(intent);
@@ -282,6 +224,127 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+    
+    private Bundle bundle = new Bundle();
+    
+    private void updateData() {
+        ConnectivityManager cm =
+                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if(cm != null) {
+            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+            isConnected = activeNetwork != null &&
+                    activeNetwork.isConnectedOrConnecting();
+        }
+    
+        mDatabase.child("mealDataFormat").child("thisMonth").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                thisMonth = dataSnapshot.getValue(Integer.class);
+                System.out.println(thisMonth);
+            
+                if(isConnected) {
+                    InitMealData initMealData = new InitMealData(mDatabase, thisMonth);
+                    initMealData.execute();
+                    try {
+                        initMealData.get();
+                    } catch(InterruptedException e) {
+                        e.printStackTrace();
+                    } catch(ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            
+            }
+        });
+        mDatabase.child("mealDataFormat").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(Calendar.getInstance().getTime());
+                int thisDay = Integer.parseInt(new SimpleDateFormat("dd", Locale.getDefault()).format(Calendar.getInstance().getTime()));
+                int thisMeal = Integer.parseInt(new SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) < 14? 0 : 1;
+                bundle.putInt("mealTime", thisMeal);
+                bundle.putString(
+                        "mealDate",
+                        new SimpleDateFormat("yyyy'년 'MM'월 'dd'일 '", Locale.getDefault()).format(Calendar.getInstance().getTime()));
+                if(!(calendar.get(Calendar.DAY_OF_WEEK) == 1 || calendar.get(Calendar.DAY_OF_WEEK) == 7)) {
+                    System.out.println(dataSnapshot);
+                    DataFormat.mealDataFormat = dataSnapshot.getValue(DataFormat.Meal.class);
+                    bundle.putString(
+                            "mealData",
+                            DataFormat.mealDataFormat.mealData.get(thisDay - 1).get(thisMeal));
+                } else {
+                    bundle.putString(
+                            "mealData",
+                            getResources().getString(R.string.meal_card_data_null));
+                }
+    
+                onCardChanged(home_spinner_selected, bundle);
+            }
+        
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            
+            }
+        });
+        mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println(dataSnapshot);
+                thisTime = dataSnapshot.getValue(String.class);
+                System.out.println(thisTime);
+                if(isConnected) {
+                    InitAirQualData initAirQualData = new InitAirQualData(mDatabase, thisTime);
+                    initAirQualData.execute();
+                    try {
+                        initAirQualData.get();
+                    } catch(InterruptedException e) {
+                        e.printStackTrace();
+                    } catch(ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            
+            }
+        });
+        mDatabase.child("airQualDataFormat").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println("changed!");
+                DataFormat.airQualDataFormat = dataSnapshot.getValue(DataFormat.AirQual.class);
+                String[] param = new String[15];
+                DataFormat.airQualDataFormat.airQualData.toArray(param);
+                String temp = String.format(
+                        Locale.getDefault(),
+                        getResources().getString(R.string.home_card_air_quality_format),
+                        param[0],
+                        param[1],
+                        param[2],
+                        param[3],
+                        param[4],
+                        param[5],
+                        param[6],
+                        param[7]
+                );
+                bundle.putString("airData", temp);
+                bundle.putStringArray("airDataList", param);
+            
+                onCardChanged(home_spinner_selected, bundle);
+            }
+        
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            
+            }
+        });
+    }
 
     public void onItemSelected(AdapterView<?> parent, View view,
                                final int pos, long id) {
@@ -295,74 +358,18 @@ public class MainActivity extends AppCompatActivity
             isConnected = activeNetwork != null &&
                     activeNetwork.isConnectedOrConnecting();
         }
-        
 
         switch(pos) {
             case 0: {
-                Bundle bundle = new Bundle();
                 onCardChanged(pos, bundle);
                 }
                 break;
             case 1:
-                mDatabase.child("mealDataFormat").child("thisMonth").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        System.out.println(dataSnapshot);
-                        thisMonth = dataSnapshot.getValue(Integer.class);
-                        System.out.println(thisMonth);
-
-                        if(isConnected) {
-                            InitMealData initMealData = new InitMealData(mDatabase, thisMonth);
-                            initMealData.execute();
-                            try {
-                                initMealData.get();
-                            } catch(InterruptedException e) {
-                                e.printStackTrace();
-                            } catch(ExecutionException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-                mDatabase.child("mealDataFormat").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.setTime(Calendar.getInstance().getTime());
-                        Bundle bundle = new Bundle();
-                        int thisDay = Integer.parseInt(new SimpleDateFormat("dd", Locale.getDefault()).format(Calendar.getInstance().getTime()));
-                        int thisMeal = Integer.parseInt(new SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) < 14? 0 : 1;
-                        bundle.putInt("mealTime", thisMeal);
-                        bundle.putString(
-                                "mealDate",
-                                new SimpleDateFormat("yyyy'년 'MM'월 'dd'일 '", Locale.getDefault()).format(Calendar.getInstance().getTime()));
-                        if(!(calendar.get(Calendar.DAY_OF_WEEK) == 1 || calendar.get(Calendar.DAY_OF_WEEK) == 7)) {
-                            System.out.println(dataSnapshot);
-                            DataFormat.mealDataFormat = dataSnapshot.getValue(Meal.class);
-                            bundle.putString(
-                                    "mealData",
-                                    DataFormat.mealDataFormat.mealData.get(thisDay - 1).get(thisMeal));
-                        } else {
-                            bundle.putString(
-                                    "mealData",
-                                    getResources().getString(R.string.meal_card_data_null));
-                        }
-                        onCardChanged(pos, bundle);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+                
+    
+                onCardChanged(pos, bundle);
                 break;
             case 2: {
-                  Bundle bundle = new Bundle();
                   onCardChanged(pos, bundle);
                 }
                 break;
@@ -385,44 +392,16 @@ public class MainActivity extends AppCompatActivity
                             }
                         }
                     }
-
+        
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+            
                     }
                 });
-                mDatabase.child("airQualDataFormat").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        DataFormat.airQualDataFormat = dataSnapshot.getValue(AirQual.class);
-                        String[] param = new String[8];
-                        DataFormat.airQualDataFormat.airQualData.toArray(param);
-                        String temp = String.format(
-                                Locale.getDefault(),
-                                getResources().getString(R.string.home_card_air_quality_format),
-                                param[0],
-                                param[1],
-                                param[2],
-                                param[3],
-                                param[4],
-                                param[5],
-                                param[6],
-                                param[7]
-                        );
-                        Bundle bundle = new Bundle();
-                        bundle.putString("airData", temp);
-                        bundle.putStringArray("airDataList", param);
-                        onCardChanged(pos, bundle);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
+    
+                onCardChanged(pos, bundle);
                 break;
             default: {
-                    Bundle bundle = new Bundle();
                     onCardChanged(pos, bundle);
                 }
                 break;

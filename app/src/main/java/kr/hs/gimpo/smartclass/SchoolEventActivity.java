@@ -54,9 +54,6 @@ public class SchoolEventActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        jsoupAsyncTask = new JsoupAsyncTask();
-        jsoupAsyncTask.execute();
-
         news = (TextView) findViewById(R.id.textView3);
         news.setMovementMethod(new ScrollingMovementMethod());
 
@@ -64,13 +61,10 @@ public class SchoolEventActivity extends AppCompatActivity
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                jsoupAsyncTask = new JsoupAsyncTask();
-                jsoupAsyncTask.execute();
             }
         });
     }
 
-    JsoupAsyncTask jsoupAsyncTask;
     TextView news;
 
     @Override
@@ -114,9 +108,11 @@ public class SchoolEventActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             finish();
         } else if (id == R.id.nav_table) {
-            intent = new Intent(SchoolEventActivity.this, TimeTableActivity.class);
+    
+            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
+            /*intent = new Intent(SchoolEventActivity.this, TimeTableActivity.class);
             startActivity(intent);
-            finish();
+            finish();*/
         } else if (id == R.id.nav_meal) {
             intent = new Intent(SchoolEventActivity.this, MealInfoActivity.class);
             startActivity(intent);
@@ -124,6 +120,8 @@ public class SchoolEventActivity extends AppCompatActivity
         } else if (id == R.id.nav_calendar) {
 
         } else if (id == R.id.nav_setting) {
+    
+            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
 
         } else if (id == R.id.nav_info) {
             try {
@@ -141,61 +139,7 @@ public class SchoolEventActivity extends AppCompatActivity
 
     //www.gimpo.hs.kr/main.php?menugrp=020300&master=diary&act=list&master_sid=1&SearchYear=2018&SearchMonth=03&SearchCategory=
     //학사일정 주소
+    
+    
 
-    private String htmlPageUrl = "http://www.yonhapnews.co.kr/";
-    private String htmlContentInStringFormat = "";
-
-    private class JsoupAsyncTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-
-                Document doc = Jsoup.connect(htmlPageUrl).get();
-
-
-                //테스트1
-                Elements titles= doc.select("div.news-con h1.tit-news");
-
-                System.out.println("-------------------------------------------------------------");
-                for(Element e: titles){
-                    System.out.println("title: " + e.text());
-                    htmlContentInStringFormat += e.text().trim() + "\n";
-                }
-
-                //테스트2
-                titles= doc.select("div.news-con h2.tit-news");
-
-                System.out.println("-------------------------------------------------------------");
-                for(Element e: titles){
-                    System.out.println("title: " + e.text());
-                    htmlContentInStringFormat += e.text().trim() + "\n";
-                }
-
-                //테스트3
-                titles= doc.select("li.section02 div.con h2.news-tl");
-
-                System.out.println("-------------------------------------------------------------");
-                for(Element e: titles){
-                    System.out.println("title: " + e.text());
-                    htmlContentInStringFormat += e.text().trim() + "\n";
-                }
-                System.out.println("-------------------------------------------------------------");
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            news.setText(htmlContentInStringFormat);
-        }
-    }
 }

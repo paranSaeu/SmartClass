@@ -298,9 +298,10 @@ public class MealInfoActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             finish();
         } else if (id == R.id.nav_table) {
-            intent = new Intent(MealInfoActivity.this, TimeTableActivity.class);
+            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
+            /*intent = new Intent(MealInfoActivity.this, TimeTableActivity.class);
             startActivity(intent);
-            finish();
+            finish();*/
         } else if (id == R.id.nav_meal) {
 
         } else if (id == R.id.nav_calendar) {
@@ -310,7 +311,8 @@ public class MealInfoActivity extends AppCompatActivity
         } else if (id == R.id.nav_setting) {
             //intent = new Intent(MealInfoActivity.this, .class);
             //startActivity(intent);
-            finish();
+            //finish();
+            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_info) {
             try {
                 CharSequence version = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;

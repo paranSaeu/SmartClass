@@ -6,7 +6,7 @@ android {
         applicationId "kr.hs.gimpo.smartclass"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 3410
+        versionCode 3420
         versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -16,14 +16,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-
+            lintOptions {
+                abortOnError false
+            }
         }
     }
     flavorDimensions "test"
     productFlavors {
         beta {
             dimension "test"
-            versionName "3.4.1-beta"
+            versionName "3.4.2-beta"
         }
     }
 }
@@ -38,8 +40,8 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation 'com.android.support:cardview-v7:26.1.0'
     implementation files('libs/jsoup-1.10.3.jar')
-    implementation 'com.google.firebase:firebase-core:12.0.1'
-    implementation 'com.google.firebase:firebase-database:12.0.1'
+    implementation 'com.google.firebase:firebase-core:15.0.0'
+    implementation 'com.google.firebase:firebase-database:15.0.0'
     implementation 'com.google.code.gson:gson:2.8.0'
 }
 
