@@ -335,6 +335,7 @@ public class MainActivity extends AppCompatActivity
                 );
                 bundle.putString("airData", temp);
                 bundle.putStringArray("airDataList", param);
+                System.out.println("airDataList init.");
             
                 onCardChanged(home_spinner_selected, bundle);
             }

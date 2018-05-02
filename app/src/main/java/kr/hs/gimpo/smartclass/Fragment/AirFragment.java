@@ -48,7 +48,8 @@ public class AirFragment extends Fragment {
             String statusId = String.format(Locale.getDefault(), STAT_ID_FORMAT, targetList[i]);;
             targetTextView = view.findViewById(getResources().getIdentifier(dataId, "id", getContext().getPackageName()));
             System.out.println(dataList[i + 1]);
-            targetTextView.setText(dataList[i + 1] + (i <= 2? " ㎍/㎥":(i < 6? " ppm":"")));
+            String temp = dataList[i + 1] + (i <= 2? " ㎍/㎥":(i < 6? " ppm":""));
+            targetTextView.setText(temp);
         
             targetTextView = view.findViewById(getResources().getIdentifier(statusId, "id", getContext().getPackageName()));
             int stat = Integer.parseInt(dataList[i + 1 + 7]);
@@ -95,8 +96,6 @@ public class AirFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.card_frag_air, container, false);
-        
-        ConstraintLayout constraintLayout = view.findViewById(R.id.card_air_layout);
 
         updateView(view);
         

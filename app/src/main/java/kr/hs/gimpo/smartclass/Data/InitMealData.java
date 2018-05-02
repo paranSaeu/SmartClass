@@ -108,6 +108,8 @@ public class InitMealData
                             }
                         }
                         temp.add(sb.toString());
+                    } else {
+                        temp.add("등록된 식단 정보가 없습니다.");
                     }
                 }
                 mealDataList.add(temp);
