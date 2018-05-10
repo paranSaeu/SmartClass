@@ -5,7 +5,7 @@
 
 - app/src/main/에서 소스 코드를 확인하실 수 있습니다.
   - java/kr/hs/gimpo/smartclass/ : 본 어플리케이션의 소스 코드
-  - java/org/hyunjun/school : [School API](agemor/school-api)의 소스 코드(일부 변경됨)
+  - java/org/hyunjun/school : [School API](https://github.com/agemor/school-api)의 소스 코드(일부 변경됨)
 
 ## [변경 기록(Changelog)](./Changelog.md)
 
@@ -30,7 +30,7 @@
  본 어플리케이션에서 제공하는 자료는 실시간으로 관측된 정보이며, 현지사정이나 수신 상태에 의해 차이가 발생할 수 있습니다.
 
 - 학사일정 자료<br>
- 본 어플리케이션은 [School API](agemor/school-api)를 사용하여 교육행정정보시스템(NEIS, 나이스) 학생서비스에서 공개하는 학교별 월간일정 자료를 제공해 드립니다.<br>
+ 본 어플리케이션은 MIT 라이선스에 따라 [School API](https://github.com/agemor/school-api)를 사용하여 교육행정정보시스템(NEIS, 나이스) 학생서비스에서 공개하는 학교별 월간일정 자료를 제공해 드립니다.<br>
  본 어플리케이션에서 제공하는 자료는 수신 상태에 따라 차이가 발생할 수 있습니다.
 
 ## 면책 조항
