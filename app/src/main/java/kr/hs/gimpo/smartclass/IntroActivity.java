@@ -51,6 +51,7 @@ public class IntroActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_intro);
+        System.out.println("setContentView: activity_intro");
 
         isConnected = false;
         ConnectivityManager cm =
