@@ -5,7 +5,7 @@
 
 - app/src/main/에서 소스 코드를 확인하실 수 있습니다.
   - java/kr/hs/gimpo/smartclass/ : 본 어플리케이션의 소스 코드
-  - java/org/hyunjun/school : [School API](https://github.com/agemor/blob/master/school-api)의 소스 코드(일부 변경됨)
+  - java/org/hyunjun/school : [School API](https://github.com/agemor/school-api)의 소스 코드(일부 변경됨)
 
 ## [변경 기록(Changelog)](Changelog.md)
 
@@ -36,3 +36,4 @@
 ## 면책 조항
 
  본 어플리케이션은 김포고등학교에서 공식으로 제작한 어플리케이션이 아닙니다. 본 어플리케이션을 사용함으로써 발생할 수 있는 모든 불이익에 대해 이 어플리케이션의 개발자는 책임을 지지 않습니다. 사용자는 본 어플리케이션을 사용함으로써 본 어플리케이션이 잘못된 정보를 제공할 수 있다는 사실과 이로 인해 일어날 수 있는 불이익을 명백히 인지하였으며, 이에 대한 책임이 사용자에게 있음에 동의한 것으로 간주합니다.
+
