@@ -5,5 +5,15 @@
     <color name="colorAccent">#FF4081</color>
     <color name="Black">#000000</color>
     <color name="danger">@android:color/holo_red_light</color>
+
+    <!-- AirQualData -->
+
+    <color name="vgood">#0080FF</color>
+    <color name="good">#00FF66</color>
+    <color name="bad">#FFFF00</color>
+    <color name="vbad">#FF1900</color>
+    <!-- common color for unknown factor. -->
     <color name="common">@android:color/tertiary_text_dark</color>
+
+
 </resources>

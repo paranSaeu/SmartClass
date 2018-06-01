@@ -20,15 +20,13 @@ public class InitAirQualData
     private String[] airData = new String[15];
     private final String[] airDataFormat = {"dataTime", "pm10", "pm25", "o3", "no2", "co", "so2", "khai"};
     private DatabaseReference mDatabase;
-    private boolean isUpdateNeed;
+    private boolean isUpdateNeed = true;
     
     public InitAirQualData(DatabaseReference mDatabase, String thisTime) {
         this.mDatabase = mDatabase;
         
         if(thisTime != null) {
             this.isUpdateNeed = (thisTime.compareTo(new SimpleDateFormat("yyyy-MM-dd HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) != 0);
-        } else {
-            this.isUpdateNeed = true;
         }
     }
     
@@ -45,9 +43,10 @@ public class InitAirQualData
                 Document doc = Jsoup.connect("http://openapi.airkorea.or.kr/openapi/services/rest/ArpltnInforInqireSvc/getMsrstnAcctoRltmMesureDnsty?serviceKey="+
                         "uTRaH16OBrv%2BrnhI1l%2BhctIkvNd6DwX%2FxpnCRXHGHLjpRpVqxmQJ7Q4cXR0wucoc%2Bx3v8hg%2BsVZRvhPTzXS1xw%3D%3D"+
                         "&numOfRows=1&pageSize=1&pageNo=1&startPage=1&stationName=%EC%82%AC%EC%9A%B0%EB%8F%99&dataTerm=DAILY&ver=1.3").get();
-                System.out.println(doc.getElementsByTag("resultCode").text().trim());
                 
                 String resultCode = doc.getElementsByTag("resultCode").text().trim();
+                
+                System.out.println(resultCode);
                 
                 if(resultCode.compareTo("00") == 0) {
                     int cnt = 0;

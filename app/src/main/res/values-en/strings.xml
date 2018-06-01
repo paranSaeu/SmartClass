@@ -124,7 +124,7 @@
 
     <string name="meal_title">MealInfo</string>
 
-    <string name="meal_allergic_info">[ Allergic Info ]\n1 Egg 2 Milk 3 Buckwheat 4 Peanut 5 Soy 6 Wheat 7 Mackerel 8 Crab 9 Shrimp 10 Pork 11 Peach 12 Tomato 13 Sulfite 14 Walnut 15 Chicken 16 Beef 17 Squid(YOU...?) 18 Abalone 19 Mussel</string>
+    <string name="meal_allergic_info">[ Allergic Info ]\n1 Egg 2 Milk 3 Buckwheat 4 Peanut 5 Soy 6 Wheat 7 Mackerel 8 Crab 9 Shrimp 10 Pork 11 Peach 12 Tomato 13 Sulfite 14 Walnut 15 Chicken 16 Beef 17 Squid 18 Abalone 19 Mussel</string>
 
     <!-- SchoolEventActivity -->
 
@@ -140,7 +140,7 @@
 
     <string name="notYet">Unmade</string>
 
-    <string name="navigation_drawer_open">Open Navigation Drawer/string>
+    <string name="navigation_drawer_open">Open Navigation Drawer</string>
     <string name="navigation_drawer_close">close Navigation Drawer</string>
     <string name="date">Date</string>
     <string name="date_format">%s. %s. %s.</string>

@@ -8,6 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,7 +21,8 @@ import java.util.Locale;
 
 import kr.hs.gimpo.smartclass.R;
 
-public class AirFragment extends Fragment {
+public class AirFragment
+        extends Fragment {
 
     public AirFragment() {
 
@@ -23,10 +30,19 @@ public class AirFragment extends Fragment {
 
     @Override
     public void setArguments(Bundle bundle) {
-        this.data = bundle.getString("airData", bundle.getString("airData_default"));
-        this.dataList = bundle.getStringArray("airDataList");
-        if(isCreated) {
-            updateView(getView());
+        if(bundle != null) {
+            this.data = bundle.getString("airData", bundle.getString("airData_default"));
+            this.dataList = bundle.getStringArray("airDataList");
+            if(isCreated) {
+                updateView(getView());
+            }
+        } else {
+            this.dataList = new String[15];
+            dataList[0] = "0000-00-00 00:00";
+            for(int i = 0; i < 7; i++) {
+                dataList[i + 1] = "--";
+                dataList[i + 1 + 7] = "-1";
+            }
         }
     }
     
@@ -60,22 +76,22 @@ public class AirFragment extends Fragment {
                     break;
                 case 1:
                     targetTextView.setTypeface(Typeface.DEFAULT);
-                    targetTextView.setTextColor(getResources().getColor(R.color.common));
+                    targetTextView.setTextColor(getResources().getColor(R.color.vgood));
                     targetTextView.setText(getResources().getString(R.string.vgood));
                     break;
                 case 2:
                     targetTextView.setTypeface(Typeface.DEFAULT);
-                    targetTextView.setTextColor(getResources().getColor(R.color.common));
+                    targetTextView.setTextColor(getResources().getColor(R.color.good));
                     targetTextView.setText(getResources().getString(R.string.good));
                     break;
                 case 3:
                     targetTextView.setTypeface(Typeface.DEFAULT_BOLD);
-                    targetTextView.setTextColor(getResources().getColor(R.color.danger));
+                    targetTextView.setTextColor(getResources().getColor(R.color.bad));
                     targetTextView.setText(getResources().getString(R.string.bad));
                     break;
                 case 4:
                     targetTextView.setTypeface(Typeface.DEFAULT_BOLD);
-                    targetTextView.setTextColor(getResources().getColor(R.color.danger));
+                    targetTextView.setTextColor(getResources().getColor(R.color.vbad));
                     targetTextView.setText(getResources().getString(R.string.vbad));
                     break;
             }
@@ -89,6 +105,7 @@ public class AirFragment extends Fragment {
     final String DATA_ID_FORMAT = "card_air_data_%s";
     final String STAT_ID_FORMAT = "card_air_status_%s";
     boolean isCreated = false;
+    DatabaseReference mDatabase;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -101,5 +118,22 @@ public class AirFragment extends Fragment {
         isCreated = true;
         
         return view;
+    }
+    
+    public void initValueEventListener() {
+        mDatabase = FirebaseDatabase.getInstance().getReference("test").child("AirQualDataFormat");
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println(dataSnapshot);
+                
+                dataList[1] = dataSnapshot.child("pm10").getValue(String.class);
+            }
+    
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+        
+            }
+        });
     }
 }
