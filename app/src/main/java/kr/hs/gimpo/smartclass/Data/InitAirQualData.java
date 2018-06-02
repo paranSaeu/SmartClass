@@ -66,23 +66,6 @@ public class InitAirQualData
                     mDatabase.child("airQualDataFormat").setValue(DataFormat.airQualDataFormat);
                 }
                 
-                
-                /*doc = Jsoup.connect("http://m.airkorea.or.kr/sub_new/sub41.jsp")
-                        .cookie("isGps","N")
-                        .cookie("station","131471")
-                        .cookie("lat", "37.619355")
-                        .cookie("lng","126,716748")
-                        .get();
-                Elements data = doc.select("div#detailContent div");
-                int cnt = 0;
-                for(Element e: data) {
-                    System.out.println("place: " + e.text());
-                    airData[cnt] = e.text().trim();
-                    cnt++;
-                }
-                DataFormat.airQualDataFormat = new AirQual(Arrays.asList(airData));
-
-                mDatabase.child("airQualDataFormat").setValue(DataFormat.airQualDataFormat);*/
                 return true;
             } catch(IOException e) {
                 e.printStackTrace();

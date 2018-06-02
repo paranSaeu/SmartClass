@@ -8,7 +8,7 @@
 
     <string name="action_settings">Settings</string>
 
-    <string name="noti_version_is">App ver.:</string>
+    <string name="noti_version_is">App ver.: </string>
 
     <string name="mon">Mon</string>
     <string name="tue">Tue</string>
@@ -51,7 +51,7 @@
 
     <string name="home_card_meal_title_am">Lunch Today</string>
     <string name="home_card_meal_title_pm">Dinner Today</string>
-    <string name="home_card_meal_title_help">Today's menu is displayed here</string>
+    <string name="home_card_meal_title_help">Today\'s menu is displayed here</string>
 
     <string name="home_card_time_title">TimeTable</string>
 
@@ -141,7 +141,7 @@
     <string name="notYet">Unmade</string>
 
     <string name="navigation_drawer_open">Open Navigation Drawer</string>
-    <string name="navigation_drawer_close">close Navigation Drawer</string>
+    <string name="navigation_drawer_close">Close Navigation Drawer</string>
     <string name="date">Date</string>
     <string name="date_format">%s. %s. %s.</string>
     <string name="home_card_air_title">Air Quality near School</string>
