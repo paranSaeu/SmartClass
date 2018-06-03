@@ -1,27 +1,29 @@
 # SmartClass
-김포고등학교 스마트 클래스 - 소스 코드
+김포고등학교 스마트 클래스 프로젝트의 소스 코드입니다.
+이 프로젝트는 김포고등학교 과학융합 프로젝트입니다.
 
-## 기능 소개
+## 이용 안내
+- app/src/main/ 에서 소스 코드를 확인하실 수 있습니다.
+  - app/src/main/java/kr/hs/gimpo/smartclass/ : 본 어플리케이션의 소스 코드
+  - app/src/main/java/org/hyunjun/school : [School API](https://github.com/agemor/school-api)의 소스 코드(일부 변경됨)
 
-- app/src/main/에서 소스 코드를 확인하실 수 있습니다.
-  - java/kr/hs/gimpo/smartclass/ : 본 어플리케이션의 소스 코드
-  - java/org/hyunjun/school : [School API](https://github.com/agemor/blob/master/school-api)의 소스 코드(일부 변경됨)
+이 Repository를 clone하신 후에는 Android Studio를 통해 열어보실 수 있습니다.<br>
+pull request는 환영합니다. 다만 확인이 늦어질 수 있으니 참고해 주시기 바랍니다.
 
 ## [변경 기록(Changelog)](Changelog.md)
 
-현재 최신 버전: 3.4.2-beta (2018-04-23 기준)
-
+현재 최신 버전: 3.5.0-beta (2018-06-03 기준)<br>
 [최신 버전 다운로드](app/beta/release/app-beta-release.apk)
 
-[예정된 기능](https://plus.google.com/u/0/101927860668573451393/posts/4N6KJmppVBf)
-
-- 3.4.2-beta 변경 사항 (2018-04-23)
+- 3.5.0-beta 변경 사항 (2018-06-03)
   - 수정된 사항
-    - 기능 개선: '메인' 화면의 '학교 주변 대기상태' 에서 대기질 정보를 좀 더 자세히 확인할 수 있습니다. 가독성 또한 개선하였습니다.
-    - 버그 수정: 인터넷을 켠 채 앱을 실행하면 강제종료되는 오류를 해결하였습니다.
-    - 기능 삭제: 실시간 시간표 기능이 작동하지 않습니다.
+    - 기능 추가: 이제 앱을 닫기 전에 '어플리케이션을 종료하시겠습니까?'하고 질문합니다!
+    - 기능 추가: '설정' 화면이 생성되었습니다.
+    - 기능 개선: '인트로' 화면에서 너무 오랜 시간 있던 것을 수정하였습니다.
+    - 기능 개선: 이제 '학사일정' 화면이 구색을 갖추기 시작합니다.
+    - 기능 개선: 이제 '메인' 화면의 '학교 주변 대기상태' 에서 각 상태별로 색깔이 다르게 적용됩니다.
   - 알려진 버그
-    - '메인' 화면에서 '오늘의 중식/석식'을 선택하였을 때 중식/석식 메뉴가 전부 표시되지 않을 수 있음
+    - '메인' 화면의 '학교 주변 대기상태'를 선택했을 때 가끔씩 강제 종료됨
 
 ## Reference
 

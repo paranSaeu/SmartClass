@@ -1,14 +1,18 @@
 package kr.hs.gimpo.smartclass;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -40,7 +44,7 @@ import kr.hs.gimpo.smartclass.Fragment.*;
 import kr.hs.gimpo.smartclass.Data.*;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,AdapterView.OnItemSelectedListener,onCardChangeListener {
+        implements NavigationView.OnNavigationItemSelectedListener,AdapterView.OnItemSelectedListener,onCardChangeListener,QuitDialogFragment.QuitDialogListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,7 +167,8 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             //super.onBackPressed();
-            finish();
+            DialogFragment dialogFragment = new QuitDialogFragment();
+            dialogFragment.show(getSupportFragmentManager(), "quit");
         }
     }
 
@@ -183,7 +188,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -209,7 +215,8 @@ public class MainActivity extends AppCompatActivity
             intent = new Intent(MainActivity.this, SchoolEventActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_setting) {
-            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
+            intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_info) {
             try {
                 CharSequence version = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
@@ -484,4 +491,17 @@ public class MainActivity extends AppCompatActivity
             } break;
         }
     }
+    
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        // User touched the dialog's positive button
+        finish();
+    }
+    
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        // User touched the dialog's negative button
+        
+    }
+    
 }

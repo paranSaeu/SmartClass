@@ -18,11 +18,14 @@ public class InitEventData
         extends AsyncTask<Void, Void, Boolean> {
     
     private DatabaseReference mDatabase;
-    
     private List<List<SchoolSchedule>> month = new ArrayList<>();
+    private boolean isUpdateNeed = false;
     
-    public InitEventData(DatabaseReference mDatabase) {
+    public InitEventData(DatabaseReference mDatabase, String thisYear) {
         this.mDatabase = mDatabase;
+        if(thisYear != null) {
+            this.isUpdateNeed = thisYear.compareTo(new SimpleDateFormat("yyyy", Locale.getDefault()).format(Calendar.getInstance().getTime())) != 0;
+        }
     }
     
     @Override
@@ -32,27 +35,31 @@ public class InitEventData
     
     @Override
     protected Boolean doInBackground(Void... param) {
-    
-        School api = new School(School.Type.HIGH,School.Region.GYEONGGI,"J100000510");
-        try {
-            int thisYear = Integer.parseInt(new SimpleDateFormat("yyyy", Locale.getDefault()).format(Calendar.getInstance().getTime()));
-            for(int i = 1; i <= 12; i++) {
-                List<SchoolSchedule> schoolSchedules = api.getMonthlySchedule(thisYear, i);
-                month.add(schoolSchedules);
-            }
-    
-            DataFormat.eventDataFormat = new DataFormat.Event(thisYear, month);
-            
-            mDatabase.child("eventDataFormat").child("eventData").child(String.valueOf(thisYear)).setValue(DataFormat.eventDataFormat.eventData);
-            mDatabase.child("eventDataFormat").child("thisYear").setValue(DataFormat.eventDataFormat.thisYear);
-            mDatabase.child("eventDataFormat").child("eventLastUpdated").setValue(DataFormat.eventDataFormat.eventLastUpdated);
-            
-        } catch(SchoolException e) {
-            e.printStackTrace();
-            return false;
-        }
         
-        return true;
+        if(isUpdateNeed) {
+            School api = new School(School.Type.HIGH,School.Region.GYEONGGI,"J100000510");
+            try {
+                int thisYear = Integer.parseInt(new SimpleDateFormat("yyyy", Locale.getDefault()).format(Calendar.getInstance().getTime()));
+                for(int i = 1; i <= 12; i++) {
+                    List<SchoolSchedule> schoolSchedules = api.getMonthlySchedule(thisYear, i);
+                    month.add(schoolSchedules);
+                }
+        
+                DataFormat.eventDataFormat = new DataFormat.Event(thisYear, month);
+        
+                mDatabase.child("eventDataFormat").child("eventData").child(String.valueOf(thisYear)).setValue(DataFormat.eventDataFormat.eventData);
+                mDatabase.child("eventDataFormat").child("thisYear").setValue(DataFormat.eventDataFormat.thisYear);
+                mDatabase.child("eventDataFormat").child("eventLastUpdated").setValue(DataFormat.eventDataFormat.eventLastUpdated);
+        
+                //mDatabase.child("eventDataFormat").setValue(DataFormat.eventDataFormat);
+        
+            } catch(SchoolException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
     
     @Override

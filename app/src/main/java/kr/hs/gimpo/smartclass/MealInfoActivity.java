@@ -283,6 +283,8 @@ public class MealInfoActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(MealInfoActivity.this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -309,16 +311,17 @@ public class MealInfoActivity extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.nav_setting) {
-            //intent = new Intent(MealInfoActivity.this, .class);
-            //startActivity(intent);
-            //finish();
-            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
+            intent = new Intent(MealInfoActivity.this, SettingsActivity.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.nav_info) {
             try {
                 CharSequence version = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
                 CharSequence versionName = getResources().getString(R.string.noti_version_is) + " " + version.toString();
                 Toast.makeText(getApplicationContext(),versionName,Toast.LENGTH_SHORT).show();
-            } catch (PackageManager.NameNotFoundException e) { }
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

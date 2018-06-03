@@ -35,7 +35,7 @@ public class IntroActivity extends AppCompatActivity {
 
     DatabaseReference mDatabase;
     Integer thisMonth;
-    String thisTime;
+    String thisTime, thisYear;
 
     boolean isConnected;
 
@@ -118,6 +118,31 @@ public class IntroActivity extends AppCompatActivity {
 
             }
         });
+        
+        mDatabase.child("eventDataFormat").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                System.out.println(dataSnapshot);
+                thisYear = String.valueOf(dataSnapshot.child("thisYear").getValue(Long.class));
+                System.out.println(thisYear);
+                if(isConnected) {
+                    InitEventData initEventData = new InitEventData(mDatabase, thisYear);
+                    initEventData.execute();
+                    try {
+                        initEventData.get();
+                    } catch(InterruptedException e) {
+                        e.printStackTrace();
+                    } catch(ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+    
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+        
+            }
+        });
 
         initData(isConnected, mDatabase);
 
@@ -131,11 +156,8 @@ public class IntroActivity extends AppCompatActivity {
         if(isConnected) {
             InitTimeData initTimeData = new InitTimeData(mDatabase);
             initTimeData.execute();
-            InitEventData initEventData = new InitEventData(mDatabase);
-            initEventData.execute();
             try {
                 initTimeData.get();
-                initEventData.get();
             } catch(InterruptedException e) {
                 e.printStackTrace();
             } catch(ExecutionException e) {
