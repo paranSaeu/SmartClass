@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -28,23 +29,32 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import kr.hs.gimpo.smartclass.Fragment.EventFragment;
+
 public class SchoolEventActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // 테마를 설정합니다.
         String today = new SimpleDateFormat("MM-dd", Locale.getDefault()).format(Calendar.getInstance().getTime());
         if(today.compareTo("04-16")==0) {
             setTheme(R.style.remember0416);
         } else {
             setTheme(R.style.AppTheme_NoActionBar);
         }
+        
+        // 레이아웃을 불러옵니다.
         setContentView(R.layout.activity_academic_calendar);
+        
+        // 툴바를 초기화합니다.
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(R.string.event_title);
         setSupportActionBar(toolbar);
-
+        
+        // 앱 서랍을 초기화합니다.
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -53,6 +63,9 @@ public class SchoolEventActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        
+        // Fragment를 불러옵니다.
+        initFragment();
     }
 
 
@@ -82,6 +95,9 @@ public class SchoolEventActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+    
+            Intent intent = new Intent(SchoolEventActivity.this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
 
@@ -109,9 +125,9 @@ public class SchoolEventActivity extends AppCompatActivity
         } else if (id == R.id.nav_calendar) {
 
         } else if (id == R.id.nav_setting) {
-    
-            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
-
+            intent = new Intent(SchoolEventActivity.this, SettingsActivity.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.nav_info) {
             try {
                 CharSequence versionName = getResources().getString(R.string.noti_version_is) + " " + getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
@@ -125,10 +141,11 @@ public class SchoolEventActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
-    //www.gimpo.hs.kr/main.php?menugrp=020300&master=diary&act=list&master_sid=1&SearchYear=2018&SearchMonth=03&SearchCategory=
-    //학사일정 주소
     
-    
-
+    private void initFragment() {
+        if(findViewById(R.id.event_card_public_fragment) != null) {
+            Fragment fragment = new EventFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.event_card_public_fragment, fragment).commit();
+        }
+    }
 }

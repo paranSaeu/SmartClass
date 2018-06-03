@@ -127,7 +127,7 @@ public class AirFragment
             public void onDataChange(DataSnapshot dataSnapshot) {
                 System.out.println(dataSnapshot);
                 
-                dataList[1] = dataSnapshot.child("pm10").getValue(String.class);
+                
             }
     
             @Override
