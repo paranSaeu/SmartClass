@@ -53,19 +53,8 @@ public class SchoolEventActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        news = (TextView) findViewById(R.id.textView3);
-        news.setMovementMethod(new ScrollingMovementMethod());
-
-        Button button = (Button) findViewById(R.id.button2);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
     }
 
-    TextView news;
 
     @Override
     public void onBackPressed() {
