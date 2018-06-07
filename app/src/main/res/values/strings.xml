@@ -228,5 +228,9 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
 
+    <!-- Exception && Error Handling -->
+
+    <string name="error">에러가 발생했습니다.</string>
+
 
 </resources>
