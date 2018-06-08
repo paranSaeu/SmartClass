@@ -80,73 +80,71 @@ public class AirQualCard extends Fragment {
                         e.printStackTrace();
                         Log.d("InitAirQualData", "Failed.");
                     }
-                    // 데이터가 업데이트되면 onDataChange()가 다시 시작될 것입니다.
-                } else {
-                    // 데이터가 최신이라면 화면에 표시합니다.
-                    
-                    // 맨 위의 시간 정보를 표시합니다.
-                    TextView textView = view.findViewById(R.id.card_air_place);
-                    try {
-                        Date date = new SimpleDateFormat("yyyy-MM-dd HH", Locale.getDefault()).parse(dataSnapshot.child("thisTime").getValue(String.class));
+                }
+                // 데이터가 최신이라면 화면에 표시합니다.
+    
+                // 맨 위의 시간 정보를 표시합니다.
+                TextView textView = view.findViewById(R.id.card_air_place);
+                try {
+                    Date date = new SimpleDateFormat("yyyy-MM-dd HH", Locale.getDefault()).parse(dataSnapshot.child("thisTime").getValue(String.class));
         
-                        String date_info = new SimpleDateFormat("yyyy'년 'MM'월 'dd'일 'HH'시 'mm'분'", Locale.getDefault()).format(date);
+                    String date_info = new SimpleDateFormat(view.getResources().getString(R.string.date_time_format), Locale.getDefault()).format(date);
         
-                        textView.setText(date_info);
-                    } catch(ParseException e) {
-                        e.printStackTrace();
-                        textView.setText(getResources().getString(R.string.error));
-                    }
+                    textView.setText(date_info);
+                } catch(ParseException e) {
+                    e.printStackTrace();
+                    textView.setText(getResources().getString(R.string.error));
+                }
     
-                    // 모든 데이터를 오프라인으로 받아옵니다.
-                    DataFormat.airQualDataFormat = dataSnapshot.getValue(DataFormat.AirQual.class);
-                    
-                    // 모든 textView에 반복적으로 적용합니다.
-                    for(int i = 1; i < 8; i++) {
-                        
-                        // 데이터가 담기는 TextView의 ID를 이용하여 TextView를 특정합니다.
-                        String dataId = String.format(Locale.getDefault(), DATA_ID_FORMAT, targetList[i - 1]);
-                        textView = view.findViewById(getResources().getIdentifier(dataId, "id", view.getContext().getPackageName()));
-                        
-                        // 데이터 TextView에 데이터를 담습니다.
-                        // 단위가 항목에 따라 달라지므로 단위에 주의합니다.
-                        String temp = DataFormat.airQualDataFormat.airQualData.get(i) + (i<=2?" ㎍/㎥":(i<6?" ppm":""));
-                        textView.setText(temp);
+                // 모든 데이터를 오프라인으로 받아옵니다.
+                DataFormat.airQualDataFormat = dataSnapshot.getValue(DataFormat.AirQual.class);
     
-                        // 상태가 담기는 TextView의 ID를 이용하여 TextView를 특정합니다.
-                        String statusId = String.format(Locale.getDefault(), STAT_ID_FORMAT, targetList[i - 1]);
-    
-                        textView = view.findViewById(getResources().getIdentifier(statusId, "id", view.getContext().getPackageName()));
-                        
-                        // 상태 TextView에 상태를 담습니다.
-                        // 상태는 -1, 1, 2, 3, 4의 정수로 제공되며, 정수에 따라 상태값을 표시해 줍니다.
-                        int stat = Integer.parseInt(DataFormat.airQualDataFormat.airQualData.get(i + 7));
-                        switch(stat) {
-                            case -1:
-                                textView.setTypeface(Typeface.DEFAULT);
-                                textView.setTextColor(getResources().getColor(R.color.common));
-                                textView.setText(getResources().getString(R.string.unknown));
-                                break;
-                            case 1:
-                                textView.setTypeface(Typeface.DEFAULT);
-                                textView.setTextColor(getResources().getColor(R.color.vgood));
-                                textView.setText(getResources().getString(R.string.vgood));
-                                break;
-                            case 2:
-                                textView.setTypeface(Typeface.DEFAULT);
-                                textView.setTextColor(getResources().getColor(R.color.good));
-                                textView.setText(getResources().getString(R.string.good));
-                                break;
-                            case 3:
-                                textView.setTypeface(Typeface.DEFAULT_BOLD);
-                                textView.setTextColor(getResources().getColor(R.color.bad));
-                                textView.setText(getResources().getString(R.string.bad));
-                                break;
-                            case 4:
-                                textView.setTypeface(Typeface.DEFAULT_BOLD);
-                                textView.setTextColor(getResources().getColor(R.color.vbad));
-                                textView.setText(getResources().getString(R.string.vbad));
-                                break;
-                        }
+                // 모든 textView에 반복적으로 적용합니다.
+                for(int i = 1; i < 8; i++) {
+        
+                    // 데이터가 담기는 TextView의 ID를 이용하여 TextView를 특정합니다.
+                    String dataId = String.format(Locale.getDefault(), DATA_ID_FORMAT, targetList[i - 1]);
+                    textView = view.findViewById(getResources().getIdentifier(dataId, "id", view.getContext().getPackageName()));
+        
+                    // 데이터 TextView에 데이터를 담습니다.
+                    // 단위가 항목에 따라 달라지므로 단위에 주의합니다.
+                    String temp = DataFormat.airQualDataFormat.airQualData.get(i) + (i<=2?" ㎍/㎥":(i<6?" ppm":""));
+                    textView.setText(temp);
+        
+                    // 상태가 담기는 TextView의 ID를 이용하여 TextView를 특정합니다.
+                    String statusId = String.format(Locale.getDefault(), STAT_ID_FORMAT, targetList[i - 1]);
+        
+                    textView = view.findViewById(getResources().getIdentifier(statusId, "id", view.getContext().getPackageName()));
+        
+                    // 상태 TextView에 상태를 담습니다.
+                    // 상태는 -1, 1, 2, 3, 4의 정수로 제공되며, 정수에 따라 상태값을 표시해 줍니다.
+                    int stat = Integer.parseInt(DataFormat.airQualDataFormat.airQualData.get(i + 7));
+                    switch(stat) {
+                        case -1:
+                            textView.setTypeface(Typeface.DEFAULT);
+                            textView.setTextColor(getResources().getColor(R.color.common));
+                            textView.setText(getResources().getString(R.string.unknown));
+                            break;
+                        case 1:
+                            textView.setTypeface(Typeface.DEFAULT);
+                            textView.setTextColor(getResources().getColor(R.color.vgood));
+                            textView.setText(getResources().getString(R.string.vgood));
+                            break;
+                        case 2:
+                            textView.setTypeface(Typeface.DEFAULT);
+                            textView.setTextColor(getResources().getColor(R.color.good));
+                            textView.setText(getResources().getString(R.string.good));
+                            break;
+                        case 3:
+                            textView.setTypeface(Typeface.DEFAULT_BOLD);
+                            textView.setTextColor(getResources().getColor(R.color.bad));
+                            textView.setText(getResources().getString(R.string.bad));
+                            break;
+                        case 4:
+                            textView.setTypeface(Typeface.DEFAULT_BOLD);
+                            textView.setTextColor(getResources().getColor(R.color.vbad));
+                            textView.setText(getResources().getString(R.string.vbad));
+                            break;
                     }
                 }
             }
