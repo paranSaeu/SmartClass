@@ -1,8 +1,6 @@
 package kr.hs.gimpo.smartclass;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
@@ -12,7 +10,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -43,8 +40,9 @@ import java.util.concurrent.ExecutionException;
 import kr.hs.gimpo.smartclass.Fragment.*;
 import kr.hs.gimpo.smartclass.Data.*;
 
+
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,AdapterView.OnItemSelectedListener,onCardChangeListener,QuitDialogFragment.QuitDialogListener {
+        implements NavigationView.OnNavigationItemSelectedListener,AdapterView.OnItemSelectedListener,onCardChangeListener,QuitDialog.QuitDialogListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,7 +168,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             //super.onBackPressed();
-            DialogFragment dialogFragment = new QuitDialogFragment();
+            DialogFragment dialogFragment = new QuitDialog();
             dialogFragment.show(getSupportFragmentManager(), "quit");
         }
     }

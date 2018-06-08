@@ -9,9 +9,10 @@ import android.support.v7.app.AlertDialog;
 
 import kr.hs.gimpo.smartclass.R;
 
-public class QuitDialogFragment extends DialogFragment {
+
+public class QuitDialog extends DialogFragment {
     
-    public QuitDialogFragment() {
+    public QuitDialog() {
     
     }
     
@@ -40,13 +41,13 @@ public class QuitDialogFragment extends DialogFragment {
         builder.setMessage(R.string.quit_prompt)
                 .setPositiveButton(R.string.quit, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDialogPositiveClick(QuitDialogFragment.this);
+                        mListener.onDialogPositiveClick(QuitDialog.this);
     
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        mListener.onDialogNegativeClick(QuitDialogFragment.this);
+                        mListener.onDialogNegativeClick(QuitDialog.this);
                     }
                 });
         // Create the AlertDialog object and return it
