@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -28,6 +29,11 @@ public class InitAirQualData
         if(thisTime != null) {
             this.isUpdateNeed = (thisTime.compareTo(new SimpleDateFormat("yyyy-MM-dd HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) != 0);
         }
+    }
+    
+    public InitAirQualData() {
+        this.isUpdateNeed = true;
+        this.mDatabase = FirebaseDatabase.getInstance().getReference("test");
     }
     
     @Override
@@ -78,7 +84,7 @@ public class InitAirQualData
     @Override
     protected void onPostExecute(Boolean isInitialized) {
         if(isInitialized) {
-            Log.d("setValue", "ok.");
+            Log.d("InitAirQualData", "Initialization Completed Successfully.");
         }
     }
 }
