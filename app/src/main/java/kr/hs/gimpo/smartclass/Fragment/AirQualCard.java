@@ -2,7 +2,6 @@ package kr.hs.gimpo.smartclass.Fragment;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -27,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 import kr.hs.gimpo.smartclass.Data.DataFormat;
 import kr.hs.gimpo.smartclass.Data.InitAirQualData;
 import kr.hs.gimpo.smartclass.R;
+
 
 public class AirQualCard extends Fragment {
     
@@ -65,7 +65,7 @@ public class AirQualCard extends Fragment {
                 Log.d("AirQualCard", "Time(Client): "+Time);
                 
                 // 서버의 데이터 태그와 현재시간을 비교해서
-                if(LastUpdated == null || LastUpdated.compareTo(Time) == 0) {
+                if(LastUpdated == null || LastUpdated.compareTo(Time) != 0) {
                     // 데이터가 최신이 아니라면 데이터를 갱신합니다.
                     InitAirQualData initAirQualData = new InitAirQualData();
                     initAirQualData.execute();
