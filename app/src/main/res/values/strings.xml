@@ -148,6 +148,7 @@
     <string name="navigation_drawer_close">탐색 창 닫기</string>
     <string name="date">날짜</string>
     <string name="date_format">%s년 %s월 %s일</string>
+    <string name="date_time_format">yyyy\'년 \'MM\'월 \'dd\'일 \'HH\'시 \'mm\'분\'</string>
     <string name="home_card_air_title">학교 주변 대기상태</string>
     <string name="home_card_air_help">여기에 학교 주변 대기상태가 표시됩니다.</string>
     <string name="meal_card_data_null">등록된 식단 정보가 없습니다.</string>

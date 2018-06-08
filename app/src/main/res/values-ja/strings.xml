@@ -149,6 +149,7 @@
     <string name="navigation_drawer_close">探索ウインドーを閉める</string>
     <string name="date">日付け</string>
     <string name="date_format">%s年 %s月 %s日</string>
+    <string name="date_time_format">yyyy\'年\'MM\'月\'dd\'日 \'HH\'時\'mm\'分\'</string>
     <string name="home_card_air_title">学校まわりの空気質</string>
     <string name="home_card_air_help">ここに学校まわりの空気質が表示されます。</string>
     <string name="meal_card_data_null">登録された給食情報がありません。</string>
