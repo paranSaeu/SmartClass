@@ -34,7 +34,7 @@ public class AirQualCard extends Fragment {
     
     }
     
-    final String[] targetList = {"pm10 ", "pm25", "o3", "no2", "co", "so2", "qual"};
+    final String[] targetList = {"pm10", "pm25", "o3", "no2", "co", "so2", "qual"};
     final String DATA_ID_FORMAT = "card_air_data_%s";
     final String STAT_ID_FORMAT = "card_air_status_%s";
     
@@ -54,9 +54,11 @@ public class AirQualCard extends Fragment {
     private void initAirQualDataListener(final View view) {
         mDatabase = FirebaseDatabase.getInstance().getReference("test");
         
-        mDatabase.child("AirQualDataFormat").addValueEventListener(new ValueEventListener() {
+        mDatabase.child("airQualDataFormat").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                
+                System.out.println(dataSnapshot);
                 
                 // 시간을 받아옵니다.
                 String LastUpdated = dataSnapshot.child("thisTime").getValue(String.class);
@@ -87,7 +89,7 @@ public class AirQualCard extends Fragment {
                     try {
                         Date date = new SimpleDateFormat("yyyy-MM-dd HH", Locale.getDefault()).parse(dataSnapshot.child("thisTime").getValue(String.class));
         
-                        String date_info = new SimpleDateFormat("yyyy'년 'MM'월 'dd'일 'HH'시 'mm' 분'", Locale.getDefault()).format(date);
+                        String date_info = new SimpleDateFormat("yyyy'년 'MM'월 'dd'일 'HH'시 'mm'분'", Locale.getDefault()).format(date);
         
                         textView.setText(date_info);
                     } catch(ParseException e) {
@@ -102,8 +104,7 @@ public class AirQualCard extends Fragment {
                     for(int i = 1; i < 8; i++) {
                         
                         // 데이터가 담기는 TextView의 ID를 이용하여 TextView를 특정합니다.
-                        String dataId = String.format(Locale.getDefault(), DATA_ID_FORMAT, targetList[i]);
-                        
+                        String dataId = String.format(Locale.getDefault(), DATA_ID_FORMAT, targetList[i - 1]);
                         textView = view.findViewById(getResources().getIdentifier(dataId, "id", view.getContext().getPackageName()));
                         
                         // 데이터 TextView에 데이터를 담습니다.
@@ -112,7 +113,7 @@ public class AirQualCard extends Fragment {
                         textView.setText(temp);
     
                         // 상태가 담기는 TextView의 ID를 이용하여 TextView를 특정합니다.
-                        String statusId = String.format(Locale.getDefault(), STAT_ID_FORMAT, targetList[i]);
+                        String statusId = String.format(Locale.getDefault(), STAT_ID_FORMAT, targetList[i - 1]);
     
                         textView = view.findViewById(getResources().getIdentifier(statusId, "id", view.getContext().getPackageName()));
                         

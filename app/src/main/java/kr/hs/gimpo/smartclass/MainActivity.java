@@ -84,11 +84,14 @@ public class MainActivity extends AppCompatActivity
             }
 
             // Create a new Fragment to be placed in the activity layout
-            Fragment firstFragment = new AirFragment();
-
+            
+            //Fragment firstFragment = new AirFragment();
+            Fragment firstFragment = new AirQualCard();
+            
             // In case this activity was started with special instructions from an
             // Intent, pass the Intent's extras to the fragment as arguments
-            firstFragment.setArguments(getIntent().getExtras());
+            
+            //firstFragment.setArguments(getIntent().getExtras());
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
@@ -297,7 +300,7 @@ public class MainActivity extends AppCompatActivity
             
             }
         });
-        mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
+        /*mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 System.out.println(dataSnapshot);
@@ -351,7 +354,7 @@ public class MainActivity extends AppCompatActivity
             public void onCancelled(DatabaseError databaseError) {
             
             }
-        });
+        });*/
     }
 
     public void onItemSelected(AdapterView<?> parent, View view,
@@ -460,35 +463,36 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.commit();
 
             } break;
-            case 3: {
+            case 3:
+            default:{
 
-                AirFragment newFragment = new AirFragment();
+                Fragment newFragment = new AirQualCard();
 
-                data.putString("airData_default", getResources().getString(R.string.home_card_air_help));
-                newFragment.setArguments(data);
-
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
-                fragmentTransaction.addToBackStack(null);
-
-                fragmentTransaction.commit();
-
-            }
-            default: {
-
-                AirFragment newFragment = new AirFragment();
-
-                data.putString("airData_default", getResources().getString(R.string.home_card_air_help));
-                newFragment.setArguments(data);
+                /*data.putString("airData_default", getResources().getString(R.string.home_card_air_help));
+                newFragment.setArguments(data);*/
 
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
                 fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
                 fragmentTransaction.addToBackStack(null);
+
                 fragmentTransaction.commit();
 
             } break;
+            /*default: {
+                
+                AirFragment newFragment = new AirFragment();
+
+                data.putString("airData_default", getResources().getString(R.string.home_card_air_help));
+                newFragment.setArguments(data);
+
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+
+                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+
+            } break;*/
         }
     }
     
