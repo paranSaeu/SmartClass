@@ -451,7 +451,7 @@ public class MainActivity extends AppCompatActivity
             } break;
             case 2: {
 
-                EventFragment newFragment = new EventFragment();
+                Fragment newFragment = new EventCard();
 
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 

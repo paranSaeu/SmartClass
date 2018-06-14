@@ -41,7 +41,7 @@ public class AirQualCard extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         
-        View view = inflater.inflate(R.layout.card_frag_air, container, false);
+        View view = inflater.inflate(R.layout.air_qual_card, container, false);
         
         // Firebase DB에서 데이터를 받아와 표시해 줍니다.
         initAirQualDataListener(view);
@@ -69,6 +69,7 @@ public class AirQualCard extends Fragment {
                 // 서버의 데이터 태그와 현재시간을 비교해서
                 if(LastUpdated == null || LastUpdated.compareTo(Time) != 0) {
                     // 데이터가 최신이 아니라면 데이터를 갱신합니다.
+                    
                     InitAirQualData initAirQualData = new InitAirQualData();
                     initAirQualData.execute();
                     try {
