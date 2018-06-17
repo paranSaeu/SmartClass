@@ -2,11 +2,8 @@ package kr.hs.gimpo.smartclass;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.method.ScrollingMovementMethod;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,21 +12,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-import kr.hs.gimpo.smartclass.Fragment.EventFragment;
+import kr.hs.gimpo.smartclass.Fragment.EventCard;
 
 public class SchoolEventActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -144,7 +133,7 @@ public class SchoolEventActivity extends AppCompatActivity
     
     private void initFragment() {
         if(findViewById(R.id.event_card_public_fragment) != null) {
-            Fragment fragment = new EventFragment();
+            Fragment fragment = new EventCard();
             getSupportFragmentManager().beginTransaction().add(R.id.event_card_public_fragment, fragment).commit();
         }
     }

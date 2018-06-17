@@ -147,11 +147,15 @@
     <string name="date_time_format">yyyy. MM. dd. HH:mm</string>
     <string name="home_card_air_title">Air Quality near School</string>
     <string name="home_card_air_help">Air Quailty Displayed</string>
-    <string name="meal_card_data_null">No Data</string>
+    <string name="meal_card_data_null">No Data.</string>
     <string name="title_activity_settings">SettingsActivity</string>
-    <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
+    <string name="quit_prompt">Quit Application?</string>
+    <string name="quit">Quit</string>
+    <string name="cancel">Cancel</string>
+    <string name="error">An error occured.</string>
+    <string name="no_data">No Data.</string>
 
 
 </resources>

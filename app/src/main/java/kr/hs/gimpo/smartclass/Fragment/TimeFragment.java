@@ -33,7 +33,7 @@ public class TimeFragment
 
 
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.card_frag_time, container, false);
+        return inflater.inflate(R.layout.time_card, container, false);
     }
 
     @Override

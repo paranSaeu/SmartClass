@@ -26,19 +26,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 import kr.hs.gimpo.smartclass.Fragment.*;
-import kr.hs.gimpo.smartclass.Data.*;
 
 
 public class MainActivity extends AppCompatActivity
@@ -176,7 +171,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -243,116 +238,6 @@ public class MainActivity extends AppCompatActivity
             isConnected = activeNetwork != null &&
                     activeNetwork.isConnectedOrConnecting();
         }
-    
-        mDatabase.child("mealDataFormat").child("thisMonth").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                thisMonth = dataSnapshot.getValue(Integer.class);
-                System.out.println(thisMonth);
-            
-                if(isConnected) {
-                    InitMealData initMealData = new InitMealData(mDatabase, thisMonth);
-                    initMealData.execute();
-                    try {
-                        initMealData.get();
-                    } catch(InterruptedException e) {
-                        e.printStackTrace();
-                    } catch(ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            
-            }
-        });
-        mDatabase.child("mealDataFormat").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(Calendar.getInstance().getTime());
-                int thisDay = Integer.parseInt(new SimpleDateFormat("dd", Locale.getDefault()).format(Calendar.getInstance().getTime()));
-                int thisMeal = Integer.parseInt(new SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) < 14? 0 : 1;
-                bundle.putInt("mealTime", thisMeal);
-                bundle.putString(
-                        "mealDate",
-                        new SimpleDateFormat("yyyy'년 'MM'월 'dd'일 '", Locale.getDefault()).format(Calendar.getInstance().getTime()));
-                if(!(calendar.get(Calendar.DAY_OF_WEEK) == 1 || calendar.get(Calendar.DAY_OF_WEEK) == 7)) {
-                    System.out.println(dataSnapshot);
-                    DataFormat.mealDataFormat = dataSnapshot.getValue(DataFormat.Meal.class);
-                    bundle.putString(
-                            "mealData",
-                            DataFormat.mealDataFormat.mealData.get(thisDay - 1).get(thisMeal));
-                } else {
-                    bundle.putString(
-                            "mealData",
-                            getResources().getString(R.string.meal_card_data_null));
-                }
-    
-                onCardChanged(home_spinner_selected, bundle);
-            }
-        
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            
-            }
-        });
-        /*mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println(dataSnapshot);
-                thisTime = dataSnapshot.getValue(String.class);
-                System.out.println(thisTime);
-                if(isConnected) {
-                    InitAirQualData initAirQualData = new InitAirQualData(mDatabase, thisTime);
-                    initAirQualData.execute();
-                    try {
-                        initAirQualData.get();
-                    } catch(InterruptedException e) {
-                        e.printStackTrace();
-                    } catch(ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            
-            }
-        });
-        mDatabase.child("airQualDataFormat").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println("changed!");
-                DataFormat.airQualDataFormat = dataSnapshot.getValue(DataFormat.AirQual.class);
-                String[] param = new String[15];
-                DataFormat.airQualDataFormat.airQualData.toArray(param);
-                String temp = String.format(
-                        Locale.getDefault(),
-                        getResources().getString(R.string.home_card_air_quality_format),
-                        param[0],
-                        param[1],
-                        param[2],
-                        param[3],
-                        param[4],
-                        param[5],
-                        param[6],
-                        param[7]
-                );
-                bundle.putString("airData", temp);
-                bundle.putStringArray("airDataList", param);
-                System.out.println("airDataList init.");
-            
-                onCardChanged(home_spinner_selected, bundle);
-            }
-        
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            
-            }
-        });*/
     }
 
     public void onItemSelected(AdapterView<?> parent, View view,
@@ -383,30 +268,6 @@ public class MainActivity extends AppCompatActivity
                 }
                 break;
             case 3:
-                mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        System.out.println(dataSnapshot);
-                        thisTime = dataSnapshot.getValue(String.class);
-                        System.out.println(thisTime);
-                        if(isConnected) {
-                            InitAirQualData initAirQualData = new InitAirQualData(mDatabase, thisTime);
-                            initAirQualData.execute();
-                            try {
-                                initAirQualData.get();
-                            } catch(InterruptedException e) {
-                                e.printStackTrace();
-                            } catch(ExecutionException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-        
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-            
-                    }
-                });
     
                 onCardChanged(pos, bundle);
                 break;
@@ -436,10 +297,7 @@ public class MainActivity extends AppCompatActivity
             } break;
             case 1: {
 
-                MealFragment newFragment = new MealFragment();
-                data.putString("mealData_default", getResources().getString(R.string.home_card_meal_title_help));
-                data.putInt("displayMode", 0);
-                newFragment.setArguments(data);
+                Fragment newFragment = new MealCard();
 
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
@@ -466,9 +324,6 @@ public class MainActivity extends AppCompatActivity
 
                 Fragment newFragment = new AirQualCard();
 
-                /*data.putString("airData_default", getResources().getString(R.string.home_card_air_help));
-                newFragment.setArguments(data);*/
-
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 
                 fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
@@ -477,20 +332,6 @@ public class MainActivity extends AppCompatActivity
                 fragmentTransaction.commit();
 
             } break;
-            /*default: {
-                
-                AirFragment newFragment = new AirFragment();
-
-                data.putString("airData_default", getResources().getString(R.string.home_card_air_help));
-                newFragment.setArguments(data);
-
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-
-            } break;*/
         }
     }
     

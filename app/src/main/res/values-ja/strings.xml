@@ -10,8 +10,7 @@
 
     <string name="noti_version_is">アプリのバージョン:</string>
 
-    <string name="quit_prompt">어플리케이션을 종료하시겠습니까?
-    アプリを終了しますか？</string>
+    <string name="quit_prompt">アプリを終了しますか？</string>
     <string name="quit">終了</string>
     <string name="cancel">キャンセル</string>
 
@@ -154,7 +153,6 @@
     <string name="home_card_air_help">ここに学校まわりの空気質が表示されます。</string>
     <string name="meal_card_data_null">登録された給食情報がありません。</string>
     <string name="title_activity_settings">SettingsActivity</string>
-    <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
 
@@ -233,6 +231,7 @@
     <!-- Exception && Error Handling -->
 
     <string name="error">深刻なエラーが発生しました。</string>
+    <string name="no_data">データがありません。</string>
 
 
 </resources>

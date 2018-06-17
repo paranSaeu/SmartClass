@@ -1,6 +1,7 @@
 package kr.hs.gimpo.smartclass.Data;
 
 import android.os.AsyncTask;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
@@ -115,7 +116,13 @@ public class InitMealData
                 mealDataList.add(temp);
             }
             DataFormat.mealDataFormat = new DataFormat.Meal(Integer.parseInt(new SimpleDateFormat("MM", Locale.getDefault()).format(Calendar.getInstance().getTime())) ,mealDataList);
-            mDatabase.child("mealDataFormat").setValue(DataFormat.mealDataFormat);
+            //mDatabase.child("mealDataFormat").setValue(DataFormat.mealDataFormat);
+            mDatabase.child("mealDataFormat").child("mealLastUpdated").setValue(DataFormat.mealDataFormat.mealLastUpdated);
+            mDatabase.child("mealDataFormat").child("thisMonth").setValue(DataFormat.mealDataFormat.thisMonth);
+            
+            String[] ym = new SimpleDateFormat("yyyy-MM", Locale.getDefault()).format(Calendar.getInstance().getTime()).split("-");
+            
+            mDatabase.child("mealDataFormat").child("mealData").child(ym[0]).child(ym[1]).setValue(DataFormat.mealDataFormat.mealData);
         }
         
         return true;
