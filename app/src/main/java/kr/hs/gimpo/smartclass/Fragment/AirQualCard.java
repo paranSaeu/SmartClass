@@ -38,10 +38,14 @@ public class AirQualCard extends Fragment {
     final String DATA_ID_FORMAT = "card_air_data_%s";
     final String STAT_ID_FORMAT = "card_air_status_%s";
     
+    boolean isInit = false;
+    
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         
         View view = inflater.inflate(R.layout.air_qual_card, container, false);
+        
+        isInit = true;
         
         // Firebase DB에서 데이터를 받아와 표시해 줍니다.
         initAirQualDataListener(view);

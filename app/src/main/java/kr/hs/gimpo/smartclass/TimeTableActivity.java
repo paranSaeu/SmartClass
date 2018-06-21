@@ -82,7 +82,7 @@ public class TimeTableActivity extends AppCompatActivity
                     activeNetwork.isConnectedOrConnecting();
         }
 
-        mDatabase.child("timeDataFormat").addValueEventListener(new ValueEventListener() {
+        /*mDatabase.child("timeDataFormat").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String updatedTime="";
@@ -133,7 +133,7 @@ public class TimeTableActivity extends AppCompatActivity
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
         final TextView time_class  = (TextView) findViewById(R.id.time_class);
         time_class.setText(refreshClassNo());

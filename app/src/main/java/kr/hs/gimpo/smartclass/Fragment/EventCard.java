@@ -33,6 +33,8 @@ public class EventCard extends Fragment {
     // 날짜 데이터의 기본값을 설정합니다.
     String date = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault()).format(Calendar.getInstance().getTime());
     
+    boolean isInit = false;
+    
     // 데이터를 설정할 수 있는 함수입니다. 이 함수가 호출되면 날짜를 따로 입력할 수 있으며, 이 함수를 호출하지 않으면 기본값(그날의 날짜)을 사용하여 학사일정 데이터를 불러옵니다.
     @Override
     public void setArguments(@Nullable Bundle args) {
@@ -51,7 +53,9 @@ public class EventCard extends Fragment {
         }
         
         // 화면에 데이터를 띄웁니다.
-        initEventDataListener(getView());
+        if(isInit) {
+            initEventDataListener(getView());
+        }
     }
     
     @Nullable
@@ -59,6 +63,8 @@ public class EventCard extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         
         View view = inflater.inflate(R.layout.event_card, container, false);
+        
+        isInit = true;
         
         // 화면에 데이터를 띄웁니다. 이미 date에는 setArgument() 를 통해 날짜 데이터가 입력되어 있어야 합니다.
         initEventDataListener(view);

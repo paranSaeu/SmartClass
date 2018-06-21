@@ -1,12 +1,10 @@
 package kr.hs.gimpo.smartclass;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -25,9 +23,6 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -146,14 +141,8 @@ public class MainActivity extends AppCompatActivity
                 spinner.setSelection(home_spinner_selected);
             }
         });
-
-        updateData();
     }
-    Integer thisMonth;
-    String thisTime;
-    boolean isConnected;
 
-    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("test");
     private int home_spinner_selected = 0;
 
     @Override
@@ -194,7 +183,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         Intent intent;
@@ -227,52 +216,32 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    
-    private Bundle bundle = new Bundle();
-    
-    private void updateData() {
-        ConnectivityManager cm =
-                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(cm != null) {
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            isConnected = activeNetwork != null &&
-                    activeNetwork.isConnectedOrConnecting();
-        }
-    }
 
     public void onItemSelected(AdapterView<?> parent, View view,
                                final int pos, long id) {
         // An item was selected. You can retrieve the selected item using
         // parent.getItemAtPosition(pos)
 
-        ConnectivityManager cm =
-                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(cm != null) {
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            isConnected = activeNetwork != null &&
-                    activeNetwork.isConnectedOrConnecting();
-        }
-
         switch(pos) {
             case 0: {
-                onCardChanged(pos, bundle);
+                onCardChanged(pos);
                 }
                 break;
             case 1:
                 
     
-                onCardChanged(pos, bundle);
+                onCardChanged(pos);
                 break;
             case 2: {
-                  onCardChanged(pos, bundle);
+                  onCardChanged(pos);
                 }
                 break;
             case 3:
     
-                onCardChanged(pos, bundle);
+                onCardChanged(pos);
                 break;
             default: {
-                    onCardChanged(pos, bundle);
+                    onCardChanged(pos);
                 }
                 break;
         }
@@ -282,7 +251,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    public void onCardChanged(int pos, Bundle data) {
+    public void onCardChanged(int pos) {
         switch (pos) {
             case 0: {
                 TimeFragment newFragment = new TimeFragment();

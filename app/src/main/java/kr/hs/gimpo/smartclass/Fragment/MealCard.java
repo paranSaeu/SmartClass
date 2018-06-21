@@ -30,9 +30,17 @@ public class MealCard extends Fragment {
     
     String date = new SimpleDateFormat("yyyy-MM-dd-HH", Locale.getDefault()).format(Calendar.getInstance().getTime());
     
+    // 탑재된 액티비티에 따라 표시되는 레이아웃이 달라집니다!
+    // 0: 에러, 1: 급식, 2: 메인
+    int mode = 0;
+    
+    boolean isInit = false;
+    
     @Override
     public void setArguments(@Nullable Bundle args) {
         super.setArguments(args);
+        
+        mode = 1;
         
         String temp = new SimpleDateFormat("yyyy-MM-dd-HH", Locale.getDefault()).format(Calendar.getInstance().getTime());
         
@@ -41,15 +49,16 @@ public class MealCard extends Fragment {
         } else {
             date = temp;
         }
-        
-        initMealDataListener(getView());
+        if(isInit) {
+            initMealDataListener(getView());
+        }
     }
     
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.meal_card, container, false);
-        
+        isInit = true;
         initMealDataListener(view);
         
         return view;
@@ -63,6 +72,7 @@ public class MealCard extends Fragment {
         mDatabase.child("mealDataFormat").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Year, Month, Day, Hour!
                 String[] ymdh = date.split("-");
                 
                 System.out.println(date);
@@ -79,9 +89,13 @@ public class MealCard extends Fragment {
                 
                 TextView mealDate = view.findViewById(R.id.card_meal_date);
                 
-                String temp = String.format(getResources().getString(R.string.date_format), ymdh[0], ymdh[1], ymdh[2]);
-                
-                mealDate.setText(temp);
+                if(mode == 2) {
+                    String temp = String.format(getResources().getString(R.string.date_format), ymdh[0], ymdh[1], ymdh[2]);
+                    mealDate.setVisibility(TextView.VISIBLE);
+                    mealDate.setText(temp);
+                } else {
+                    mealDate.setVisibility(TextView.GONE);
+                }
                 
                 TextView mealType = view.findViewById(R.id.card_meal_time);
     

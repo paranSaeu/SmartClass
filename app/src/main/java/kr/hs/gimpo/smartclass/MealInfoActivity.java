@@ -6,6 +6,8 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -39,12 +41,12 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
+import kr.hs.gimpo.smartclass.Fragment.MealCard;
+
 public class MealInfoActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("test");
-    boolean isConnected;
-    Integer thisMonth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,194 +70,128 @@ public class MealInfoActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        calendar = Calendar.getInstance();
-        today = Calendar.getInstance().getTime();
-        calendar.setTime(today);
-        day = new SimpleDateFormat("dd", Locale.getDefault()).format(today);
-        month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
-        year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
-
-        /*ConnectivityManager cm =
-                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(cm != null) {
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            isConnected = activeNetwork != null &&
-                    activeNetwork.isConnectedOrConnecting();
-        }
-
-        mDatabase.child("mealDataFormat").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println(dataSnapshot);
-                thisMonth = dataSnapshot.child("thisMonth").getValue(Integer.class);
-                System.out.println(thisMonth);
-
-                if(isConnected) {
-                    InitMealData initMealData = new InitMealData(mDatabase, thisMonth);
-                    initMealData.execute();
-                    try {
-                        initMealData.get();
-                    } catch(InterruptedException e) {
-                        e.printStackTrace();
-                    } catch(ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                if(!(calendar.get(Calendar.DAY_OF_WEEK) == 1 || calendar.get(Calendar.DAY_OF_WEEK) == 7)) {
-                    System.out.println(dataSnapshot);
-                    DataFormat.mealDataFormat = dataSnapshot.getValue(Meal.class);
-                    int thisDay = Integer.parseInt(new SimpleDateFormat("dd", Locale.getDefault()).format(Calendar.getInstance().getTime()));
-                    int thisMeal = Integer.parseInt(new SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) < 14? 0 : 1;
-                    if() {DataFormat.mealDataFormat.mealData.get(thisDay - 1).get(thisMeal);
-                } else {
-                    getResources().getString(R.string.meal_card_data_null));
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
-
-        initDate(year, month, day);
-
-        lunch_data = (TextView)findViewById(R.id.meal_card_lunch_data);
-        lunch_data.setMovementMethod(new ScrollingMovementMethod()); //스크롤 가능한 텍스트뷰로 만들기
-
-        dinner_data = (TextView) findViewById(R.id.meal_card_dinner_data);
-        lunch_data.setMovementMethod(new ScrollingMovementMethod());
-
-        jsoupAsyncTask = new JsoupAsyncTask();
-        jsoupAsyncTask.execute();
-
-        final ImageButton month_left = (ImageButton) findViewById(R.id.meal_button_month_back);
-        month_left.setOnClickListener(new View.OnClickListener() {
+        
+        final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd-", Locale.getDefault());
+    
+        final Calendar calendar = Calendar.getInstance();
+        
+        date = dateFormat.format(calendar.getTime());
+    
+        TextView mealDate = (TextView) findViewById(R.id.meal_date);
+        String[] ymd = date.split("-");
+        String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+        mealDate.setText(temp);
+        
+        final Fragment lunchCard = new MealCard();
+        final Fragment dinnerCard = new MealCard();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        
+        Bundle lunchCardDate = new Bundle();
+        lunchCardDate.putString("date", date + "06");
+        lunchCard.setArguments(lunchCardDate);
+        
+        Bundle dinnerCardDate = new Bundle();
+        dinnerCardDate.putString("date", date + "18");
+        dinnerCard.setArguments(dinnerCardDate);
+        
+        fragmentTransaction.add(R.id.meal_card_lunch_fragment, lunchCard);
+        fragmentTransaction.add(R.id.meal_card_dinner_fragment, dinnerCard);
+        
+        fragmentTransaction.commit();
+        
+        ImageButton week_left = (ImageButton) findViewById(R.id.meal_button_month_back);
+        week_left.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 calendar.add(Calendar.DATE, -7);
-                today = new Date(calendar.getTimeInMillis());
-                day = new SimpleDateFormat("dd", Locale.getDefault()).format(today);
-                month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
-                year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
-                initDate(year, month, day);
+                
+                String date = dateFormat.format(calendar.getTime());
+    
+                TextView mealDate = (TextView) findViewById(R.id.meal_date);
+                String[] ymd = date.split("-");
+                String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+                mealDate.setText(temp);
+    
+                Bundle lunchCardDate = new Bundle();
+                lunchCardDate.putString("date", date + "06");
+                lunchCard.setArguments(lunchCardDate);
+    
+                Bundle dinnerCardDate = new Bundle();
+                dinnerCardDate.putString("date", date + "18");
+                dinnerCard.setArguments(dinnerCardDate);
             }
         });
-
-        final ImageButton month_right = (ImageButton) findViewById(R.id.meal_button_month_forward);
-        month_right.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                calendar.add(Calendar.DATE, 7);
-                today = new Date(calendar.getTimeInMillis());
-                day = new SimpleDateFormat("dd", Locale.getDefault()).format(today);
-                month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
-                year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
-                initDate(year, month, day);
-            }
-        });
-
-        final ImageButton day_left = (ImageButton) findViewById(R.id.meal_button_day_back);
+    
+        ImageButton day_left = (ImageButton) findViewById(R.id.meal_button_day_back);
         day_left.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 calendar.add(Calendar.DATE, -1);
-                today = new Date(calendar.getTimeInMillis());
-                day = new SimpleDateFormat("dd", Locale.getDefault()).format(today);
-                month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
-                year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
-                initDate(year, month, day);
+            
+                String date = dateFormat.format(calendar.getTime());
+    
+                TextView mealDate = (TextView) findViewById(R.id.meal_date);
+                String[] ymd = date.split("-");
+                String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+                mealDate.setText(temp);
+            
+                Bundle lunchCardDate = new Bundle();
+                lunchCardDate.putString("date", date + "06");
+                lunchCard.setArguments(lunchCardDate);
+            
+                Bundle dinnerCardDate = new Bundle();
+                dinnerCardDate.putString("date", date + "18");
+                dinnerCard.setArguments(dinnerCardDate);
             }
         });
-
-        final ImageButton day_right = (ImageButton) findViewById(R.id.meal_button_day_forward);
+    
+        ImageButton day_right = (ImageButton) findViewById(R.id.meal_button_day_forward);
         day_right.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 calendar.add(Calendar.DATE, 1);
-                today = new Date(calendar.getTimeInMillis());
-                day = new SimpleDateFormat("dd", Locale.getDefault()).format(today);
-                month = new SimpleDateFormat("MM", Locale.getDefault()).format(today);
-                year = new SimpleDateFormat("yyyy", Locale.getDefault()).format(today);
-                initDate(year, month, day);
+            
+                String date = dateFormat.format(calendar.getTime());
+    
+                TextView mealDate = (TextView) findViewById(R.id.meal_date);
+                String[] ymd = date.split("-");
+                String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+                mealDate.setText(temp);
+            
+                Bundle lunchCardDate = new Bundle();
+                lunchCardDate.putString("date", date + "06");
+                lunchCard.setArguments(lunchCardDate);
+            
+                Bundle dinnerCardDate = new Bundle();
+                dinnerCardDate.putString("date", date + "18");
+                dinnerCard.setArguments(dinnerCardDate);
+            }
+        });
+    
+        ImageButton week_right = (ImageButton) findViewById(R.id.meal_button_month_forward);
+        week_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar.add(Calendar.DATE, 7);
+            
+                String date = dateFormat.format(calendar.getTime());
+    
+                TextView mealDate = (TextView) findViewById(R.id.meal_date);
+                String[] ymd = date.split("-");
+                String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+                mealDate.setText(temp);
+            
+                Bundle lunchCardDate = new Bundle();
+                lunchCardDate.putString("date", date + "06");
+                lunchCard.setArguments(lunchCardDate);
+            
+                Bundle dinnerCardDate = new Bundle();
+                dinnerCardDate.putString("date", date + "18");
+                dinnerCard.setArguments(dinnerCardDate);
             }
         });
     }
 
-    private void initDate(String _year, String _month, String _day) {
-        String date = String.format(Locale.getDefault(), getResources().getString(R.string.date_format), _year, _month, _day);
-        TextView mealDate = (TextView) findViewById(R.id.meal_date);
-        System.out.println("Current Date: " + date);
-        mealDate.setText(date);
-        htmlPageUrl = "http://www.gimpo.hs.kr/main.php?menugrp=021100&master=meal2&act=list&SearchYear="+_year+"&SearchMonth="+_month+"&SearchDay="+_day+"#diary_list";
-        jsoupAsyncTask = new JsoupAsyncTask();
-        jsoupAsyncTask.execute();
-    }
-
-    //private String htmlPageUrl = "http://www.yonhapnews.co.kr/"; //파싱할 홈페이지의 URL주소
-    private JsoupAsyncTask jsoupAsyncTask = new JsoupAsyncTask();
-    private String year, month, day;
-    private Date today;
-    private Calendar calendar;
-    private String htmlPageUrl;
-    private TextView lunch_data;
-    private TextView dinner_data;
-
-    private String meal[] = new String[2];
-
-    private class JsoupAsyncTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                Document doc = Jsoup.connect(htmlPageUrl).get();
-
-                Elements mealData = doc.select("div.meal_content.col-md-7 div.meal_table table tbody");
-                System.out.println("------------------------------");
-                int cnt = 0;
-                meal[0] = getResources().getString(R.string.meal_card_data_null);
-                meal[1] = getResources().getString(R.string.meal_card_data_null);
-                for(Element e: mealData) {
-                    System.out.println("data:" + e.text());
-                    meal[cnt] = e.text().trim();
-                    cnt++;
-                }
-                System.out.println("------------------------------");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            for(int i = 0; i < 2; i++) {
-                StringBuilder sb = new StringBuilder(meal[i]);
-                if(meal[i].compareTo(getResources().getString(R.string.meal_card_data_null))!=0) {
-                    for(int j = 0; j < sb.length(); j++) {
-                        if(sb.charAt(j) == ' ') {
-                            if(sb.charAt(j+1) == '1' || sb.charAt(j+1) == '2' || sb.charAt(j+1) == '3' || sb.charAt(j+1) == '4' || sb.charAt(j+1) == '5' || sb.charAt(j+1) == '6' || sb.charAt(j+1) == '7' || sb.charAt(j+1) == '8' || sb.charAt(j+1) == '9' || sb.charAt(j+1) == '0') {
-                                sb.deleteCharAt(j);
-                            } else {
-                                sb.replace(j, j+1, "\n");
-                            }
-                        }
-                    }
-                    meal[i] = sb.toString();
-                }
-            }
-            lunch_data.setText(meal[0]);
-            dinner_data.setText(meal[1]);
-        }
-    }
 
     @Override
     public void onBackPressed() {
