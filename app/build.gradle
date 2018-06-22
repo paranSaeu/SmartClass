@@ -6,7 +6,7 @@ android {
         applicationId "kr.hs.gimpo.smartclass"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 3500
+        versionCode 3510
         versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -26,7 +26,7 @@ android {
     productFlavors {
         beta {
             dimension "test"
-            versionName "3.5.0-beta"
+            versionName "3.5.1-beta"
         }
     }
 }
