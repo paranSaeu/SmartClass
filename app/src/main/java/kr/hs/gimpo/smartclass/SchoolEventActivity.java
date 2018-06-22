@@ -12,6 +12,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -28,8 +31,8 @@ public class SchoolEventActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         
         // 테마를 설정합니다.
-        String today = new SimpleDateFormat("MM-dd", Locale.getDefault()).format(Calendar.getInstance().getTime());
-        if(today.compareTo("04-16")==0) {
+        String date = new SimpleDateFormat("MM-dd", Locale.getDefault()).format(Calendar.getInstance().getTime());
+        if(date.compareTo("04-16")==0) {
             setTheme(R.style.remember0416);
         } else {
             setTheme(R.style.AppTheme_NoActionBar);
@@ -52,9 +55,103 @@ public class SchoolEventActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    
+        
+        final Calendar calendar = Calendar.getInstance();
+        
+        date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
+    
+        TextView eventDate = (TextView) findViewById(R.id.event_date);
+        String[] ymd = date.split("-");
+        String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+        eventDate.setText(temp);
+    
+        final Fragment fragment = new EventCard();
         
         // Fragment를 불러옵니다.
-        initFragment();
+        if(findViewById(R.id.event_card_public_fragment) != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString("date", date);
+            fragment.setArguments(bundle);
+            
+            getSupportFragmentManager().beginTransaction().add(R.id.event_card_public_fragment, fragment).commit();
+        }
+    
+        ImageButton week_left = (ImageButton) findViewById(R.id.event_button_month_back);
+        week_left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar.add(Calendar.DATE, -7);
+                
+                String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
+    
+                TextView eventDate = (TextView) findViewById(R.id.event_date);
+                String[] ymd = date.split("-");
+                String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+                eventDate.setText(temp);
+                
+                Bundle bundle = new Bundle();
+                bundle.putString("date", date);
+                fragment.setArguments(bundle);
+            }
+        });
+    
+        ImageButton day_left = (ImageButton) findViewById(R.id.event_button_day_back);
+        day_left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar.add(Calendar.DATE, -1);
+            
+                String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
+            
+                TextView eventDate = (TextView) findViewById(R.id.event_date);
+                String[] ymd = date.split("-");
+                String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+                eventDate.setText(temp);
+            
+                Bundle bundle = new Bundle();
+                bundle.putString("date", date);
+                fragment.setArguments(bundle);
+            }
+        });
+    
+        ImageButton day_right = (ImageButton) findViewById(R.id.event_button_day_forward);
+        day_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar.add(Calendar.DATE, 1);
+            
+                String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
+            
+                TextView eventDate = (TextView) findViewById(R.id.event_date);
+                String[] ymd = date.split("-");
+                String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+                eventDate.setText(temp);
+            
+                Bundle bundle = new Bundle();
+                bundle.putString("date", date);
+                fragment.setArguments(bundle);
+            }
+        });
+    
+        ImageButton week_right = (ImageButton) findViewById(R.id.event_button_month_forward);
+        week_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                calendar.add(Calendar.DATE, 7);
+            
+                String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
+            
+                TextView eventDate = (TextView) findViewById(R.id.event_date);
+                String[] ymd = date.split("-");
+                String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+                eventDate.setText(temp);
+            
+                Bundle bundle = new Bundle();
+                bundle.putString("date", date);
+                fragment.setArguments(bundle);
+            }
+        });
     }
 
 
@@ -129,12 +226,5 @@ public class SchoolEventActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-    
-    private void initFragment() {
-        if(findViewById(R.id.event_card_public_fragment) != null) {
-            Fragment fragment = new EventCard();
-            getSupportFragmentManager().beginTransaction().add(R.id.event_card_public_fragment, fragment).commit();
-        }
     }
 }
