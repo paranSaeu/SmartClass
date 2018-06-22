@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -31,8 +32,12 @@ import java.util.Locale;
 import kr.hs.gimpo.smartclass.Fragment.*;
 
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,AdapterView.OnItemSelectedListener,onCardChangeListener,QuitDialog.QuitDialogListener {
+public class MainActivity
+        extends AppCompatActivity
+        implements
+        NavigationView.OnNavigationItemSelectedListener,
+        AdapterView.OnItemSelectedListener,
+        QuitDialog.QuitDialogListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +50,7 @@ public class MainActivity extends AppCompatActivity
 
             setContentView(R.layout.activity_main);
 
-            TextView textView = (TextView) findViewById(R.id.home_header_school_motto);
+            TextView textView = (TextView) findViewById(R.id.school_motto);
             textView.setTypeface(Typeface.DEFAULT_BOLD);
             textView.setText(R.string.home_header_remember20140416);
 
@@ -55,25 +60,24 @@ public class MainActivity extends AppCompatActivity
 
             setContentView(R.layout.activity_main);
 
-            TextView textView = (TextView) findViewById(R.id.home_header_school_motto);
+            TextView textView = (TextView) findViewById(R.id.school_motto);
             textView.setTypeface(Typeface.DEFAULT);
             textView.setText(R.string.school_motto);
         }
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
-        if (findViewById(R.id.home_card_fragment) != null) {
+        if (findViewById(R.id.main_card_frame) != null) {
 
             // However, if we're being restored from a previous state,
             // then we don't need to do anything and should return or else
             // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
+            /*if (savedInstanceState != null) {
                 return;
-            }
+            }*/
 
             // Create a new Fragment to be placed in the activity layout
             
-            //Fragment firstFragment = new AirFragment();
             Fragment firstFragment = new AirQualCard();
             
             // In case this activity was started with special instructions from an
@@ -83,7 +87,7 @@ public class MainActivity extends AppCompatActivity
 
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.home_card_fragment, firstFragment).commit();
+                    .add(R.id.main_card_frame, firstFragment).commit();
         }
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_home);
@@ -99,7 +103,7 @@ public class MainActivity extends AppCompatActivity
         final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        final Spinner spinner = (Spinner) findViewById(R.id.home_spinner);
+        final Spinner spinner = (Spinner) findViewById(R.id.main_category);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter;
 
@@ -117,7 +121,7 @@ public class MainActivity extends AppCompatActivity
         spinner.setOnItemSelectedListener(this);
         spinner.setSelection(home_spinner_selected);
 
-        final ImageButton button_left = (ImageButton) findViewById(R.id.home_button_left);
+        final ImageButton button_left = (ImageButton) findViewById(R.id.main_category_left);
         button_left.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Do something in response to button click
@@ -130,7 +134,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        final ImageButton button_right = (ImageButton) findViewById(R.id.home_button_right);
+        final ImageButton button_right = (ImageButton) findViewById(R.id.main_category_right);
         button_right.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if(home_spinner_selected != 3) {
@@ -139,6 +143,70 @@ public class MainActivity extends AppCompatActivity
                     home_spinner_selected = 0;
                 }
                 spinner.setSelection(home_spinner_selected);
+            }
+        });
+        
+        final FloatingActionButton refresh = (FloatingActionButton) findViewById(R.id.main_refresh);
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int pos = home_spinner_selected;
+                
+                final Spinner spinner = (Spinner) findViewById(R.id.main_category);
+                // Create an ArrayAdapter using the string array and a default spinner layout
+                ArrayAdapter<CharSequence> adapter;
+    
+                if(Integer.parseInt(new SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) < 14) {
+                    adapter = ArrayAdapter.createFromResource(getApplicationContext(),
+                            R.array.home_spinner_day, android.R.layout.simple_spinner_item);
+                } else {
+                    adapter = ArrayAdapter.createFromResource(getApplicationContext(),
+                            R.array.home_spinner_night, android.R.layout.simple_spinner_item);
+                }
+                // Specify the layout to use when the list of choices appears
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                // Apply the adapter to the spinner
+                spinner.setAdapter(adapter);
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        
+                        ((TextView) view).setTextColor(getResources().getColor(android.R.color.black));
+                        
+                        Fragment newFragment;
+    
+                        switch(position) {
+                            case 0:
+                                newFragment = new TimeFragment();
+                                break;
+                            case 1:
+                                newFragment = new MealCard();
+                                break;
+                            case 2:
+                                newFragment = new EventCard();
+                                break;
+                            case 3:
+                                newFragment = new AirQualCard();
+                                break;
+                            default:
+                                newFragment = new AirQualCard();
+                                break;
+                        }
+    
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+    
+                        fragmentTransaction.replace(R.id.main_card_frame, newFragment);
+                        fragmentTransaction.addToBackStack(null);
+    
+                        fragmentTransaction.commit();
+                    }
+    
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+        
+                    }
+                });
+                spinner.setSelection(pos);
             }
         });
     }
@@ -221,87 +289,37 @@ public class MainActivity extends AppCompatActivity
                                final int pos, long id) {
         // An item was selected. You can retrieve the selected item using
         // parent.getItemAtPosition(pos)
-
+    
+        Fragment newFragment;
+    
         switch(pos) {
-            case 0: {
-                onCardChanged(pos);
-                }
+            case 0:
+                newFragment = new TimeFragment();
                 break;
             case 1:
-                
-    
-                onCardChanged(pos);
+                newFragment = new MealCard();
                 break;
-            case 2: {
-                  onCardChanged(pos);
-                }
+            case 2:
+                newFragment = new EventCard();
                 break;
             case 3:
-    
-                onCardChanged(pos);
+                newFragment = new AirQualCard();
                 break;
-            default: {
-                    onCardChanged(pos);
-                }
+            default:
+                newFragment = new AirQualCard();
                 break;
         }
+        
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+    
+        fragmentTransaction.replace(R.id.main_card_frame, newFragment);
+        fragmentTransaction.addToBackStack(null);
+    
+        fragmentTransaction.commit();
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
 
-    }
-
-    public void onCardChanged(int pos) {
-        switch (pos) {
-            case 0: {
-                TimeFragment newFragment = new TimeFragment();
-
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
-                fragmentTransaction.addToBackStack(null);
-
-                fragmentTransaction.commit();
-
-            } break;
-            case 1: {
-
-                Fragment newFragment = new MealCard();
-
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
-                fragmentTransaction.addToBackStack(null);
-
-                fragmentTransaction.commit();
-
-            } break;
-            case 2: {
-
-                Fragment newFragment = new EventCard();
-
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
-                fragmentTransaction.addToBackStack(null);
-
-                fragmentTransaction.commit();
-
-            } break;
-            case 3:
-            default:{
-
-                Fragment newFragment = new AirQualCard();
-
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
-                fragmentTransaction.addToBackStack(null);
-
-                fragmentTransaction.commit();
-
-            } break;
-        }
     }
     
     @Override
@@ -315,5 +333,4 @@ public class MainActivity extends AppCompatActivity
         // User touched the dialog's negative button
         
     }
-    
 }
