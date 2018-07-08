@@ -121,7 +121,7 @@
 
     <string name="time_card_period">時限</string>
 
-    <string name="time_table_info">データをアップグレードしています&#8230;</string>
+    <string name="time_table_info">データをアップデートしています…</string>
 
 
     <!-- MealInfoActivity -->
@@ -142,7 +142,7 @@
 
     <!-- Develop Procedure -->
 
-    <string name="notYet">まだ具現されてない機能です。</string>
+    <string name="notYet">まだ作られておらない機能です。</string>
 
     <string name="navigation_drawer_open">探索ウインドーを開く</string>
     <string name="navigation_drawer_close">探索ウインドーを閉める</string>
@@ -159,7 +159,7 @@
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
+    <string name="pref_header_general">一般設定</string>
 
     <string name="pref_title_social_recommendations">Enable social recommendations</string>
     <string name="pref_description_social_recommendations">Recommendations for people to contact
@@ -182,7 +182,7 @@
     </string-array>
 
     <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
+    <string name="pref_header_data_sync">データと同期化 &amp; sync</string>
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
@@ -232,6 +232,7 @@
 
     <string name="error">深刻なエラーが発生しました。</string>
     <string name="no_data">データがありません。</string>
+    <string name="dow">曜日</string>
 
 
 </resources>

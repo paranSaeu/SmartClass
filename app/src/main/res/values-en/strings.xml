@@ -156,6 +156,7 @@
     <string name="cancel">Cancel</string>
     <string name="error">An error occured.</string>
     <string name="no_data">No Data.</string>
+    <string name="dow">Day of Week</string>
 
 
 </resources>

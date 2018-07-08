@@ -33,12 +33,18 @@ public class EventCard extends Fragment {
     // 날짜 데이터의 기본값을 설정합니다.
     String date = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault()).format(Calendar.getInstance().getTime());
     
+    // 탑재된 액티비티에 따라 표시되는 레이아웃이 달라집니다!
+    // 0: 에러, `1: 학사일정, 2: 메인
+    int mode = 2;
+    
     boolean isInit = false;
     
     // 데이터를 설정할 수 있는 함수입니다. 이 함수가 호출되면 날짜를 따로 입력할 수 있으며, 이 함수를 호출하지 않으면 기본값(그날의 날짜)을 사용하여 학사일정 데이터를 불러옵니다.
     @Override
     public void setArguments(@Nullable Bundle args) {
         super.setArguments(args);
+        
+        mode = 1;
         
         // 오늘의 날짜 값을 받아옵니다. 주어진 날짜 데이터가 유효하지 않을 때 기본값으로 지정됩니다.
         String temp = new SimpleDateFormat("yyyy-MM-dd",Locale.getDefault()).format(Calendar.getInstance().getTime());
@@ -98,7 +104,7 @@ public class EventCard extends Fragment {
                         .getValue(SchoolSchedule.class);
                 
                 // 학사일정 카드의 데이터 부분에 있는 텍스트뷰에 접근합니다.
-                TextView textView = view.findViewById(R.id.home_card_event_data);
+                TextView textView = view.findViewById(R.id.card_event_data);
                 
                 // 데이터가 알맞게 들어왔다면 ""의 형태 혹은 "일정"의 형태입니다.
                 // 데이터가 어떻게 되어 있는지 검사합니다.
@@ -108,6 +114,26 @@ public class EventCard extends Fragment {
                 } else {
                     // 데이터가 존재하지 않는다면 데이터가 존재하지 않는다고 표시합니다.
                     textView.setText(getResources().getString(R.string.no_data));
+                }
+                
+                TextView eventDate = view.findViewById(R.id.card_event_date);
+                
+                TextView eventDOW = view.findViewById(R.id.card_event_dow);
+                
+                if(mode == 2) {
+                    String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+                    eventDate.setVisibility(TextView.VISIBLE);
+                    eventDate.setText(temp);
+                    
+                    temp = new SimpleDateFormat("EEE", Locale.getDefault()).format(Calendar.getInstance().getTime());
+                    
+                    temp = "[ " + temp + " ]";
+                    
+                    eventDOW.setVisibility(TextView.VISIBLE);
+                    eventDOW.setText(temp);
+                } else {
+                    eventDate.setVisibility(TextView.GONE);
+                    eventDOW.setVisibility(TextView.GONE);
                 }
             }
     

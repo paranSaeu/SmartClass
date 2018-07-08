@@ -61,17 +61,31 @@ public class AirQualCard extends Fragment {
         mDatabase.child("airQualDataFormat").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                
-                System.out.println(dataSnapshot);
-                
+                /*boolean isValid = true;
                 // 시간을 받아옵니다.
-                String LastUpdated = dataSnapshot.child("thisTime").getValue(String.class);
-                Log.d("AirQualCard", "LastUpdated(Server): "+ LastUpdated);
+                try {
+                    String airLastUpdated = dataSnapshot.child("airLastUpdated").getValue(String.class);
+                    Date lastUpdatedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(airLastUpdated);
+                    
+                    Date today = new Date();
+                    
+                    long dateDifference = today.getTime() - lastUpdatedDate.getTime() > 0? today.getTime() - lastUpdatedDate.getTime() : lastUpdatedDate.getTime() - today.getTime();
+                    
+                    if(dateDifference < 60000) {
+                        Log.d("AirQualCard", "No need to update. update procedure terminated.");
+                        isValid = false;
+                    }
+                } catch(ParseException e) {
+                    e.printStackTrace();
+                }*/
+                
+                String thisTime = dataSnapshot.child("thisTime").getValue(String.class);
+                Log.d("AirQualCard", "LastUpdated(Server): "+ thisTime);
                 String Time = new SimpleDateFormat("yyyy-MM-dd HH", Locale.getDefault()).format(Calendar.getInstance().getTime());
                 Log.d("AirQualCard", "Time(Client): "+Time);
                 
                 // 서버의 데이터 태그와 현재시간을 비교해서
-                if(LastUpdated == null || LastUpdated.compareTo(Time) != 0) {
+                if((thisTime == null || thisTime.compareTo(Time) != 0) /*&& isValid*/) {
                     // 데이터가 최신이 아니라면 데이터를 갱신합니다.
                     
                     InitAirQualData initAirQualData = new InitAirQualData();
@@ -100,6 +114,10 @@ public class AirQualCard extends Fragment {
                     e.printStackTrace();
                     textView.setText(getResources().getString(R.string.error));
                 }
+                
+                // 측정소 정보를 표시합니다.
+                textView = view.findViewById(R.id.card_air_station_name);
+                textView.setText(getResources().getString(R.string.air_card_station));
     
                 // 모든 데이터를 오프라인으로 받아옵니다.
                 DataFormat.airQualDataFormat = dataSnapshot.getValue(DataFormat.AirQual.class);

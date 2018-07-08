@@ -8,6 +8,7 @@
 
         <item
             android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home_black_24dp"
             android:title="@string/home_title" />
 
     </group>
@@ -17,12 +18,15 @@
 
         <item
             android:id="@+id/nav_table"
+            android:icon="@drawable/ic_assignment_black_24dp"
             android:title="@string/time_title" />
         <item
             android:id="@+id/nav_meal"
+            android:icon="@drawable/ic_restaurant_menu_black_24dp"
             android:title="@string/meal_title" />
         <item
             android:id="@+id/nav_calendar"
+            android:icon="@drawable/ic_today_black_24dp"
             android:title="@string/event_title" />
 
     </group>
@@ -32,9 +36,11 @@
 
         <item
             android:id="@+id/nav_setting"
+            android:icon="@drawable/ic_settings_black_24dp"
             android:title="@string/set_title" />
         <item
             android:id="@+id/nav_info"
+            android:icon="@drawable/ic_info_outline_black_24dp"
             android:title="@string/about" />
 
     </group>

@@ -103,5 +103,19 @@ public class DataFormat {
         }
     }
     
+    public static class Class {
+        public int grade;
+        public int no;
+        
+        public Class() {
+        
+        }
+        
+        public Class(int grade, int no) {
+            this.grade = grade;
+            this.no = no;
+        }
+    }
+    
 }
 

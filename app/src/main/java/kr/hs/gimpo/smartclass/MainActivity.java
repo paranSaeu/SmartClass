@@ -68,26 +68,18 @@ public class MainActivity
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
         if (findViewById(R.id.main_card_frame) != null) {
-
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
             /*if (savedInstanceState != null) {
                 return;
             }*/
-
-            // Create a new Fragment to be placed in the activity layout
             
             Fragment firstFragment = new AirQualCard();
-            
-            // In case this activity was started with special instructions from an
-            // Intent, pass the Intent's extras to the fragment as arguments
-            
             //firstFragment.setArguments(getIntent().getExtras());
-
-            // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.main_card_frame, firstFragment).commit();
+            
+            TextView textView = (TextView) findViewById(R.id.main_card_info);
+            
+            textView.setText(getResources().getString(R.string.air_info));
         }
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_home);
@@ -146,7 +138,7 @@ public class MainActivity
             }
         });
         
-        final FloatingActionButton refresh = (FloatingActionButton) findViewById(R.id.main_refresh);
+        /*final FloatingActionButton refresh = (FloatingActionButton) findViewById(R.id.main_refresh);
         refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,22 +166,28 @@ public class MainActivity
                         ((TextView) view).setTextColor(getResources().getColor(android.R.color.black));
                         
                         Fragment newFragment;
+                        String text;
     
                         switch(position) {
                             case 0:
                                 newFragment = new TimeFragment();
+                                text = getResources().getString(R.string.time_info);
                                 break;
                             case 1:
                                 newFragment = new MealCard();
+                                text = getResources().getString(R.string.meal_info);
                                 break;
                             case 2:
                                 newFragment = new EventCard();
+                                text = getResources().getString(R.string.event_info);
                                 break;
                             case 3:
                                 newFragment = new AirQualCard();
+                                text = getResources().getString(R.string.air_info);
                                 break;
                             default:
                                 newFragment = new AirQualCard();
+                                text = getResources().getString(R.string.air_info);
                                 break;
                         }
     
@@ -199,6 +197,9 @@ public class MainActivity
                         fragmentTransaction.addToBackStack(null);
     
                         fragmentTransaction.commit();
+    
+                        TextView textView = (TextView) findViewById(R.id.main_card_info);
+                        textView.setText(text);
                     }
     
                     @Override
@@ -208,7 +209,7 @@ public class MainActivity
                 });
                 spinner.setSelection(pos);
             }
-        });
+        });*/
     }
 
     private int home_spinner_selected = 0;
@@ -291,31 +292,40 @@ public class MainActivity
         // parent.getItemAtPosition(pos)
     
         Fragment newFragment;
+        String text;
     
         switch(pos) {
             case 0:
                 newFragment = new TimeFragment();
+                text = getResources().getString(R.string.time_info);
                 break;
             case 1:
                 newFragment = new MealCard();
+                text = getResources().getString(R.string.meal_info);
                 break;
             case 2:
                 newFragment = new EventCard();
+                text = getResources().getString(R.string.event_info);
                 break;
             case 3:
                 newFragment = new AirQualCard();
+                text = getResources().getString(R.string.air_info);
                 break;
             default:
                 newFragment = new AirQualCard();
+                text = getResources().getString(R.string.air_info);
                 break;
         }
-        
+    
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
     
         fragmentTransaction.replace(R.id.main_card_frame, newFragment);
         fragmentTransaction.addToBackStack(null);
     
         fragmentTransaction.commit();
+    
+        TextView textView = (TextView) findViewById(R.id.main_card_info);
+        textView.setText(text);
     }
 
     public void onNothingSelected(AdapterView<?> parent) {

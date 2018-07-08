@@ -32,7 +32,7 @@ public class MealCard extends Fragment {
     
     // 탑재된 액티비티에 따라 표시되는 레이아웃이 달라집니다!
     // 0: 에러, 1: 급식, 2: 메인
-    int mode = 0;
+    int mode = 2;
     
     boolean isInit = false;
     
@@ -89,12 +89,21 @@ public class MealCard extends Fragment {
                 
                 TextView mealDate = view.findViewById(R.id.card_meal_date);
                 
+                TextView mealDOW = view.findViewById(R.id.card_meal_dow);
+                
                 if(mode == 2) {
                     String temp = String.format(getResources().getString(R.string.date_format), ymdh[0], ymdh[1], ymdh[2]);
                     mealDate.setVisibility(TextView.VISIBLE);
                     mealDate.setText(temp);
+                    
+                    temp = new SimpleDateFormat("EEE", Locale.getDefault()).format(Calendar.getInstance().getTime());
+                    temp = "[ " + temp + " ]";
+                    
+                    mealDOW.setVisibility(TextView.VISIBLE);
+                    mealDOW.setText(temp);
                 } else {
                     mealDate.setVisibility(TextView.GONE);
+                    mealDOW.setVisibility(TextView.GONE);
                 }
                 
                 TextView mealType = view.findViewById(R.id.card_meal_time);
