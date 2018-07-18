@@ -11,6 +11,13 @@
     <string name="noti_version_is">어플리케이션 버전:</string>
 
     <string name="quit_prompt">어플리케이션을 종료하시겠습니까?</string>
+
+    <string name="air_info">학교 주변 대기상태 자료\n본 자료는 실시간으로 관측된 자료이며,\n현지 사정·수신 상태에 의해 오차가 발생할 수 있습니다.\n제공: 한국환경공단</string>
+
+    <string name="meal_info">급식정보 자료\n제공: 김포고등학교</string>
+    <string name="event_info">학사일정 자료\n제공: 김포고등학교</string>
+    <string name="time_info">시간표 자료\n제공: 김포고등학교</string>
+
     <string name="quit">종료</string>
     <string name="cancel">취소</string>
 
@@ -29,8 +36,6 @@
     <string name="lunch">[ 중식 ]</string>
     <string name="dinner">[ 석식 ]</string>
 
-    <!-- %s\n미세먼지(PM10): %s\n초미세먼지(PM2.5): %s\n오존(O₃): %s\n이산화질소(NO₂): %s\n일산화탄소(CO): %s\n아황산가스(SO₂): %s\n통합대기환경지수: %s -->
-
     <string name="measure_type">측정항목</string>
     <string name="measure_value">측정값</string>
     <string name="measure_status">상태</string>
@@ -46,7 +51,7 @@
     <string name="good">[ 보통 ]</string>
     <string name="bad">[ 나쁨 ]</string>
     <string name="vbad">[ 위험 ]</string>
-    <string name="unknown">[ 없음 ]</string>
+    <string name="unknown">[ Null ]</string>
 
     <!-- HomeActivity -->
 
@@ -73,8 +78,6 @@
         <item>@string/home_card_event_title</item>
         <item>@string/home_card_air_title</item>
     </string-array>
-
-    <string name="home_card_air_quality_format">%s\n미세먼지(PM10): %s\n초미세먼지(PM2.5): %s\n오존(O₃): %s\n이산화질소(NO₂): %s\n일산화탄소(CO): %s\n아황산가스(SO₂): %s\n통합대기환경지수: %s</string>
 
     <!-- TimeTableActivity -->
 
@@ -134,11 +137,25 @@
 
     <string name="event_title">학사일정</string>
 
+    <string name="event_private_hint">%s년 %s월 %s일\n메모</string>
+
+    <string name="event_register">등록</string>
+
+    <string name="event_registered">일정이 등록되었습니다.</string>
+    <string name="event_deleted">일정이 삭제되었습니다.</string>
+
     <!-- SettingsActivity -->
 
     <string name="set_title">설정</string>
 
     <string name="about">어플리케이션 정보</string>
+
+    <string name="brief">정시 브리핑</string>
+    <string name="brief_setting">정시 브리핑 기능 사용하기</string>
+    <string name="brief_summary">정해진 시각에 주요 정보를 알려 드립니다.</string>
+
+    <string name="sync_with_gcalendar_setting">Google 캘린더와 일정 동기화</string>
+    <string name="sync_with_gcalendar_summary">Google 캘린더에 학사일정을 저장합니다.\n앱에서 Google 캘린더에 저장한 일정을 읽을 수 있습니다.</string>
 
     <!-- Develop Procedure -->
 
@@ -148,11 +165,13 @@
     <string name="navigation_drawer_close">탐색 창 닫기</string>
     <string name="date">날짜</string>
     <string name="date_format">%s년 %s월 %s일</string>
+    <string name="date_time_format">yyyy\'년 \'MM\'월 \'dd\'일 \'HH\'시 \'mm\'분\'</string>
     <string name="home_card_air_title">학교 주변 대기상태</string>
-    <string name="home_card_air_help">여기에 학교 주변 대기상태가 표시됩니다.</string>
+    <string name="home_card_air_help">학교 주변 대기상태</string>
+    <string name="air_card_station_hint">측정소명</string>
+    <string name="air_card_station">사우동 측정소</string>
     <string name="meal_card_data_null">등록된 식단 정보가 없습니다.</string>
     <string name="title_activity_settings">SettingsActivity</string>
-    <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
 
@@ -227,6 +246,13 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
+
+    <!-- Exception && Error Handling -->
+
+    <string name="error">에러가 발생했습니다.</string>
+    <string name="no_data">데이터가 없습니다.</string>
+    <string name="dow">요일</string>
+    <string name="nav_header_title">Android Studio</string>
 
 
 </resources>

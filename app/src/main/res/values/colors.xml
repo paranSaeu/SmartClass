@@ -9,8 +9,8 @@
     <!-- AirQualData -->
 
     <color name="vgood">#0080FF</color>
-    <color name="good">#00FF66</color>
-    <color name="bad">#FFFF00</color>
+    <color name="good">#00DD66</color>
+    <color name="bad">@android:color/holo_orange_dark</color>
     <color name="vbad">#FF1900</color>
     <!-- common color for unknown factor. -->
     <color name="common">@android:color/tertiary_text_dark</color>

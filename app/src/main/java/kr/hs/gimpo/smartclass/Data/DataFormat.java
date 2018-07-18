@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+
 public class DataFormat {
 
     public static Time timeDataFormat;
@@ -99,6 +100,20 @@ public class DataFormat {
             } catch(ParseException e) {
                 e.printStackTrace();
             }
+        }
+    }
+    
+    public static class Class {
+        public int grade;
+        public int no;
+        
+        public Class() {
+        
+        }
+        
+        public Class(int grade, int no) {
+            this.grade = grade;
+            this.no = no;
         }
     }
     

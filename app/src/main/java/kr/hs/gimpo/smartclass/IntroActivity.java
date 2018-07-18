@@ -2,20 +2,15 @@ package kr.hs.gimpo.smartclass;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-import android.widget.TextView;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
@@ -25,11 +20,11 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 
-import kr.hs.gimpo.smartclass.*;
 import kr.hs.gimpo.smartclass.Data.InitAirQualData;
 import kr.hs.gimpo.smartclass.Data.InitEventData;
 import kr.hs.gimpo.smartclass.Data.InitMealData;
 import kr.hs.gimpo.smartclass.Data.InitTimeData;
+import kr.hs.gimpo.smartclass.Data.TimeVerifier;
 
 public class IntroActivity extends AppCompatActivity {
 
@@ -52,6 +47,14 @@ public class IntroActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_intro);
         System.out.println("setContentView: activity_intro");
+        
+        try {
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        } catch(DatabaseException e) {
+            e.printStackTrace();
+        }
+    
+        TimeVerifier.validateTime();
 
         isConnected = false;
         ConnectivityManager cm =
@@ -62,15 +65,12 @@ public class IntroActivity extends AppCompatActivity {
                     activeNetwork.isConnectedOrConnecting();
         }
 
-
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-
         mDatabase = FirebaseDatabase.getInstance().getReference("test");
         mDatabase.keepSynced(true);
 
         mDatabase.child("mealDataFormat").child("thisMonth").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 System.out.println(dataSnapshot);
                 thisMonth = dataSnapshot.getValue(Integer.class);
                 System.out.println(thisMonth);
@@ -89,14 +89,14 @@ public class IntroActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
 
         mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 System.out.println(dataSnapshot);
                 thisTime = dataSnapshot.getValue(String.class);
                 System.out.println(thisTime);
@@ -114,14 +114,14 @@ public class IntroActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
         
         mDatabase.child("eventDataFormat").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 System.out.println(dataSnapshot);
                 thisYear = String.valueOf(dataSnapshot.child("thisYear").getValue(Long.class));
                 System.out.println(thisYear);
@@ -139,7 +139,7 @@ public class IntroActivity extends AppCompatActivity {
             }
     
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
         
             }
         });

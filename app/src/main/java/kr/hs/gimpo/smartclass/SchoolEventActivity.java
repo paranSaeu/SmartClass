@@ -2,11 +2,10 @@ package kr.hs.gimpo.smartclass;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.method.ScrollingMovementMethod;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -15,21 +14,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
-import kr.hs.gimpo.smartclass.Fragment.EventFragment;
+import kr.hs.gimpo.smartclass.Fragment.EventCard;
 
 public class SchoolEventActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -39,8 +36,8 @@ public class SchoolEventActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         
         // 테마를 설정합니다.
-        String today = new SimpleDateFormat("MM-dd", Locale.getDefault()).format(Calendar.getInstance().getTime());
-        if(today.compareTo("04-16")==0) {
+        String date = new SimpleDateFormat("MM-dd", Locale.getDefault()).format(Calendar.getInstance().getTime());
+        if(date.compareTo("04-16")==0) {
             setTheme(R.style.remember0416);
         } else {
             setTheme(R.style.AppTheme_NoActionBar);
@@ -64,8 +61,207 @@ public class SchoolEventActivity extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         
+        
+        final Calendar calendar = Calendar.getInstance();
+        
+        date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
+    
+        final TextView eventDate = (TextView) findViewById(R.id.event_date);
+        String[] ymd = date.split("-");
+        String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+        eventDate.setText(temp);
+    
+        File file = new File(getFilesDir(), "privateCalendar.db");
+    
+        final SQLiteDatabase sqLiteDatabase = SQLiteDatabase.openOrCreateDatabase(file, null);
+        
+        sqLiteDatabase.execSQL(
+                "CREATE TABLE IF NOT EXISTS " +
+                "PRIVATE_CALENDAR" + " ( " +
+                "DATE TEXT" + " , " + "" +
+                "SCHEDULE TEXT" + " )"
+        );
+    
+        final Fragment fragment = new EventCard();
+        
         // Fragment를 불러옵니다.
-        initFragment();
+        if(findViewById(R.id.event_card_public_frame) != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString("date", date);
+            fragment.setArguments(bundle);
+            
+            getSupportFragmentManager().beginTransaction().add(R.id.event_card_public_frame, fragment).commit();
+        }
+        
+        final EditText privateCalendar = (EditText) findViewById(R.id.event_private);
+        privateCalendar.setHint(String.format(getResources().getString(R.string.event_private_hint), ymd[0], ymd[1], ymd[2]));
+    
+        Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + "PRIVATE_CALENDAR" + " WHERE DATE = " + "\"" + new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime()) + "\"", null);
+        if(cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            privateCalendar.setText(cursor.getString(1));
+        } else {
+            privateCalendar.setText("");
+        }
+        cursor.close();
+    
+        ImageButton week_left = (ImageButton) findViewById(R.id.event_button_month_back);
+        week_left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(privateCalendar.getText().toString().compareTo("") != 0) {
+                    sqLiteDatabase.execSQL(
+                            "INSERT OR REPLACE INTO " + "PRIVATE_CALENDAR" + " VALUES ( " + "\"" + new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime()) + "\""  + " , " + "\"" + privateCalendar.getText().toString() + "\"" + ")"
+                    );
+                }
+    
+                calendar.add(Calendar.DATE, -7);
+                
+                String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
+    
+                TextView eventDate = (TextView) findViewById(R.id.event_date);
+                String[] ymd = date.split("-");
+                String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+                eventDate.setText(temp);
+                
+                Bundle bundle = new Bundle();
+                bundle.putString("date", date);
+                fragment.setArguments(bundle);
+    
+                privateCalendar.setHint(String.format(getResources().getString(R.string.event_private_hint), ymd[0], ymd[1], ymd[2]));
+                Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + "PRIVATE_CALENDAR" + " WHERE DATE = " + "\"" + new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime()) + "\"", null);
+                if(cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    privateCalendar.setText(cursor.getString(1));
+                } else {
+                    privateCalendar.setText("");
+                }
+                cursor.close();
+            }
+        });
+    
+        ImageButton day_left = (ImageButton) findViewById(R.id.event_button_day_back);
+        day_left.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(privateCalendar.getText().toString().compareTo("") != 0) {
+                    sqLiteDatabase.execSQL(
+                            "INSERT OR REPLACE INTO " + "PRIVATE_CALENDAR" + " VALUES ( " + "\"" + new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime()) + "\""  + " , " + "\"" + privateCalendar.getText().toString() + "\"" + ")"
+                    );
+                }
+    
+                calendar.add(Calendar.DATE, -1);
+            
+                String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
+            
+                TextView eventDate = (TextView) findViewById(R.id.event_date);
+                String[] ymd = date.split("-");
+                String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+                eventDate.setText(temp);
+            
+                Bundle bundle = new Bundle();
+                bundle.putString("date", date);
+                fragment.setArguments(bundle);
+    
+                privateCalendar.setHint(String.format(getResources().getString(R.string.event_private_hint), ymd[0], ymd[1], ymd[2]));
+                Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + "PRIVATE_CALENDAR" + " WHERE DATE = " + "\"" + new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime()) + "\"", null);
+                if(cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    privateCalendar.setText(cursor.getString(1));
+                } else {
+                    privateCalendar.setText("");
+                }
+                cursor.close();
+            }
+        });
+    
+        ImageButton day_right = (ImageButton) findViewById(R.id.event_button_day_forward);
+        day_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(privateCalendar.getText().toString().compareTo("") != 0) {
+                    sqLiteDatabase.execSQL(
+                            "INSERT OR REPLACE INTO " + "PRIVATE_CALENDAR" + " VALUES ( " + "\"" + new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime()) + "\""  + " , " + "\"" + privateCalendar.getText().toString() + "\"" + ")"
+                    );
+                }
+    
+                calendar.add(Calendar.DATE, 1);
+            
+                String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
+            
+                TextView eventDate = (TextView) findViewById(R.id.event_date);
+                String[] ymd = date.split("-");
+                String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+                eventDate.setText(temp);
+            
+                Bundle bundle = new Bundle();
+                bundle.putString("date", date);
+                fragment.setArguments(bundle);
+    
+                privateCalendar.setHint(String.format(getResources().getString(R.string.event_private_hint), ymd[0], ymd[1], ymd[2]));
+                Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + "PRIVATE_CALENDAR" + " WHERE DATE = " + "\"" + new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime()) + "\"", null);
+                if(cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    privateCalendar.setText(cursor.getString(1));
+                } else {
+                    privateCalendar.setText("");
+                }
+                cursor.close();
+            }
+        });
+    
+        ImageButton week_right = (ImageButton) findViewById(R.id.event_button_month_forward);
+        week_right.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(privateCalendar.getText().toString().compareTo("") != 0) {
+                    sqLiteDatabase.execSQL(
+                            "INSERT OR REPLACE INTO " + "PRIVATE_CALENDAR" + " VALUES ( " + "\"" + new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime()) + "\""  + " , " + "\"" + privateCalendar.getText().toString() + "\"" + ")"
+                    );
+                }
+                
+                calendar.add(Calendar.DATE, 7);
+            
+                String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime());
+            
+                TextView eventDate = (TextView) findViewById(R.id.event_date);
+                String[] ymd = date.split("-");
+                String temp = String.format(getResources().getString(R.string.date_format), ymd[0], ymd[1], ymd[2]);
+                eventDate.setText(temp);
+            
+                Bundle bundle = new Bundle();
+                bundle.putString("date", date);
+                fragment.setArguments(bundle);
+    
+                privateCalendar.setHint(String.format(getResources().getString(R.string.event_private_hint), ymd[0], ymd[1], ymd[2]));
+                Cursor cursor = sqLiteDatabase.rawQuery("SELECT * FROM " + "PRIVATE_CALENDAR" + " WHERE DATE = " + "\"" + new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime()) + "\"", null);
+                if(cursor.getCount() > 0) {
+                    cursor.moveToFirst();
+                    privateCalendar.setText(cursor.getString(1));
+                } else {
+                    privateCalendar.setText("");
+                }
+                cursor.close();
+            }
+        });
+    
+        Button eventRegister = (Button) findViewById(R.id.event_register);
+        eventRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(privateCalendar.getText().toString().compareTo("") != 0) {
+                    sqLiteDatabase.execSQL(
+                            "INSERT OR REPLACE INTO " + "PRIVATE_CALENDAR" + " VALUES ( " + "\"" + new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime()) + "\""  + " , " + "\"" + privateCalendar.getText().toString() + "\"" + ")"
+                    );
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.event_registered), Toast.LENGTH_SHORT).show();
+                } else {
+                    sqLiteDatabase.execSQL(
+                            "DELETE FROM " + "PRIVATE_CALENDAR" + " WHERE DATE = " + "\"" + new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(calendar.getTime()) + "\""
+                    );
+                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.event_deleted), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
 
@@ -140,12 +336,5 @@ public class SchoolEventActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-    
-    private void initFragment() {
-        if(findViewById(R.id.event_card_public_fragment) != null) {
-            Fragment fragment = new EventFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.event_card_public_fragment, fragment).commit();
-        }
     }
 }

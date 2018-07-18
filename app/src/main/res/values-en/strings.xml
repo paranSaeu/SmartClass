@@ -2,9 +2,9 @@
 
     <!-- Common Resource -->
 
-    <string name="app_name">GimpoHigh Smart Class</string>
-    <string name="school_name">Gimpo High</string>
-    <string name="school_motto">Healty, Creative and Diligent Pupil</string>
+    <string name="app_name">Gimpo High Smart Class</string>
+    <string name="school_name">Gimpo High School</string>
+    <string name="school_motto">Healthy, Creative and Diligent Student</string>
 
     <string name="action_settings">Settings</string>
 
@@ -51,7 +51,7 @@
 
     <string name="home_card_meal_title_am">Lunch Today</string>
     <string name="home_card_meal_title_pm">Dinner Today</string>
-    <string name="home_card_meal_title_help">Today\'s menu is displayed here</string>
+    <string name="home_card_meal_title_help">Today\'s menu is displayed here.</string>
 
     <string name="home_card_time_title">TimeTable</string>
 
@@ -117,7 +117,7 @@
 
     <string name="time_card_period">Time</string>
 
-    <string name="time_table_info">Updating TimeTable...</string>
+    <string name="time_table_info">Updating TimeTable&#8230;</string>
 
 
     <!-- MealInfoActivity -->
@@ -144,13 +144,19 @@
     <string name="navigation_drawer_close">Close Navigation Drawer</string>
     <string name="date">Date</string>
     <string name="date_format">%s. %s. %s.</string>
+    <string name="date_time_format">yyyy. MM. dd. HH:mm</string>
     <string name="home_card_air_title">Air Quality near School</string>
     <string name="home_card_air_help">Air Quailty Displayed</string>
-    <string name="meal_card_data_null">No Data</string>
+    <string name="meal_card_data_null">No Data.</string>
     <string name="title_activity_settings">SettingsActivity</string>
-    <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
+    <string name="quit_prompt">Quit Application?</string>
+    <string name="quit">Quit</string>
+    <string name="cancel">Cancel</string>
+    <string name="error">An error occured.</string>
+    <string name="no_data">No Data.</string>
+    <string name="dow">Day of Week</string>
 
 
 </resources>

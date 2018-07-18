@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/brief">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="onTimeBriefing"
+            android:title="@string/brief_setting"
+            android:summary="@string/brief_summary" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/event_title">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="syncWithGCalendar"
+            android:title="@string/sync_with_gcalendar_setting"
+            android:summary="@string/sync_with_gcalendar_summary" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/about">
+
+        <Preference
+            android:title="개발자 정보" />
+
+        <Preference
+            android:title="어플리케이션 버전" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

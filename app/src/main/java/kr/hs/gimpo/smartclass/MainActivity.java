@@ -1,18 +1,14 @@
 package kr.hs.gimpo.smartclass;
 
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -29,22 +25,19 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.concurrent.ExecutionException;
 
 import kr.hs.gimpo.smartclass.Fragment.*;
-import kr.hs.gimpo.smartclass.Data.*;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,AdapterView.OnItemSelectedListener,onCardChangeListener,QuitDialogFragment.QuitDialogListener {
+
+public class MainActivity
+        extends AppCompatActivity
+        implements
+        NavigationView.OnNavigationItemSelectedListener,
+        AdapterView.OnItemSelectedListener,
+        QuitDialog.QuitDialogListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +50,7 @@ public class MainActivity extends AppCompatActivity
 
             setContentView(R.layout.activity_main);
 
-            TextView textView = (TextView) findViewById(R.id.home_header_school_motto);
+            TextView textView = (TextView) findViewById(R.id.school_motto);
             textView.setTypeface(Typeface.DEFAULT_BOLD);
             textView.setText(R.string.home_header_remember20140416);
 
@@ -67,32 +60,26 @@ public class MainActivity extends AppCompatActivity
 
             setContentView(R.layout.activity_main);
 
-            TextView textView = (TextView) findViewById(R.id.home_header_school_motto);
+            TextView textView = (TextView) findViewById(R.id.school_motto);
             textView.setTypeface(Typeface.DEFAULT);
             textView.setText(R.string.school_motto);
         }
 
         // Check that the activity is using the layout version with
         // the fragment_container FrameLayout
-        if (findViewById(R.id.home_card_fragment) != null) {
-
-            // However, if we're being restored from a previous state,
-            // then we don't need to do anything and should return or else
-            // we could end up with overlapping fragments.
-            if (savedInstanceState != null) {
+        if (findViewById(R.id.main_card_frame) != null) {
+            /*if (savedInstanceState != null) {
                 return;
-            }
-
-            // Create a new Fragment to be placed in the activity layout
-            Fragment firstFragment = new AirFragment();
-
-            // In case this activity was started with special instructions from an
-            // Intent, pass the Intent's extras to the fragment as arguments
-            firstFragment.setArguments(getIntent().getExtras());
-
-            // Add the fragment to the 'fragment_container' FrameLayout
+            }*/
+            
+            Fragment firstFragment = new AirQualCard();
+            //firstFragment.setArguments(getIntent().getExtras());
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.home_card_fragment, firstFragment).commit();
+                    .add(R.id.main_card_frame, firstFragment).commit();
+            
+            TextView textView = (TextView) findViewById(R.id.main_card_info);
+            
+            textView.setText(getResources().getString(R.string.air_info));
         }
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_home);
@@ -108,7 +95,7 @@ public class MainActivity extends AppCompatActivity
         final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        final Spinner spinner = (Spinner) findViewById(R.id.home_spinner);
+        final Spinner spinner = (Spinner) findViewById(R.id.main_category);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapter;
 
@@ -126,7 +113,7 @@ public class MainActivity extends AppCompatActivity
         spinner.setOnItemSelectedListener(this);
         spinner.setSelection(home_spinner_selected);
 
-        final ImageButton button_left = (ImageButton) findViewById(R.id.home_button_left);
+        final ImageButton button_left = (ImageButton) findViewById(R.id.main_category_left);
         button_left.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Do something in response to button click
@@ -139,7 +126,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        final ImageButton button_right = (ImageButton) findViewById(R.id.home_button_right);
+        final ImageButton button_right = (ImageButton) findViewById(R.id.main_category_right);
         button_right.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if(home_spinner_selected != 3) {
@@ -150,14 +137,81 @@ public class MainActivity extends AppCompatActivity
                 spinner.setSelection(home_spinner_selected);
             }
         });
-
-        updateData();
+        
+        /*final FloatingActionButton refresh = (FloatingActionButton) findViewById(R.id.main_refresh);
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int pos = home_spinner_selected;
+                
+                final Spinner spinner = (Spinner) findViewById(R.id.main_category);
+                // Create an ArrayAdapter using the string array and a default spinner layout
+                ArrayAdapter<CharSequence> adapter;
+    
+                if(Integer.parseInt(new SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) < 14) {
+                    adapter = ArrayAdapter.createFromResource(getApplicationContext(),
+                            R.array.home_spinner_day, android.R.layout.simple_spinner_item);
+                } else {
+                    adapter = ArrayAdapter.createFromResource(getApplicationContext(),
+                            R.array.home_spinner_night, android.R.layout.simple_spinner_item);
+                }
+                // Specify the layout to use when the list of choices appears
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                // Apply the adapter to the spinner
+                spinner.setAdapter(adapter);
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        
+                        ((TextView) view).setTextColor(getResources().getColor(android.R.color.black));
+                        
+                        Fragment newFragment;
+                        String text;
+    
+                        switch(position) {
+                            case 0:
+                                newFragment = new TimeFragment();
+                                text = getResources().getString(R.string.time_info);
+                                break;
+                            case 1:
+                                newFragment = new MealCard();
+                                text = getResources().getString(R.string.meal_info);
+                                break;
+                            case 2:
+                                newFragment = new EventCard();
+                                text = getResources().getString(R.string.event_info);
+                                break;
+                            case 3:
+                                newFragment = new AirQualCard();
+                                text = getResources().getString(R.string.air_info);
+                                break;
+                            default:
+                                newFragment = new AirQualCard();
+                                text = getResources().getString(R.string.air_info);
+                                break;
+                        }
+    
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+    
+                        fragmentTransaction.replace(R.id.main_card_frame, newFragment);
+                        fragmentTransaction.addToBackStack(null);
+    
+                        fragmentTransaction.commit();
+    
+                        TextView textView = (TextView) findViewById(R.id.main_card_info);
+                        textView.setText(text);
+                    }
+    
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+        
+                    }
+                });
+                spinner.setSelection(pos);
+            }
+        });*/
     }
-    Integer thisMonth;
-    String thisTime;
-    boolean isConnected;
 
-    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("test");
     private int home_spinner_selected = 0;
 
     @Override
@@ -167,7 +221,7 @@ public class MainActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             //super.onBackPressed();
-            DialogFragment dialogFragment = new QuitDialogFragment();
+            DialogFragment dialogFragment = new QuitDialog();
             dialogFragment.show(getSupportFragmentManager(), "quit");
         }
     }
@@ -175,7 +229,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -198,7 +252,7 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         Intent intent;
@@ -231,265 +285,51 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    
-    private Bundle bundle = new Bundle();
-    
-    private void updateData() {
-        ConnectivityManager cm =
-                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(cm != null) {
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            isConnected = activeNetwork != null &&
-                    activeNetwork.isConnectedOrConnecting();
-        }
-    
-        mDatabase.child("mealDataFormat").child("thisMonth").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                thisMonth = dataSnapshot.getValue(Integer.class);
-                System.out.println(thisMonth);
-            
-                if(isConnected) {
-                    InitMealData initMealData = new InitMealData(mDatabase, thisMonth);
-                    initMealData.execute();
-                    try {
-                        initMealData.get();
-                    } catch(InterruptedException e) {
-                        e.printStackTrace();
-                    } catch(ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            
-            }
-        });
-        mDatabase.child("mealDataFormat").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(Calendar.getInstance().getTime());
-                int thisDay = Integer.parseInt(new SimpleDateFormat("dd", Locale.getDefault()).format(Calendar.getInstance().getTime()));
-                int thisMeal = Integer.parseInt(new SimpleDateFormat("HH", Locale.getDefault()).format(Calendar.getInstance().getTime())) < 14? 0 : 1;
-                bundle.putInt("mealTime", thisMeal);
-                bundle.putString(
-                        "mealDate",
-                        new SimpleDateFormat("yyyy'년 'MM'월 'dd'일 '", Locale.getDefault()).format(Calendar.getInstance().getTime()));
-                if(!(calendar.get(Calendar.DAY_OF_WEEK) == 1 || calendar.get(Calendar.DAY_OF_WEEK) == 7)) {
-                    System.out.println(dataSnapshot);
-                    DataFormat.mealDataFormat = dataSnapshot.getValue(DataFormat.Meal.class);
-                    bundle.putString(
-                            "mealData",
-                            DataFormat.mealDataFormat.mealData.get(thisDay - 1).get(thisMeal));
-                } else {
-                    bundle.putString(
-                            "mealData",
-                            getResources().getString(R.string.meal_card_data_null));
-                }
-    
-                onCardChanged(home_spinner_selected, bundle);
-            }
-        
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            
-            }
-        });
-        mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println(dataSnapshot);
-                thisTime = dataSnapshot.getValue(String.class);
-                System.out.println(thisTime);
-                if(isConnected) {
-                    InitAirQualData initAirQualData = new InitAirQualData(mDatabase, thisTime);
-                    initAirQualData.execute();
-                    try {
-                        initAirQualData.get();
-                    } catch(InterruptedException e) {
-                        e.printStackTrace();
-                    } catch(ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            
-            }
-        });
-        mDatabase.child("airQualDataFormat").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println("changed!");
-                DataFormat.airQualDataFormat = dataSnapshot.getValue(DataFormat.AirQual.class);
-                String[] param = new String[15];
-                DataFormat.airQualDataFormat.airQualData.toArray(param);
-                String temp = String.format(
-                        Locale.getDefault(),
-                        getResources().getString(R.string.home_card_air_quality_format),
-                        param[0],
-                        param[1],
-                        param[2],
-                        param[3],
-                        param[4],
-                        param[5],
-                        param[6],
-                        param[7]
-                );
-                bundle.putString("airData", temp);
-                bundle.putStringArray("airDataList", param);
-                System.out.println("airDataList init.");
-            
-                onCardChanged(home_spinner_selected, bundle);
-            }
-        
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            
-            }
-        });
-    }
 
     public void onItemSelected(AdapterView<?> parent, View view,
                                final int pos, long id) {
         // An item was selected. You can retrieve the selected item using
         // parent.getItemAtPosition(pos)
-
-        ConnectivityManager cm =
-                (ConnectivityManager)getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if(cm != null) {
-            NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-            isConnected = activeNetwork != null &&
-                    activeNetwork.isConnectedOrConnecting();
-        }
-
+    
+        Fragment newFragment;
+        String text;
+    
         switch(pos) {
-            case 0: {
-                onCardChanged(pos, bundle);
-                }
+            case 0:
+                newFragment = new TimeFragment();
+                text = getResources().getString(R.string.time_info);
                 break;
             case 1:
-                
-    
-                onCardChanged(pos, bundle);
+                newFragment = new MealCard();
+                text = getResources().getString(R.string.meal_info);
                 break;
-            case 2: {
-                  onCardChanged(pos, bundle);
-                }
+            case 2:
+                newFragment = new EventCard();
+                text = getResources().getString(R.string.event_info);
                 break;
             case 3:
-                mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        System.out.println(dataSnapshot);
-                        thisTime = dataSnapshot.getValue(String.class);
-                        System.out.println(thisTime);
-                        if(isConnected) {
-                            InitAirQualData initAirQualData = new InitAirQualData(mDatabase, thisTime);
-                            initAirQualData.execute();
-                            try {
-                                initAirQualData.get();
-                            } catch(InterruptedException e) {
-                                e.printStackTrace();
-                            } catch(ExecutionException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-        
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-            
-                    }
-                });
-    
-                onCardChanged(pos, bundle);
+                newFragment = new AirQualCard();
+                text = getResources().getString(R.string.air_info);
                 break;
-            default: {
-                    onCardChanged(pos, bundle);
-                }
+            default:
+                newFragment = new AirQualCard();
+                text = getResources().getString(R.string.air_info);
                 break;
         }
+    
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+    
+        fragmentTransaction.replace(R.id.main_card_frame, newFragment);
+        fragmentTransaction.addToBackStack(null);
+    
+        fragmentTransaction.commit();
+    
+        TextView textView = (TextView) findViewById(R.id.main_card_info);
+        textView.setText(text);
     }
 
     public void onNothingSelected(AdapterView<?> parent) {
 
-    }
-
-    public void onCardChanged(int pos, Bundle data) {
-        switch (pos) {
-            case 0: {
-                TimeFragment newFragment = new TimeFragment();
-
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
-                fragmentTransaction.addToBackStack(null);
-
-                fragmentTransaction.commit();
-
-            } break;
-            case 1: {
-
-                MealFragment newFragment = new MealFragment();
-                data.putString("mealData_default", getResources().getString(R.string.home_card_meal_title_help));
-                data.putInt("displayMode", 0);
-                newFragment.setArguments(data);
-
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
-                fragmentTransaction.addToBackStack(null);
-
-                fragmentTransaction.commit();
-
-            } break;
-            case 2: {
-
-                EventFragment newFragment = new EventFragment();
-
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
-                fragmentTransaction.addToBackStack(null);
-
-                fragmentTransaction.commit();
-
-            } break;
-            case 3: {
-
-                AirFragment newFragment = new AirFragment();
-
-                data.putString("airData_default", getResources().getString(R.string.home_card_air_help));
-                newFragment.setArguments(data);
-
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
-                fragmentTransaction.addToBackStack(null);
-
-                fragmentTransaction.commit();
-
-            }
-            default: {
-
-                AirFragment newFragment = new AirFragment();
-
-                data.putString("airData_default", getResources().getString(R.string.home_card_air_help));
-                newFragment.setArguments(data);
-
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-
-                fragmentTransaction.replace(R.id.home_card_fragment, newFragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
-
-            } break;
-        }
     }
     
     @Override
@@ -503,5 +343,4 @@ public class MainActivity extends AppCompatActivity
         // User touched the dialog's negative button
         
     }
-    
 }

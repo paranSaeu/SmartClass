@@ -1,47 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/home_layout"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="kr.hs.gimpo.smartclass.MainActivity"
-    tools:showIn="@layout/app_bar_main"
-    android:orientation="vertical" >
+    tools:showIn="@layout/app_bar_main">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/home_header_layout"
+        android:id="@+id/main_header"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@drawable/gimpo_hs_thumb"
-        app:layout_constraintDimensionRatio="6:4"
+        app:layout_constraintDimensionRatio="10:6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/home_header_school_name"
+            android:id="@+id/school_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:text="@string/school_name"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
             android:textColor="@android:color/white"
-            app:layout_constraintBottom_toTopOf="@+id/home_header_school_motto"
+            app:layout_constraintBottom_toTopOf="@+id/school_motto"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/home_header_school_motto"
+            android:id="@+id/school_motto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:text="@string/school_motto"
             android:textColor="@android:color/white"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -49,47 +48,49 @@
     </android.support.constraint.ConstraintLayout>
 
     <ImageButton
-        android:id="@+id/home_button_left"
+        android:id="@+id/main_category_left"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:background="?android:selectableItemBackground"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:contentDescription=""
         android:src="@drawable/ic_chevron_left_black_24dp"
-        app:layout_constraintEnd_toStartOf="@+id/home_spinner"
+        app:layout_constraintEnd_toStartOf="@+id/main_category"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_header_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/main_header" />
 
     <ImageButton
-        android:id="@+id/home_button_right"
+        android:id="@+id/main_category_right"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:background="?android:selectableItemBackground"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:contentDescription=""
         android:src="@drawable/ic_chevron_right_black_24dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/home_spinner"
-        app:layout_constraintTop_toBottomOf="@+id/home_header_layout" />
+        app:layout_constraintStart_toEndOf="@+id/main_category"
+        app:layout_constraintTop_toBottomOf="@+id/main_header" />
 
     <Spinner
-        android:id="@+id/home_spinner"
+        android:id="@+id/main_category"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/home_button_right"
-        app:layout_constraintEnd_toStartOf="@+id/home_button_right"
+        app:layout_constraintBottom_toBottomOf="@+id/main_category_right"
+        app:layout_constraintEnd_toStartOf="@+id/main_category_right"
         app:layout_constraintHorizontal_bias="0.6"
-        app:layout_constraintStart_toEndOf="@+id/home_button_left"
-        app:layout_constraintTop_toTopOf="@+id/home_button_left" />
+        app:layout_constraintStart_toEndOf="@+id/main_category_left"
+        app:layout_constraintTop_toTopOf="@+id/main_category_left" />
 
     <android.support.v7.widget.CardView
-        android:id="@+id/home_card"
+        android:id="@+id/main_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
@@ -98,15 +99,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.437"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_button_left">
+        app:layout_constraintTop_toBottomOf="@+id/main_category_left">
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/home_card_layout"
+            android:id="@+id/main_body"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <FrameLayout
-                android:id="@+id/home_card_fragment"
+                android:id="@+id/main_card_frame"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -119,8 +120,25 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
         </android.support.constraint.ConstraintLayout>
 
     </android.support.v7.widget.CardView>
+
+    <TextView
+        android:id="@+id/main_card_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:gravity="right"
+        android:text="@string/air_info"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main_card" />
 
 </android.support.constraint.ConstraintLayout>

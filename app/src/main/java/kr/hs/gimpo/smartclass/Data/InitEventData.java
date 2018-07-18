@@ -1,6 +1,7 @@
 package kr.hs.gimpo.smartclass.Data;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
 
@@ -52,9 +53,13 @@ public class InitEventData
                 mDatabase.child("eventDataFormat").child("eventLastUpdated").setValue(DataFormat.eventDataFormat.eventLastUpdated);
         
                 //mDatabase.child("eventDataFormat").setValue(DataFormat.eventDataFormat);
+                
+                Log.d("InitEventData", "Initialization Completed Successfully.");
         
             } catch(SchoolException e) {
-                e.printStackTrace();
+                Log.d("InitEventData", "Error: " + e.getMessage());
+                
+                Log.d("InitEventData", "Initialization Failed!");
                 return false;
             }
             return true;
