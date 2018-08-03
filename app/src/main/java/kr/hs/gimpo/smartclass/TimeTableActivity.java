@@ -212,7 +212,7 @@ public class TimeTableActivity extends AppCompatActivity
         }
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.time_table, menu);
@@ -232,7 +232,7 @@ public class TimeTableActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -242,9 +242,9 @@ public class TimeTableActivity extends AppCompatActivity
         Intent intent;
         if (id == R.id.nav_home) {
             finish();
-        } else if (id == R.id.nav_table) {
+        } /*else if (id == R.id.nav_table) {
 
-        } else if (id == R.id.nav_meal) {
+        } */else if (id == R.id.nav_meal) {
             intent = new Intent(TimeTableActivity.this, MealInfoActivity.class);
             startActivity(intent);
             finish();
@@ -252,9 +252,9 @@ public class TimeTableActivity extends AppCompatActivity
             intent = new Intent(TimeTableActivity.this, SchoolEventActivity.class);
             startActivity(intent);
             finish();
-        } else if (id == R.id.nav_setting) {
+        } /*else if (id == R.id.nav_setting) {
 
-        } else if (id == R.id.nav_info) {
+        } */else if (id == R.id.nav_info) {
             try {
                 CharSequence version = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
                 CharSequence versionName = getResources().getString(R.string.noti_version_is) + " " + version.toString();
