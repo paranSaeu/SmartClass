@@ -15,5 +15,7 @@
     <!-- common color for unknown factor. -->
     <color name="common">@android:color/tertiary_text_dark</color>
 
+    <color name="sunday">#FF3333</color>
+    <color name="saturday">#3333FF</color>
 
 </resources>
