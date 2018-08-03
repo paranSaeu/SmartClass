@@ -68,11 +68,11 @@ public class SettingsActivity extends AppCompatActivity
         Intent intent;
         if (id == R.id.nav_home) {
             finish();
-        } else if (id == R.id.nav_table) {
+        }/* else if (id == R.id.nav_table) {
             Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
-            /*intent = new Intent(MainActivity.this, TimeTableActivity.class);
-            startActivity(intent);*/
-        } else if (id == R.id.nav_meal) {
+            //intent = new Intent(MainActivity.this, TimeTableActivity.class);
+            //startActivity(intent);
+        } */else if (id == R.id.nav_meal) {
             intent = new Intent(SettingsActivity.this, MealInfoActivity.class);
             startActivity(intent);
             finish();
@@ -80,9 +80,9 @@ public class SettingsActivity extends AppCompatActivity
             intent = new Intent(SettingsActivity.this, SchoolEventActivity.class);
             startActivity(intent);
             finish();
-        } else if (id == R.id.nav_setting) {
+        } /*else if (id == R.id.nav_setting) {
         
-        } else if (id == R.id.nav_info) {
+        } */ else if (id == R.id.nav_info) {
             try {
                 CharSequence version = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
                 CharSequence versionName = getResources().getString(R.string.noti_version_is) + " " + version.toString();

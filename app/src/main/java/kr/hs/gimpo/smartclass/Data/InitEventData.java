@@ -1,9 +1,13 @@
 package kr.hs.gimpo.smartclass.Data;
 
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import org.hyunjun.school.School;
 import org.hyunjun.school.SchoolException;
@@ -49,10 +53,9 @@ public class InitEventData
                 DataFormat.eventDataFormat = new DataFormat.Event(thisYear, month);
         
                 mDatabase.child("eventDataFormat").child("eventData").child(String.valueOf(thisYear)).setValue(DataFormat.eventDataFormat.eventData);
+                
                 mDatabase.child("eventDataFormat").child("thisYear").setValue(DataFormat.eventDataFormat.thisYear);
                 mDatabase.child("eventDataFormat").child("eventLastUpdated").setValue(DataFormat.eventDataFormat.eventLastUpdated);
-        
-                //mDatabase.child("eventDataFormat").setValue(DataFormat.eventDataFormat);
                 
                 Log.d("InitEventData", "Initialization Completed Successfully.");
         
@@ -63,6 +66,26 @@ public class InitEventData
                 return false;
             }
             return true;
+        } else {
+            final int thisMonth = Integer.parseInt(new SimpleDateFormat("MM", Locale.getDefault()).format(Calendar.getInstance().getTime()));
+            mDatabase.child("eventDataFormat").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    Long serverMonth = dataSnapshot.child("thisMonth").getValue(Long.class);
+                    
+                    if(serverMonth == null || (thisMonth >= 8 && serverMonth < 8 )||(thisMonth >= 9 && serverMonth < 9)) {
+                        mDatabase.child("eventDataFormat").child("thisMonth").setValue(thisMonth);
+                        int thisYear = Integer.parseInt(new SimpleDateFormat("yyyy", Locale.getDefault()).format(Calendar.getInstance().getTime())) - 1;
+                        InitEventData initEventData = new InitEventData(mDatabase, String.valueOf(thisYear));
+                        initEventData.execute();
+                    }
+                }
+    
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+        
+                }
+            });
         }
         return false;
     }
