@@ -2,11 +2,15 @@ package kr.hs.gimpo.smartclass;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,15 +42,22 @@ public class IntroActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String today = new SimpleDateFormat("MM-dd", Locale.getDefault()).format(Calendar.getInstance().getTime());
+        /*String today = new SimpleDateFormat("MM-dd", Locale.getDefault()).format(Calendar.getInstance().getTime());
         if(today.compareTo("04-16")==0) {
             setTheme(R.style.remember0416_AppTheme);
         } else {
-            setTheme(R.style.AppTheme);
-        }
+            setTheme(R.style.AppTheme_NoActionBar);
+        }*/
 
         setContentView(R.layout.activity_intro);
-        System.out.println("setContentView: activity_intro");
+        
+        TextView version = findViewById(R.id.intro_version);
+        try {
+            CharSequence versionName = "v " + getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
+            version.setText(versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
         
         try {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
@@ -71,9 +82,7 @@ public class IntroActivity extends AppCompatActivity {
         mDatabase.child("mealDataFormat").child("thisMonth").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                System.out.println(dataSnapshot);
                 thisMonth = dataSnapshot.getValue(Integer.class);
-                System.out.println(thisMonth);
 
                 if(isConnected) {
                     InitMealData initMealData = new InitMealData(mDatabase, thisMonth);
@@ -97,9 +106,7 @@ public class IntroActivity extends AppCompatActivity {
         mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                System.out.println(dataSnapshot);
                 thisTime = dataSnapshot.getValue(String.class);
-                System.out.println(thisTime);
                 if(isConnected) {
                     InitAirQualData initAirQualData = new InitAirQualData(mDatabase, thisTime);
                     initAirQualData.execute();
@@ -122,9 +129,8 @@ public class IntroActivity extends AppCompatActivity {
         mDatabase.child("eventDataFormat").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                System.out.println(dataSnapshot);
                 thisYear = String.valueOf(dataSnapshot.child("thisYear").getValue(Long.class));
-                System.out.println(thisYear);
+                thisMonth = dataSnapshot.child("thisMonth").getValue(Integer.class);
                 if(isConnected) {
                     InitEventData initEventData = new InitEventData(mDatabase, thisYear);
                     initEventData.execute();
@@ -145,11 +151,16 @@ public class IntroActivity extends AppCompatActivity {
         });
 
         initData(isConnected, mDatabase);
-
-        Intent intent = new Intent(IntroActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
-
+    
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(IntroActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }, 3000);
     }
 
     private void initData(Boolean isConnected, DatabaseReference mDatabase) {
