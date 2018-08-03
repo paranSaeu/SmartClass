@@ -120,7 +120,7 @@ public class MainActivity
                 if(home_spinner_selected != 0) {
                     home_spinner_selected--;
                 } else {
-                    home_spinner_selected = 3;
+                    home_spinner_selected = 2;
                 }
                 spinner.setSelection(home_spinner_selected);
             }
@@ -129,7 +129,7 @@ public class MainActivity
         final ImageButton button_right = (ImageButton) findViewById(R.id.main_category_right);
         button_right.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if(home_spinner_selected != 3) {
+                if(home_spinner_selected != 2) {
                     home_spinner_selected++;
                 } else {
                     home_spinner_selected = 0;
@@ -226,7 +226,7 @@ public class MainActivity
         }
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
@@ -248,7 +248,7 @@ public class MainActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -258,20 +258,20 @@ public class MainActivity
         Intent intent;
         if (id == R.id.nav_home) {
 
-        } else if (id == R.id.nav_table) {
+        } /*else if (id == R.id.nav_table) {
             Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
-            /*intent = new Intent(MainActivity.this, TimeTableActivity.class);
-            startActivity(intent);*/
-        } else if (id == R.id.nav_meal) {
+            //intent = new Intent(MainActivity.this, TimeTableActivity.class);
+            //startActivity(intent);
+        }*/ else if (id == R.id.nav_meal) {
             intent = new Intent(MainActivity.this, MealInfoActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_calendar) {
             intent = new Intent(MainActivity.this, SchoolEventActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_setting) {
+        } /*else if (id == R.id.nav_setting) {
             intent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent);
-        } else if (id == R.id.nav_info) {
+        } */ else if (id == R.id.nav_info) {
             try {
                 CharSequence version = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
                 CharSequence versionName = getResources().getString(R.string.noti_version_is) + " " + version.toString();
@@ -295,19 +295,19 @@ public class MainActivity
         String text;
     
         switch(pos) {
-            case 0:
+            case -1:
                 newFragment = new TimeFragment();
                 text = getResources().getString(R.string.time_info);
                 break;
-            case 1:
+            case 0:
                 newFragment = new MealCard();
                 text = getResources().getString(R.string.meal_info);
                 break;
-            case 2:
+            case 1:
                 newFragment = new EventCard();
                 text = getResources().getString(R.string.event_info);
                 break;
-            case 3:
+            case 2:
                 newFragment = new AirQualCard();
                 text = getResources().getString(R.string.air_info);
                 break;
