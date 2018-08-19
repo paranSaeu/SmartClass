@@ -24,7 +24,7 @@ public class SchoolMenu {
     public String dinner;
 
     public SchoolMenu() {
-        breakfast = lunch = dinner = "급식이 없습니다";
+        breakfast = lunch = dinner = "등록된 식단 정보가 없습니다.";
     }
 
     @Override

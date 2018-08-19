@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +51,7 @@ public class IntroActivity extends AppCompatActivity {
         }*/
 
         setContentView(R.layout.activity_intro);
-        
+        long startTime = System.currentTimeMillis();
         TextView version = findViewById(R.id.intro_version);
         try {
             CharSequence versionName = "v " + getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
@@ -102,29 +103,6 @@ public class IntroActivity extends AppCompatActivity {
 
             }
         });
-
-        mDatabase.child("airQualDataFormat").child("thisTime").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                thisTime = dataSnapshot.getValue(String.class);
-                if(isConnected) {
-                    InitAirQualData initAirQualData = new InitAirQualData(mDatabase, thisTime);
-                    initAirQualData.execute();
-                    try {
-                        initAirQualData.get();
-                    } catch(InterruptedException e) {
-                        e.printStackTrace();
-                    } catch(ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
         
         mDatabase.child("eventDataFormat").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -151,6 +129,12 @@ public class IntroActivity extends AppCompatActivity {
         });
 
         initData(isConnected, mDatabase);
+        
+        long endTime = System.currentTimeMillis();
+        
+        long term = endTime - startTime;
+        
+        Log.i("IntroActivity", "term: " + term);
     
         Handler mHandler = new Handler();
         mHandler.postDelayed(new Runnable() {
@@ -160,7 +144,7 @@ public class IntroActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 3000);
+        }, 3000 - term > 0 ? 3000 - term : 1000);
     }
 
     private void initData(Boolean isConnected, DatabaseReference mDatabase) {
