@@ -75,11 +75,7 @@ public class MealCard extends Fragment {
                 // Year, Month, Day, Hour!
                 String[] ymdh = date.split("-");
                 
-                System.out.println(date);
-                
                 String data = dataSnapshot.child("mealData").child(ymdh[0]).child(ymdh[1]).child(String.valueOf(Integer.parseInt(ymdh[2]) - 1)).child(String.valueOf(Integer.parseInt(ymdh[3]) < 14 ? 0 : 1)).getValue(String.class);
-                
-                System.out.println(data);
     
                 TextView mealData = view.findViewById(R.id.card_meal_data);
                 
