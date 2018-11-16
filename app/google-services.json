@@ -8,16 +8,12 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:679439699615:android:7383a6158ae55594",
+        "mobilesdk_app_id": "1:679439699615:android:db3dfefe8e0777c2",
         "android_client_info": {
-          "package_name": "kr.hs.gimpo.smartclass"
+          "package_name": "com.example.timetabletest"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "679439699615-gntb92e3cegrvqq4md1gkj1v500vqkft.apps.googleusercontent.com",
-          "client_type": 3
-        },
         {
           "client_id": "679439699615-gntb92e3cegrvqq4md1gkj1v500vqkft.apps.googleusercontent.com",
           "client_type": 3
@@ -35,6 +31,50 @@
         "appinvite_service": {
           "status": 1,
           "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:679439699615:android:7383a6158ae55594",
+        "android_client_info": {
+          "package_name": "kr.hs.gimpo.smartclass"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "679439699615-6m3j77mep8q0srjfio15uas3ir4ek0ts.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "kr.hs.gimpo.smartclass",
+            "certificate_hash": "168525cb88b5b62e9860920ffa6dd46b2273b38f"
+          }
+        },
+        {
+          "client_id": "679439699615-gntb92e3cegrvqq4md1gkj1v500vqkft.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJqVjr6Cb6NmCSNGTOpzpRWrpwPiQ65m0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "679439699615-gntb92e3cegrvqq4md1gkj1v500vqkft.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

@@ -43,13 +43,6 @@ public class IntroActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*String today = new SimpleDateFormat("MM-dd", Locale.getDefault()).format(Calendar.getInstance().getTime());
-        if(today.compareTo("04-16")==0) {
-            setTheme(R.style.remember0416_AppTheme);
-        } else {
-            setTheme(R.style.AppTheme_NoActionBar);
-        }*/
-
         setContentView(R.layout.activity_intro);
         long startTime = System.currentTimeMillis();
         TextView version = findViewById(R.id.intro_version);

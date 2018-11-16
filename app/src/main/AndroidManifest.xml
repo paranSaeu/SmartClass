@@ -51,7 +51,7 @@
             android:name=".EventDetailActivity"
             android:label="@string/detail"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

@@ -256,22 +256,22 @@ public class MainActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         Intent intent;
-        if (id == R.id.nav_home) {
-
-        } /*else if (id == R.id.nav_table) {
-            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
-            //intent = new Intent(MainActivity.this, TimeTableActivity.class);
-            //startActivity(intent);
-        }*/ else if (id == R.id.nav_meal) {
+        if (id == R.id.nav_main) {
+            // Do nothing... it's home now!
+        } else if (id == R.id.nav_table) {
+            //Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
+            intent = new Intent(MainActivity.this, TimeTableActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_meal) {
             intent = new Intent(MainActivity.this, MealInfoActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_calendar) {
             intent = new Intent(MainActivity.this, SchoolEventActivity.class);
             startActivity(intent);
-        } /*else if (id == R.id.nav_setting) {
+        } else if (id == R.id.nav_setting) {
             intent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent);
-        } */ else if (id == R.id.nav_info) {
+        } else if (id == R.id.nav_info) {
             try {
                 CharSequence version = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
                 CharSequence versionName = getResources().getString(R.string.noti_version_is) + " " + version.toString();

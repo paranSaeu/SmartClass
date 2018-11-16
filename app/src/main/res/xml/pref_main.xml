@@ -25,7 +25,8 @@
             android:title="개발자 정보" />
 
         <Preference
-            android:title="어플리케이션 버전" />
+            android:title="어플리케이션 버전"
+            android:summary=""/>
 
     </PreferenceCategory>
 </PreferenceScreen>

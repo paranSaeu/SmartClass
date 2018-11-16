@@ -383,25 +383,24 @@ public class SchoolEventActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         Intent intent;
-        if (id == R.id.nav_home) {
+        if (id == R.id.nav_main) {
             finish();
-        } /*else if (id == R.id.nav_table) {
-    
-            Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
-            //intent = new Intent(SchoolEventActivity.this, TimeTableActivity.class);
-            //startActivity(intent);
-            //finish();
-        }*/ else if (id == R.id.nav_meal) {
+        } else if (id == R.id.nav_table) {
+            //Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();
+            intent = new Intent(SchoolEventActivity.this, TimeTableActivity.class);
+            startActivity(intent);
+            finish();
+        } else if (id == R.id.nav_meal) {
             intent = new Intent(SchoolEventActivity.this, MealInfoActivity.class);
             startActivity(intent);
             finish();
         } else if (id == R.id.nav_calendar) {
 
-        } /*else if (id == R.id.nav_setting) {
+        } else if (id == R.id.nav_setting) {
             intent = new Intent(SchoolEventActivity.this, SettingsActivity.class);
             startActivity(intent);
             finish();
-        } */ else if (id == R.id.nav_info) {
+        } else if (id == R.id.nav_info) {
             try {
                 CharSequence versionName = getResources().getString(R.string.noti_version_is) + " " + getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
                 Toast.makeText(getApplicationContext(),versionName,Toast.LENGTH_SHORT).show();
