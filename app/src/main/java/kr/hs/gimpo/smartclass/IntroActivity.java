@@ -72,30 +72,16 @@ public class IntroActivity extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference("test");
         mDatabase.keepSynced(true);
-
-        mDatabase.child("mealDataFormat").child("thisMonth").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                thisMonth = dataSnapshot.getValue(Integer.class);
-
-                if(isConnected) {
-                    InitMealData initMealData = new InitMealData(mDatabase, thisMonth);
-                    initMealData.execute();
-                    try {
-                        initMealData.get();
-                    } catch(InterruptedException e) {
-                        e.printStackTrace();
-                    } catch(ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+    
+        InitMealData initMealData = new InitMealData(isConnected);
+        initMealData.execute();
+        try {
+            initMealData.get();
+        } catch(InterruptedException e) {
+            e.printStackTrace();
+        } catch(ExecutionException e) {
+            e.printStackTrace();
+        }
         
         mDatabase.child("eventDataFormat").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
