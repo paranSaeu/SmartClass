@@ -43,13 +43,6 @@ public class IntroActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        /*String today = new SimpleDateFormat("MM-dd", Locale.getDefault()).format(Calendar.getInstance().getTime());
-        if(today.compareTo("04-16")==0) {
-            setTheme(R.style.remember0416_AppTheme);
-        } else {
-            setTheme(R.style.AppTheme_NoActionBar);
-        }*/
-
         setContentView(R.layout.activity_intro);
         long startTime = System.currentTimeMillis();
         TextView version = findViewById(R.id.intro_version);
@@ -79,30 +72,16 @@ public class IntroActivity extends AppCompatActivity {
 
         mDatabase = FirebaseDatabase.getInstance().getReference("test");
         mDatabase.keepSynced(true);
-
-        mDatabase.child("mealDataFormat").child("thisMonth").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                thisMonth = dataSnapshot.getValue(Integer.class);
-
-                if(isConnected) {
-                    InitMealData initMealData = new InitMealData(mDatabase, thisMonth);
-                    initMealData.execute();
-                    try {
-                        initMealData.get();
-                    } catch(InterruptedException e) {
-                        e.printStackTrace();
-                    } catch(ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+    
+        InitMealData initMealData = new InitMealData(isConnected);
+        initMealData.execute();
+        try {
+            initMealData.get();
+        } catch(InterruptedException e) {
+            e.printStackTrace();
+        } catch(ExecutionException e) {
+            e.printStackTrace();
+        }
         
         mDatabase.child("eventDataFormat").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

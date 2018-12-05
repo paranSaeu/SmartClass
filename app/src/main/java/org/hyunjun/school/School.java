@@ -61,8 +61,21 @@ public class School {
             this.url = url;
         }
     }
+    
+    private enum MealTime {
+        BREAKFAST(1),
+        LUNCH(2),
+        DINNER(3);
+        
+        private int id;
+        
+        MealTime(int id) {
+            this.id = id;
+        }
+    }
 
     private static final String MONTHLY_MENU_URL = "sts_sci_md00_001.do";
+    private static final String WEEKLY_MENU_URL = "sts_sci_md01_001.do";
     private static final String SCHEDULE_URL = "sts_sci_sf01_001.do";
 
     /**
@@ -102,15 +115,46 @@ public class School {
      */
     public List<SchoolMenu> getMonthlyMenu(int year, int month) throws SchoolException {
 
-        StringBuffer targetUrl = new StringBuffer("https://" + schoolRegion.url + "/" + MONTHLY_MENU_URL);
+        StringBuffer targetUrl =
+                new StringBuffer("https://" + schoolRegion.url + "/" + MONTHLY_MENU_URL);
         targetUrl.append("?");
-        targetUrl.append("schulCode=" + schoolCode + "&");
-        targetUrl.append("schulCrseScCode=" + schoolType.id + "&");
-        targetUrl.append("schulKndScCode=" + "0" + schoolType.id + "&");
-        targetUrl.append("schYm=" + year + String.format("%02d", month) + "&");
+        targetUrl.append("schulCode=").append(schoolCode).append("&");
+        targetUrl.append("schulCrseScCode=").append(schoolType.id).append("&");
+        targetUrl.append("schulKndScCode=").append("0").append(schoolType.id).append("&");
+        targetUrl.append("schYm=").append(year).append(String.format("%02d", month)).append("&");
 
         try {
             String content = getContentFromUrl(new URL(targetUrl.toString()), "<tbody>", "</tbody>");
+            return SchoolMenuParser.parse(content);
+        } catch (MalformedURLException e) {
+            throw new SchoolException("교육청 접속 주소가 올바르지 않습니다.");
+        }
+    }
+    
+    
+    /**
+     *
+     * @param year 해당 연도를 yyyy 형식으로 입력
+     * @param month 해당 월을 m 형식으로 입력
+     * @param day 해당 주간에 포함된 일자를 d 형식으로 입력
+     * @param mealTime 받아올 식사 시간을 선택
+     * @return 각 일자별 자세한 급식메뉴 리스트
+     * @throws SchoolException
+     */
+    public List<SchoolMenu> getWeeklyMenu(int year, int month, int day, MealTime mealTime) throws SchoolException {
+        
+        StringBuffer targetUrl =
+                new StringBuffer("https://" + schoolRegion.url + "/" + WEEKLY_MENU_URL);
+        targetUrl.append("?");
+        targetUrl.append("schulCode=").append(schoolCode).append("&");
+        targetUrl.append("schulCrseScCode=").append(schoolType.id).append("&");
+        targetUrl.append("schulKndScCode=").append("0").append(schoolType.id).append("&");
+        targetUrl.append("schYmd=")
+                .append(year).append(String.format("%02d%02d", month, day)).append("&");
+        targetUrl.append("schMmealScCode=").append(mealTime.id).append("&");
+        
+        try {
+            String content = getContentFromUrl(new URL(targetUrl.toString()), "<>", "<>");
             return SchoolMenuParser.parse(content);
         } catch (MalformedURLException e) {
             throw new SchoolException("교육청 접속 주소가 올바르지 않습니다.");

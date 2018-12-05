@@ -8,6 +8,19 @@ package org.hyunjun.school;
  * @version 3.0
  */
 public class SchoolMenu {
+    
+    public enum Type {
+        SIMPLE(0),
+        PRECISE(1);
+        
+        private int type;
+        Type(int type) {
+            this.type = type;
+        }
+    }
+    
+    public Type type;
+    
     /**
      * 조식
      */
@@ -25,10 +38,17 @@ public class SchoolMenu {
 
     public SchoolMenu() {
         breakfast = lunch = dinner = "등록된 식단 정보가 없습니다.";
+        type = Type.SIMPLE;
     }
 
     @Override
     public String toString() {
-        return "[아침]\n" + breakfast + "\n" + "[점심]\n" + lunch + "\n" + "[저녁]\n" + dinner;
+        if(type == Type.SIMPLE) {
+            return "[아침]\n" + breakfast + "\n" + "[점심]\n" + lunch + "\n" + "[저녁]\n" + dinner;
+        } else if(type == Type.PRECISE) {
+            return "[아침]\n" + breakfast.split("#")[0] + "\n" + "[점심]\n" + lunch.split("#")[0] + "\n" + "[저녁]\n" + dinner.split("#")[0];
+        } else {
+            return "에러가 발생하였습니다.";
+        }
     }
 }

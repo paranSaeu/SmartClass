@@ -1,5 +1,7 @@
 package org.hyunjun.school;
 
+import android.support.annotation.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,17 @@ import java.util.List;
  * @version 3.0
  */
 public class SchoolMenuParser {
+    
+    public enum Mode {
+        /* 월별 */ MONTHLY(0),
+        /* 주별 */ WEEKLY(1);
+        
+        private int id;
+        
+        Mode(int id) {
+            this.id = id;
+        }
+    }
 
     /**
      * 웹에서 가져온 데이터를 바탕으로 급식 메뉴를 파싱합니다.
@@ -18,47 +31,62 @@ public class SchoolMenuParser {
      * @param rawData
      * @return
      */
+    
     public static List<SchoolMenu> parse(String rawData) throws SchoolException {
-
+        return parse(rawData, Mode.MONTHLY);
+    }
+    
+    public static List<SchoolMenu> parse(String rawData, Mode mode) throws SchoolException {
+    
         if (rawData.length() < 1)
             throw new SchoolException("불러온 데이터가 올바르지 않습니다.");
-
-        List<SchoolMenu> monthlyMenu = new ArrayList<SchoolMenu>();
+    
+        List<SchoolMenu> Menu = new ArrayList<SchoolMenu>();
 
         /*
          파싱 편의를 위해 모든 공백을 제거합니다.
          급식 메뉴의 이름에는 공백이 들어가지 않으므로, 파싱 결과에는 영향을 주지 않습니다.
          */
         rawData = rawData.replaceAll("\\s+", "");
+        
+        if(mode == Mode.MONTHLY) {
 
         /*
          <div> - </div> 쌍을 찾아 그 사이의 데이터를 추출합니다.
          */
-        StringBuffer buffer = new StringBuffer();
-
-        boolean inDiv = false;
-
-        try {
-            for (int i = 0; i < rawData.length(); i++) {
-                if (rawData.charAt(i) == 'v') {
-                    if (inDiv) {
-                        buffer.delete(buffer.length() - 4, buffer.length());
-                        if (buffer.length() > 0)
-                            monthlyMenu.add(parseDay(buffer.toString()));
-                        buffer.setLength(0);
-                    } else {
-                        i++;
+            StringBuffer buffer = new StringBuffer();
+    
+            boolean inDiv = false;
+    
+            try {
+                for (int i = 0; i < rawData.length(); i++) {
+                    if (rawData.charAt(i) == 'v') {
+                        if (inDiv) {
+                            buffer.delete(buffer.length() - 4, buffer.length());
+                            if (buffer.length() > 0)
+                                Menu.add(parseDay(buffer.toString()));
+                            buffer.setLength(0);
+                        } else {
+                            i++;
+                        }
+                        inDiv = !inDiv;
+                    } else if (inDiv) {
+                        buffer.append(rawData.charAt(i));
                     }
-                    inDiv = !inDiv;
-                } else if (inDiv) {
-                    buffer.append(rawData.charAt(i));
                 }
+        
+                return Menu;
+        
+            } catch (Exception e) {
+                throw new SchoolException("급식 정보 파싱에 실패했습니다. 최신 버전으로 업데이트 해 주세요.");
             }
-
-            return monthlyMenu;
-
-        } catch (Exception e) {
-            throw new SchoolException("급식 정보 파싱에 실패했습니다. 최신 버전으로 업데이트 해 주세요.");
+        } else if(mode == Mode.WEEKLY) {
+            
+            
+            
+            return Menu;
+        } else {
+            throw new SchoolException("올바른 파싱 모드가 아닙니다.");
         }
     }
 

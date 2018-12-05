@@ -66,7 +66,7 @@ public class SettingsActivity extends AppCompatActivity
         int id = item.getItemId();
     
         Intent intent;
-        if (id == R.id.nav_home) {
+        if (id == R.id.nav_main) {
             finish();
         }/* else if (id == R.id.nav_table) {
             Toast.makeText(getApplicationContext(),R.string.notYet,Toast.LENGTH_SHORT).show();

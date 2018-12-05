@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -43,13 +44,14 @@ import java.util.concurrent.ExecutionException;
 import kr.hs.gimpo.smartclass.*;
 import kr.hs.gimpo.smartclass.Data.DataFormat;
 import kr.hs.gimpo.smartclass.Data.InitTimeData;
+import kr.hs.gimpo.smartclass.Fragment.TimeCard;
 
 public class TimeTableActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     boolean isConnected;
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("test");
-
+    /*
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -133,7 +135,7 @@ public class TimeTableActivity extends AppCompatActivity
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });*/
+        });
 
         final TextView time_class  = (TextView) findViewById(R.id.time_class);
         time_class.setText(refreshClassNo());
@@ -186,6 +188,41 @@ public class TimeTableActivity extends AppCompatActivity
             }
         });
     }
+    */
+    
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        
+        String today = new SimpleDateFormat("MM-dd", Locale.getDefault()).format(Calendar.getInstance().getTime());
+        if(today.compareTo("04-16")==0) {
+            setTheme(R.style.remember0416);
+        } else {
+            setTheme(R.style.AppTheme_NoActionBar);
+        }
+        setContentView(R.layout.activity_time_table);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(R.string.time_title);
+        setSupportActionBar(toolbar);
+    
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+    
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        
+        if(findViewById(R.id.time_card_fragment) != null) {
+            Fragment fragment = new TimeCard();
+            
+            //fragment.setArguments();
+            
+            getSupportFragmentManager().beginTransaction().add(R.id.time_card_fragment, fragment).commit();
+        }
+    }
+    
     private String[] date = {"mon", "tue", "wed", "thu", "fri"};
     private static final String ID_FORMAT = "time_card_%s_%d";
     private String[][][][][] table_data_default = new String[3][11][5][7][2];
@@ -240,11 +277,11 @@ public class TimeTableActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         Intent intent;
-        if (id == R.id.nav_home) {
+        if (id == R.id.nav_main) {
             finish();
-        } /*else if (id == R.id.nav_table) {
+        } else if (id == R.id.nav_table) {
 
-        } */else if (id == R.id.nav_meal) {
+        } else if (id == R.id.nav_meal) {
             intent = new Intent(TimeTableActivity.this, MealInfoActivity.class);
             startActivity(intent);
             finish();
@@ -252,9 +289,11 @@ public class TimeTableActivity extends AppCompatActivity
             intent = new Intent(TimeTableActivity.this, SchoolEventActivity.class);
             startActivity(intent);
             finish();
-        } /*else if (id == R.id.nav_setting) {
-
-        } */else if (id == R.id.nav_info) {
+        } else if (id == R.id.nav_setting) {
+            intent = new Intent(TimeTableActivity.this, SettingsActivity.class);
+            startActivity(intent);
+            finish();
+        } else if (id == R.id.nav_info) {
             try {
                 CharSequence version = getApplicationContext().getPackageManager().getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;
                 CharSequence versionName = getResources().getString(R.string.noti_version_is) + " " + version.toString();

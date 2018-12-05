@@ -22,6 +22,7 @@
             android:maxLines="15"
             android:scrollbars="vertical"
             android:text="@string/home_card_air_help"
+            android:textColor="@android:color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -38,10 +39,11 @@
                 android:id="@+id/card_air_pm10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/pm10"
+                android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -49,12 +51,13 @@
                 android:id="@+id/card_air_pm25"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
                 android:text="@string/pm25"
+                android:textColor="@android:color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_pm10" />
@@ -63,10 +66,11 @@
                 android:id="@+id/card_air_o3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/o3"
+                android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_pm25" />
 
@@ -74,10 +78,11 @@
                 android:id="@+id/card_air_no2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/no2"
+                android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_o3" />
 
@@ -85,10 +90,11 @@
                 android:id="@+id/card_air_co"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/co"
+                android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_no2" />
 
@@ -96,10 +102,11 @@
                 android:id="@+id/card_air_so2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="4dp"
                 android:text="@string/so2"
+                android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_co" />
 
@@ -107,11 +114,12 @@
                 android:id="@+id/card_air_qual"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
                 android:text="@string/qual"
+                android:textColor="@android:color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_so2" />
@@ -134,10 +142,11 @@
                 android:id="@+id/card_air_data_pm10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
                 android:text="TextView"
+                android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -145,10 +154,11 @@
                 android:id="@+id/card_air_data_pm25"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="4dp"
                 android:text="TextView"
+                android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_data_pm10" />
 
@@ -156,10 +166,11 @@
                 android:id="@+id/card_air_data_o3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="4dp"
                 android:text="TextView"
+                android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_data_pm25" />
 
@@ -167,10 +178,11 @@
                 android:id="@+id/card_air_data_no2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="4dp"
                 android:text="TextView"
+                android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_data_o3" />
 
@@ -178,10 +190,11 @@
                 android:id="@+id/card_air_data_co"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="4dp"
                 android:text="TextView"
+                android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_data_no2" />
 
@@ -189,10 +202,11 @@
                 android:id="@+id/card_air_data_so2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="4dp"
                 android:text="TextView"
+                android:textColor="@android:color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_data_co" />
 
@@ -200,11 +214,12 @@
                 android:id="@+id/card_air_data_qual"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
                 android:text="TextView"
+                android:textColor="@android:color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_data_so2" />
@@ -224,12 +239,13 @@
                 android:id="@+id/card_air_status_pm10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
                 android:text="TextView"
+                android:textColor="@android:color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -240,6 +256,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="TextView"
+                android:textColor="@android:color/black"
                 app:layout_constraintEnd_toEndOf="@+id/card_air_status_pm10"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_status_pm10" />
 
@@ -249,6 +266,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="TextView"
+                android:textColor="@android:color/black"
                 app:layout_constraintEnd_toEndOf="@+id/card_air_status_pm25"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_status_pm25" />
 
@@ -258,6 +276,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="TextView"
+                android:textColor="@android:color/black"
                 app:layout_constraintEnd_toEndOf="@+id/card_air_status_o3"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_status_o3" />
 
@@ -267,6 +286,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="TextView"
+                android:textColor="@android:color/black"
                 app:layout_constraintEnd_toEndOf="@+id/card_air_status_no2"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_status_no2" />
 
@@ -276,6 +296,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:text="TextView"
+                android:textColor="@android:color/black"
                 app:layout_constraintEnd_toEndOf="@+id/card_air_status_co"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_status_co" />
 
@@ -283,9 +304,10 @@
                 android:id="@+id/card_air_status_qual"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
                 android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
                 android:text="TextView"
+                android:textColor="@android:color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/card_air_status_so2"
                 app:layout_constraintTop_toBottomOf="@+id/card_air_status_so2" />
@@ -301,7 +323,8 @@
             android:layout_marginTop="8dp"
             android:text="@string/air_card_station_hint"
             app:layout_constraintStart_toEndOf="@+id/card_air_place"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@android:color/black" />
 
 
     </android.support.constraint.ConstraintLayout>
