@@ -3,6 +3,7 @@ package kr.hs.gimpo.smartclass.Data;
 import android.os.AsyncTask;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class InitTimeData
         extends AsyncTask<Void, Void, Boolean> {
@@ -11,8 +12,8 @@ public class InitTimeData
     
     private String jsonData = "";
     
-    public InitTimeData(DatabaseReference mDatabase) {
-        this.mDatabase = mDatabase;
+    public InitTimeData() {
+        this.mDatabase = FirebaseDatabase.getInstance().getReference();
     }
     
     @Override
