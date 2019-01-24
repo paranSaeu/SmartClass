@@ -19,11 +19,10 @@ import java.util.List;
 import java.util.Locale;
 
 public class InitMealData
-        extends AsyncTask<Void, Void, Boolean> {
+        extends AsyncTask<Void, Void, Void> {
 
     private List<List<String>> mealDataList = new ArrayList<>();
     private DatabaseReference mDatabase;
-    private boolean isInternetConnected;
 
     private final String DEFAULT_URL =
     "https://stu.goe.go.kr/"+
@@ -33,19 +32,8 @@ public class InitMealData
     "schulCrseScCode=4&"+
     "schulKndScCode=04&";
 
-    public InitMealData(boolean isInternetConnected) {
-        this.isInternetConnected = isInternetConnected;
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-    }
-
-    private Calendar getStartOfWeek() {
-        Calendar cal = Calendar.getInstance();
-        
-        while(cal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
-            cal.add(Calendar.DATE, -1);
-        }
-        
-        return cal;
+    public InitMealData() {
+        this.mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
     @Override
@@ -54,52 +42,49 @@ public class InitMealData
     }
 
     @Override
-    protected Boolean doInBackground(Void... voids) {
-        if(isInternetConnected) {
-            /*
-            예:
-            https://stu.goe.go.kr/sts_sci_md01_001.do?schulCode=J100000510&schulCrseScCode=4&schulKndScCode=04&schYmd=20180818&schMmealScCode=3&
+    protected Void doInBackground(Void... voids) {
+        /*
+        예:
+        https://stu.goe.go.kr/sts_sci_md01_001.do?schulCode=J100000510&schulCrseScCode=4&schulKndScCode=04&schYmd=20180818&schMmealScCode=3&
 
-            위 주소의 분석:
-            https://stu.goe.go.kr/ : 경기도교육청 산하 학교의 정보
-            sts_sci_md01_001.do : 주간 급식 및 영양소 정보
-            ? : 이하 쿠키 내용
-            schulCode=J100000510 : 김포고등학교
-            & : 나열
-            schulCrseScCode=4&schulKndScCode=04 : 고등학교
-            schYmd=20180818 : 조회하고 싶은 주에 포함된 날짜 (2018년 08월 18일이 있는 주간의 메뉴)
-            schMmealScCode=3 : 석식 (1: 조식, 2: 중식, 3: 석식)
-            */
+        위 주소의 분석:
+        https://stu.goe.go.kr/ : 경기도교육청 산하 학교의 정보
+        sts_sci_md01_001.do : 주간 급식 및 영양소 정보
+        ? : 이하 쿠키 내용
+        schulCode=J100000510 : 김포고등학교
+        & : 나열
+        schulCrseScCode=4&schulKndScCode=04 : 고등학교
+        schYmd=20180818 : 조회하고 싶은 주에 포함된 날짜 (2018년 08월 18일이 있는 주간의 메뉴)
+        schMmealScCode=3 : 석식 (1: 조식, 2: 중식, 3: 석식)
+        */
     
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
-            String time = sdf.format(Calendar.getInstance().getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+        String time = sdf.format(Calendar.getInstance().getTime());
     
-            for(int i = 2; i <= 3; i++) {
-                StringBuffer url = new StringBuffer(DEFAULT_URL);
+        for(int i = 2; i <= 3; i++) {
+            
+            StringBuffer url = new StringBuffer(DEFAULT_URL);
         
-                url.append("schYmd=").append(time).append("&");
-                url.append("schMmealScCode=").append(i).append("&");
+            url.append("schYmd=").append(time).append("&");
+            url.append("schMmealScCode=").append(i).append("&");
         
-                try {
-                    Document doc = Jsoup.connect(url.toString()).get();
+            try {
+                Document doc = Jsoup.connect(url.toString()).get();
                     
-                    Elements column = doc.select("table.tbl_type3 tbody tr");
+                Elements column = doc.select("table.tbl_type3 tbody tr");
                     
-                    for(Element a : column) {
+                for(Element a : column) {
+                    Elements rowName = a.select("th");
                         
-                        Elements rowName = a.select("th");
+                    Log.i("InitMealData", "row name : " + rowName.text().trim());
                         
-                        Log.i("InitMealData", "row name : " + rowName.text().trim());
-                        
-                        Elements row = a.select("td");
-                        for(Element b : row) {
-                            Log.i("InitMealData", b.text().trim());
-                        }
+                    Elements row = a.select("td");
+                    for(Element b : row) {
+                        Log.i("InitMealData", b.text().trim());
                     }
-                    
-                } catch(IOException e) {
-                    e.printStackTrace();
                 }
+            } catch(IOException e) {
+                e.printStackTrace();
             }
             
             /*
@@ -128,12 +113,11 @@ public class InitMealData
             } catch(SchoolException e) {
                 e.printStackTrace();
             }*/
-
         }
         return null;
     }
 
     @Override
-    protected void onPostExecute(Boolean isInitialized) {
+    protected void onPostExecute(Void v) {
     }
 }

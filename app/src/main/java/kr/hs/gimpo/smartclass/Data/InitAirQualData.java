@@ -1,7 +1,6 @@
 package kr.hs.gimpo.smartclass.Data;
 
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
@@ -17,24 +16,16 @@ import java.util.Calendar;
 import java.util.Locale;
 
 public class InitAirQualData
-        extends AsyncTask<Void, Void, Boolean> {
-
+        extends AsyncTask<Void, Void, Void> {
+    
     private String[] airData = new String[15];
     private final String[] airDataFormat =
-    {"dataTime", "pm10", "pm25", "o3", "no2", "co", "so2", "khai"};
+            {"dataTime", "pm10", "pm25", "o3", "no2", "co", "so2", "khai"};
     private DatabaseReference mDatabase;
-
-    // this constructor is no longer supported and will be deprecated.
-    // please call function InitAirQualData()
-    public InitAirQualData(
-      DatabaseReference mDatabase,
-      @NonNull String thisTime
-    ) {
-        this.mDatabase = mDatabase;
-    }
-
+    
     public InitAirQualData() {
-        this.mDatabase = FirebaseDatabase.getInstance().getReference("test");
+        this.mDatabase = FirebaseDatabase.getInstance().getReference();
+
     }
 
     @Override
@@ -102,7 +93,7 @@ public class InitAirQualData
 
               Log.e("InitAirQualData", "resultMsg: " + resultMessage);
 
-              // printing infor to the console
+              // printing info to the console
               Log.e("InitAirQualData", "Initialization Failed!");
 
               return false;
@@ -116,7 +107,7 @@ public class InitAirQualData
     }
 
     @Override
-    protected void onPostExecute(Boolean isInitialized) {
+    protected void onPostExecute(Void v) {
 
     }
 }
