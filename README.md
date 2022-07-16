@@ -1,4 +1,4 @@
-# Smart Class Project
+# Smart Class Project [Deprecated]
 
  김포고등학교 스마트 클래스 프로젝트의 소스 코드입니다.<br>
 
