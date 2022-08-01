@@ -1,8 +1,13 @@
 ## 스마트 클래스 (kr.hs.gimpo.smartclass) 변경 기록
 
-현재 최신 버전: (2018-08-19 기준) <br>
+* NOTICE
+
+This Project will not be updated.
+
+
+<del> 현재 최신 버전: (2018-08-19 기준) <br>
 Release : 1.0.0 (2018-08-19)<br>
-Beta : 3.5.3-beta (2018-08-19)<br>
+Beta : 3.5.3-beta (2018-08-19)<br> </del>
 
 - 1.0.0 변경 사항 (2018-08-19)
   - 수정된 사항
