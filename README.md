@@ -5,9 +5,9 @@
 
 ## [변경 기록(Changelog)](Changelog.md)
 
-현재 최신 버전:<br>
-- Release : 1.0.0 (업데이트 일자: 2018-08-19)<br>
-- Beta : 3.5.3-beta (업데이트 일자: 2018-08-19)<br>
+<del> 현재 최신 버전:<br> </del>
+<del> - Release : 1.0.0 (업데이트 일자: 2018-08-19)<br> </del>
+<del> - Beta : 3.5.3-beta (업데이트 일자: 2018-08-19)<br> </del>
 
 ## Reference
 
